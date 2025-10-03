@@ -3,12 +3,52 @@ import Waves from "./waves.astro";
 ---
 
 <div>
-	<div class="flex justify-center items-center min-h-screen bg-gray-100">
+	<div class="relative flex justify-center items-center min-h-screen bg-gray-100">
 		<img
-			src="//letravivaoficial.com/cdn/shop/files/PAGINA_DE_INICIO.png?v=1753674589&width=3840"
-			alt="Letra Viva"
-			class="w-[120%] h-auto object-contain mx-auto"
+		  src="//letravivaoficial.com/cdn/shop/files/PAGINA_DE_INICIO.png?v=1753674589&width=3840"
+		  alt="Letra Viva"
+		  class="w-[120%] h-auto object-contain mx-auto"
 		/>
-	</div>
-	<Waves />	
+	  
+		<!-- Modal centrado -->
+		<div class="absolute inset-0 flex justify-center items-center">
+		  <div class="bg-white rounded-2xl shadow-lg px-8 py-12 text-center min-w-md ">
+			<h2 class="text-2xl font-bold text-[#073535] mb-2">
+			  Regala Emoción ❤️ | Crea Tu Canción Personalizada 🎵
+			</h2>
+			<p class="text-gray-600 mb-4">
+			  Haz Click en el botón para Crear tu Canción 👇🏻
+			</p>
+			<a
+			  href="#"
+			  class="bg-[#073535] hover:bg-[#095959] text-white font-medium px-6 py-3 rounded-md">
+			  Crear Canción Personalizada
+			</a>
+		  </div>
+		</div>
+	  </div>
+	  
+	<Waves />
+	<footer class="bg-[#083335] text-gray-400 py-6">
+		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+		  
+		  <!-- Enlaces -->
+		  <div class="flex flex-wrap justify-center space-x-6 mb-4 mt-5">
+			<a href="#" class="hover:underline">Política De Privacidad</a>
+			<a href="#" class="hover:underline">Política De Envíos</a>
+			<a href="#" class="hover:underline">Política De Reembolso</a>
+			<a href="#" class="hover:underline">Términos y Condiciones</a>
+		  </div>
+	  
+		  <!-- Info contacto -->
+		  <p class="mb-4">Información de Contacto</p>
+	  
+		</div>
+
+		<div>
+			<hr class="border-gray-800 my-4 w-full" />
+			<p class="text-xs px-20 py-2 text-white/60">© 2025, Letra Viva.</p>
+		</div>
+	  </footer>
+		  
 </div>
