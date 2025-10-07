@@ -1,0 +1,15 @@
+---
+import ProductList from "../components/shopify/ProductList";
+import Layout from "../layouts/Layout.astro";
+import { fetchAdminProducts } from "../lib/shopify.server";
+
+const products = await fetchAdminProducts(); // SSR fetch
+---
+
+<Layout title="Canción Personalizada | Letra Viva" description="Crea una canción personalizada para esa persona especial. Regala emociones y momentos inolvidables con nuestra canción única y hecha a medida.">
+
+    <div class="mt-16 mx-auto container">      
+        <ProductList client:load  products={products}/>
+    </div>
+
+</Layout>
