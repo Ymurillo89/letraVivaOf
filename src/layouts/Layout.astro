@@ -15,7 +15,9 @@ import Navbar from "../components/Navbar.astro";
 	</head>
 	<body>
 		<Navbar/>
-		<slot/>
+		<div class="max-w-7xl mx-auto">
+			<slot/>
+		</div>
 		<SpeedInsights/>
 	</body>
 </html>

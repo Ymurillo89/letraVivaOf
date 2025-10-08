@@ -20,79 +20,86 @@ export default function ProductList(props: Props) {
     <div class="container mx-auto">
       <For each={props.products}>
         {(p) => (
-          <div class="grid lg:grid-cols-2 min-h-screen">
-            <div class="bg-teal-dark text-white p-8  flex flex-col justify-between">
-                <div class="flex-1 flex flex-col items-center justify-center">
-                {/* Main Image and Vinyl */}
-                <div class="relative w-full max-w-3xl mb-8">
-                  <div class="flex items-center justify-center gap-4">
-                  <img
-                    src={p.image?.src}
-                    alt="Celebration"
-                    class="w-full h-auto rounded-lg shadow-2xl"
-                    
-                  />
-                  {/*  <div class="relative w-1/2">
-                  <div class="w-full aspect-square rounded-full bg-zinc-900 shadow-2xl flex items-center justify-center">
-                  <div class="w-3/4 aspect-square rounded-full bg-gradient-to-br from-red-900 to-red-700 flex items-center justify-center">
-                    <div class="w-1/4 aspect-square rounded-full bg-zinc-900" />
-                  </div>
-                  </div> */}
+          <div class="grid lg:grid-cols-2 min-h-screen gap-x-6">
+
+            <div>
+              <div class="flex-1 flex flex-col items-center justify-center mb-6">
+                <div class="relative w-full  ">
+                  <div class="flex items-center justify-center ">
+                    <img
+                      src={p.image?.src}
+                      alt="Celebration"
+                      class="w-full h-auto rounded-lg shadow-md" />
                   </div>
                 </div>
-                </div>
-
-              {/* Song Title */}
-              <div class="text-center mb-6">
-                <div class="flex items-center justify-center gap-2 mb-2">
-                  <span class="text-sm">•••</span>
-                </div>
-                <h2 class="text-2xl font-bold mb-1">Celebra Su Cumpleaños 🎉</h2>
-              </div>
-
-              {/* Progress Bar */}
-              <div class="w-full max-w-md mb-6">
-                {/*    <Slider
-                value={sliderValue}
-                onValueChange={setSliderValue}
-                max={100}
-                step={1}
-                class="w-full [&_[role=slider]]:bg-orange [&_[role=slider]]:border-orange [&_.bg-primary]:bg-orange"
-              /> */}
               </div>
 
               {/* Player Controls */}
-              <div class="flex items-center justify-center gap-6 mb-8">
-                {/*        <Button variant="ghost" size="icon" class="text-orange hover:text-orange hover:bg-orange/10">
-                <Shuffle class="w-6 h-6" />
-              </Button>
-              <Button variant="ghost" size="icon" class="text-orange hover:text-orange hover:bg-orange/10">
-                <SkipBack class="w-6 h-6" />
-              </Button>
-              <Button size="icon" class="w-14 h-14 rounded-full bg-orange hover:bg-orange/90 text-white">
-                <Play class="w-6 h-6 fill-current" />
-              </Button>
-              <Button variant="ghost" size="icon" class="text-orange hover:text-orange hover:bg-orange/10">
-                <SkipForward class="w-6 h-6" />
-              </Button>
-              <Button variant="ghost" size="icon" class="text-orange hover:text-orange hover:bg-orange/10">
-                <Menu class="w-6 h-6" />
-              </Button> */}
+              <div class="flex items-center justify-center gap-2 mb-8">
+                <For each={p.images}>
+                  {(image) => (
+                    <img
+                      src={image.src}
+                      alt="Celebration"
+                      class=" rounded-lg object-cover h-32 w-32 cursor-pointer hover:scale-110 transition-transform" />
+                  )}
+                </For>
+
               </div>
             </div>
 
+            <div class="overflow-y-auto">
+              <div class="w-full">
+                <div class="mb-6">
+                  <div class="flex items-start justify-start  text-sm text-muted-foreground mb-4">
+                    <span>🎁</span>
+                    <span>Paquetes Letra Viva - Elige El Tuyo 🔥</span>
+                  </div>
+                </div>
+              </div>
+              <div class="space-y-3 mb-2">
+                <For each={p.variants}>
+                  {(variant) => (
+                    <div class="p-4 rounded-xl border border-gray-200 hover:border-green-900 hover:bg-green-50 cursor-pointer transition-all shadow-sm hover:shadow-md flex items-center justify-between">
+                      <div class="flex items-center gap-3">
+                        <div>
+                          <p class="font-medium text-gray-800 text-sm">{variant.title}</p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </For>
+              </div>
+
+              <div class="bg-red-700 text-white text-center py-2 rounded-lg font-bold mb-4">
+                YA ES VIRAL! ¡PIDE TU CANCIÓN AHORA!
+              </div>
+
+              <h1 class="text-4xl font-bold mb-4 text-balance">Regala una canción personalizada única</h1>
+
+              <div class="flex items-center gap-2 mb-6">
+                <div class="flex">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" fill="currentColor">
+                    <path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"></path>
+                  </svg>
+                </div>
+                <span class="font-bold">4.9/5</span>
+                <span class="text-muted-foreground">Basado en 712 Reseñas</span>
+              </div>
+
+
+
+
+            </div>
 
           </div>
-
-
-
         )}
 
       </For>
 
       <div class="grid lg:grid-cols-2 min-h-screen">
         {/* Left Side - Music Player */}
-        <div class="bg-teal-dark text-white p-8 lg:p-12 flex flex-col justify-between">
+        <div class=" text-white p-8 lg:p-12 flex flex-col justify-between">
 
           <div class="flex-1 flex flex-col items-center justify-center">
             {/* Main Image and Vinyl */}
@@ -201,7 +208,7 @@ export default function ProductList(props: Props) {
               </div>
 
               {/* Banner */}
-              <div class="bg-red-banner text-white text-center py-3 rounded-lg mb-6 font-bold">
+              <div class="bg-red-700 text-white text-center py-3 rounded-lg mb-6 font-bold">
                 YA ES VIRAL! ¡PIDE TU CANCIÓN AHORA!
               </div>
 
