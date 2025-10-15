@@ -1,5 +1,5 @@
 // src/lib/shopify.server.ts
-import type { ShopifyProduct } from "../types/shopify";
+/* import type { ShopifyProduct } from "../types/shopify";
 
 const SHOP_DOMAIN = import.meta.env.SHOPIFY_STORE_DOMAIN;
 const ADMIN_TOKEN = import.meta.env.SHOPIFY_ADMIN_TOKEN;
@@ -28,3 +28,4 @@ export async function fetchAdminProducts(): Promise<ShopifyProduct[]> {
   console.log(json.products[4]);
   return json.products ?? [];
 }
+ */
