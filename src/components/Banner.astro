@@ -1,0 +1,39 @@
+---
+const messages = [
+  "Regala Emoción | 40% De Descuento Oferta Limitada",
+  "¡Últimos Cupos Disponibles!",
+  "Entrega de 24 a 48h - ¡Haz Tu Pedido Ya!"
+];
+---
+
+<div class="relative overflow-hidden bg-[#00343d] text-white py-2">
+  <div class="marquee-wrapper flex">
+    <div class="marquee-content flex shrink-0 space-x-10 px-10">
+      {messages.map((msg) => (
+        <span class="text-sm font-semibold">{msg} •</span>
+      ))}
+    </div>
+    <div class="marquee-content-duplicate flex shrink-0 space-x-10 px-10" aria-hidden="true">
+      {messages.map((msg) => (
+        <span class="text-sm font-semibold">{msg} •</span>
+      ))}
+    </div>
+  </div>
+</div>
+
+<style>
+.marquee-wrapper {
+  display: flex;
+  width: max-content;
+  animation: marquee 15s linear infinite;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+</style>

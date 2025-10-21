@@ -2,6 +2,7 @@
 import  SpeedInsights  from "@vercel/speed-insights/astro"
 import "../styles/global.css";
 import Navbar from "../components/Navbar.astro";
+import Banner from "../components/Banner.astro";
 ---
 
 <!doctype html>
@@ -15,7 +16,7 @@ import Navbar from "../components/Navbar.astro";
 	</head>
 	<body>
 		<Navbar/>
-		<div >
+		<div >			
 			<slot/>
 		</div>
 		<SpeedInsights/>
