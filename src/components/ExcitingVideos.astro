@@ -1,0 +1,111 @@
+---
+const videos = [
+  {
+    title: "Reacción Cumpleaños",
+    desc: "La emoción de recibir una canción única",
+    src: "/video/REGALORAUL.mp4",
+    poster: "/emotional-birthday-song-reaction.jpg",
+  },
+  {
+    title: "Aniversario Especial",
+    desc: "Amor en cada nota",
+    src: "/video/ADS15.mp4",
+    poster: "/romantic-anniversary-song-surprise.jpg",
+  },
+  {
+    title: "Canción para la Abuelita",
+    desc: "Ternura y emoción",
+    src: "/video/ADSABUELITA.mp4",
+    poster: "/mother-crying-happy-tears-song.jpg",
+  },
+  {
+    title: "Para Mi Gordita",
+    desc: "Una sorpresa romántica",
+    src: "/video/ADSGORDITA.mp4",
+    poster: "/romantic-surprise-song.jpg",
+  }
+ 
+];
+---
+
+<div class=" rounded-3xl p-8 md:p-12 border-2 border-[#11676a]/20 shadow-xl relative overflow-hidden">
+  <!-- Encabezado -->
+  <div class="text-center mb-12">
+    <div class="inline-flex items-center gap-2 bg-gradient-to-r from-[#11676a] to-[#2d8c89] text-white px-8 py-3 rounded-full text-base font-bold mb-4 shadow-2xl animate-pulse">
+      <svg xmlns="http://www.w3.org/2000/svg" class="lucide lucide-play h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <polygon points="6 3 20 12 6 21 6 3"></polygon>
+      </svg>
+      <span>Videos Emocionantes</span>
+    </div>
+    <h3 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Mira La Magia En Acción</h3>
+    <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+      Descubre cómo nuestras canciones personalizadas crean momentos inolvidables
+    </p>
+  </div>
+
+  <!-- Grid Desktop -->
+  <div class="hidden md:grid md:grid-cols-4 gap-1 mb-8">
+    {videos.map((video) => (
+      <div
+        class="relative rounded-2xl overflow-hidden shadow-2xl group cursor-pointer border-2 border-[#11676a]/20 hover:border-[#11676a] transition-all hover:scale-[1.02]"
+        style="aspect-ratio: 9 / 16;"
+      >
+        <video
+          class="w-full h-full object-cover"
+          autoplay
+          loop
+          muted
+          playsinline
+          poster={video.poster}
+        >
+          <source src={video.src} type="video/mp4" />
+        </video>
+
+        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent flex items-end p-4">
+          <div class="text-white">
+            <h4 class="text-lg font-bold mb-1">{video.title}</h4>
+            <p class="text-xs opacity-90">{video.desc}</p>
+          </div>
+        </div>
+
+        <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/20">
+          <div class="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="lucide lucide-play h-8 w-8 text-[#11676a] ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <polygon points="6 3 20 12 6 21 6 3"></polygon>
+            </svg>
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <!-- Carrusel Mobile -->
+  <div class="md:hidden overflow-x-auto snap-x snap-mandatory scrollbar-hide -mx-4 px-4">
+    <div class="flex gap-1 pb-4">
+      {videos.map((video) => (
+        <div
+          class="flex-shrink-0 w-[70vw] snap-center relative rounded-2xl overflow-hidden shadow-2xl group cursor-pointer border-2 border-[#11676a]/20"
+          style="aspect-ratio: 9 / 16;"
+        >
+          <video
+            class="w-full h-full object-cover"
+            autoplay
+            loop
+            muted
+            playsinline
+            poster={video.poster}
+          >
+            <source src={video.src} type="video/mp4" />
+          </video>
+
+          <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent flex items-end p-6">
+            <div class="text-white">
+              <h4 class="text-xl font-bold mb-2">{video.title}</h4>
+              <p class="text-sm opacity-90">{video.desc}</p>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</div>
