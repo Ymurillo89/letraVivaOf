@@ -1,0 +1,129 @@
+---
+const faqs = [
+  {
+    question: "¿Cómo recibiré mi canción personalizada?",
+    answer: "Tu canción será entregada en formato digital de alta calidad (MP3 o WAV) directamente a tu correo electrónico. Recibirás un enlace de descarga seguro dentro de 3-5 días hábiles después de completar tu pedido."
+  },
+  {
+    question: "¿Puedo elegir el estilo musical de la canción?",
+    answer: "¡Absolutamente! Ofrecemos una amplia variedad de estilos musicales incluyendo pop, rock, balada, reggaeton, cumbia, vallenato, y más. Durante el proceso de pedido podrás especificar tu género musical preferido."
+  },
+  {
+    question: "¿Ofrecen canciones personalizadas para empresas o eventos corporativos?",
+    answer: "Sí, trabajamos con empresas para crear jingles, canciones corporativas y música para eventos especiales. Contáctanos directamente para cotizaciones personalizadas y paquetes empresariales."
+  },
+  {
+    question: "¿Qué pasa si quiero hacer cambios a mi canción?",
+    answer: "Incluimos hasta 2 revisiones sin costo adicional. Si necesitas ajustes en la letra o el estilo, podrás solicitarlos durante el proceso de revisión. Cambios adicionales pueden tener un costo extra."
+  },
+  {
+    question: "¿Qué es contra entrega digital?",
+    answer: "Es un método de pago seguro donde recibes primero un adelanto de tu canción (30 segundos) y solo pagas el monto completo una vez estés satisfecho con el resultado. Así garantizamos tu satisfacción antes del pago final."
+  },
+  {
+    question: "¿Qué medios de pago aceptan en Colombia?",
+    answer: "Aceptamos transferencias bancarias, PSE, tarjetas de crédito/débito, Nequi, Daviplata y efectivo a través de puntos autorizados. Trabajamos con pasarelas de pago seguras para tu tranquilidad."
+  },
+  {
+    question: "¿Aún tienes dudas?",
+    answer: "Estamos aquí para ayudarte. Contáctanos por WhatsApp, correo electrónico o redes sociales. Nuestro equipo responderá todas tus preguntas en menos de 24 horas."
+  }
+];
+---
+
+<section class="py-24">
+  <div class="container mx-auto px-4">
+    <div class="text-center mb-8">
+      <h2 class="text-4xl md:text-5xl font-bold mb-4">
+        Preguntas Frecuentes
+      </h2>
+      <p class="text-xl text-muted-foreground max-w-2xl mx-auto">
+        Todo lo que necesitas saber sobre nuestras canciones personalizadas
+      </p>
+    </div>
+    <div class="max-w-3xl mx-auto">
+      <div class="space-y-4">
+        {faqs.map((faq, index) => (
+          <div class=" bg-white rounded-lg px-6 border border-gray-200 shadow-sm">
+            <h3 class="flex">
+              <button
+                type="button"
+                class="faq-trigger  cursor-pointer focus-visible:border-ring focus-visible:ring-ring/50 flex flex-1 items-start justify-between gap-4 rounded-md py-4 text-sm transition-all outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 text-left font-semibold hover:no-underline"
+                aria-expanded="false"
+                data-index={index}
+              >
+                {faq.question}
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="chevron-icon text-muted-foreground pointer-events-none size-4 shrink-0 translate-y-0.5 transition-transform duration-200"
+                >
+                  <path d="m6 9 6 6 6-6"></path>
+                </svg>
+              </button>
+            </h3>
+            <div
+              class="faq-content overflow-hidden transition-all duration-200 ease-in-out"
+              style="max-height: 0;"
+              data-index={index}
+            >
+              <div class="pb-4 text-sm text-gray-600">
+                {faq.answer}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const triggers = document.querySelectorAll('.faq-trigger');
+    
+    triggers.forEach(trigger => {
+      trigger.addEventListener('click', () => {
+        const index = trigger.getAttribute('data-index');
+        const content = document.querySelector(`.faq-content[data-index="${index}"]`);
+        const chevron = trigger.querySelector('.chevron-icon');
+        const isOpen = trigger.getAttribute('aria-expanded') === 'true';
+        
+        if (isOpen) {
+          // Cerrar
+          trigger.setAttribute('aria-expanded', 'false');
+          content.style.maxHeight = '0';
+          chevron.style.transform = 'translateY(0.125rem) rotate(0deg)';
+        } else {
+          // Cerrar todos los demás
+          triggers.forEach(t => {
+            const idx = t.getAttribute('data-index');
+            const c = document.querySelector(`.faq-content[data-index="${idx}"]`);
+            const ch = t.querySelector('.chevron-icon');
+            t.setAttribute('aria-expanded', 'false');
+            c.style.maxHeight = '0';
+            ch.style.transform = 'translateY(0.125rem) rotate(0deg)';
+          });
+          
+          // Abrir el seleccionado
+          trigger.setAttribute('aria-expanded', 'true');
+          content.style.maxHeight = content.scrollHeight + 'px';
+          chevron.style.transform = 'translateY(0.125rem) rotate(180deg)';
+        }
+      });
+    });
+  });
+</script>
+
+<style>
+  .text-muted-foreground {
+    color: #6b7280;
+  }
+</style>

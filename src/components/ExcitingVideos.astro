@@ -3,32 +3,31 @@ const videos = [
   {
     title: "Reacción Cumpleaños",
     desc: "La emoción de recibir una canción única",
-    src: "/video/REGALORAUL.mp4",
+    src: "/video/REGALOARAUL.mp4",
     poster: "/emotional-birthday-song-reaction.jpg",
   },
   {
     title: "Aniversario Especial",
     desc: "Amor en cada nota",
-    src: "/video/ADS15.mp4",
+    src: "/video/REGALOARAUL.mp4",
     poster: "/romantic-anniversary-song-surprise.jpg",
   },
   {
     title: "Canción para la Abuelita",
     desc: "Ternura y emoción",
-    src: "/video/ADSABUELITA.mp4",
+    src: "/video/REGALOARAUL.mp4",
     poster: "/mother-crying-happy-tears-song.jpg",
   },
   {
     title: "Para Mi Gordita",
     desc: "Una sorpresa romántica",
-    src: "/video/ADSGORDITA.mp4",
+    src: "/video/REGALOARAUL.mp4",
     poster: "/romantic-surprise-song.jpg",
   }
- 
 ];
 ---
 
-<div class=" rounded-3xl p-8 md:p-12 border-2 border-[#11676a]/20 shadow-xl relative overflow-hidden">
+<div class="rounded-3xl p-8 md:p-12 border-2 border-[#11676a]/20 shadow-xl relative overflow-hidden">
   <!-- Encabezado -->
   <div class="text-center mb-12">
     <div class="inline-flex items-center gap-2 bg-gradient-to-r from-[#11676a] to-[#2d8c89] text-white px-8 py-3 rounded-full text-base font-bold mb-4 shadow-2xl animate-pulse">
@@ -45,31 +44,43 @@ const videos = [
 
   <!-- Grid Desktop -->
   <div class="hidden md:grid md:grid-cols-4 gap-1 mb-8">
-    {videos.map((video) => (
+    {videos.map((video, index) => (
       <div
-        class="relative rounded-2xl overflow-hidden shadow-2xl group cursor-pointer border-2 border-[#11676a]/20 hover:border-[#11676a] transition-all hover:scale-[1.02]"
+        class="video-container relative rounded-2xl overflow-hidden shadow-2xl group cursor-pointer border-2 border-[#11676a]/20 hover:border-[#11676a] transition-all hover:scale-[1.02]"
         style="aspect-ratio: 9 / 16;"
+        data-video-src={video.src}
+        data-index={index}
       >
+        <!-- Poster como imagen de fondo -->
+        <div 
+          class="video-poster absolute inset-0 bg-cover bg-center"
+          style={`background-image: url(${video.poster});`}
+        >
+          <div class="absolute inset-0 bg-black/20"></div>
+        </div>
+
+        <!-- Video (se carga bajo demanda) -->
         <video
-          class="w-full h-full object-cover"
-          autoplay
+          class="lazy-video w-full h-full object-cover opacity-0 transition-opacity duration-300"
           loop
           muted
           playsinline
+          preload="none"
           poster={video.poster}
         >
-          <source src={video.src} type="video/mp4" />
+          <source data-src={video.src} type="video/mp4" />
         </video>
 
-        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent flex items-end p-4">
+        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent flex items-end p-4 pointer-events-none z-10">
           <div class="text-white">
             <h4 class="text-lg font-bold mb-1">{video.title}</h4>
             <p class="text-xs opacity-90">{video.desc}</p>
           </div>
         </div>
 
-        <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/20">
-          <div class="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center">
+        <!-- Botón de play inicial -->
+        <div class="play-button absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
+          <div class="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center shadow-lg">
             <svg xmlns="http://www.w3.org/2000/svg" class="lucide lucide-play h-8 w-8 text-[#11676a] ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <polygon points="6 3 20 12 6 21 6 3"></polygon>
             </svg>
@@ -82,26 +93,46 @@ const videos = [
   <!-- Carrusel Mobile -->
   <div class="md:hidden overflow-x-auto snap-x snap-mandatory scrollbar-hide -mx-4 px-4">
     <div class="flex gap-1 pb-4">
-      {videos.map((video) => (
+      {videos.map((video, index) => (
         <div
-          class="flex-shrink-0 w-[70vw] snap-center relative rounded-2xl overflow-hidden shadow-2xl group cursor-pointer border-2 border-[#11676a]/20"
+          class="video-container flex-shrink-0 w-[70vw] snap-center relative rounded-2xl overflow-hidden shadow-2xl group cursor-pointer border-2 border-[#11676a]/20"
           style="aspect-ratio: 9 / 16;"
+          data-video-src={video.src}
+          data-index={index}
         >
+          <!-- Poster como imagen de fondo -->
+          <div 
+            class="video-poster absolute inset-0 bg-cover bg-center"
+            style={`background-image: url(${video.poster});`}
+          >
+            <div class="absolute inset-0 bg-black/20"></div>
+          </div>
+
+          <!-- Video (se carga bajo demanda) -->
           <video
-            class="w-full h-full object-cover"
-            autoplay
+            class="lazy-video w-full h-full object-cover opacity-0 transition-opacity duration-300"
             loop
             muted
             playsinline
+            preload="none"
             poster={video.poster}
           >
-            <source src={video.src} type="video/mp4" />
+            <source data-src={video.src} type="video/mp4" />
           </video>
 
-          <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent flex items-end p-6">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent flex items-end p-6 pointer-events-none z-10">
             <div class="text-white">
               <h4 class="text-xl font-bold mb-2">{video.title}</h4>
               <p class="text-sm opacity-90">{video.desc}</p>
+            </div>
+          </div>
+
+          <!-- Botón de play inicial -->
+          <div class="play-button absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
+            <div class="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center shadow-lg">
+              <svg xmlns="http://www.w3.org/2000/svg" class="lucide lucide-play h-8 w-8 text-[#11676a] ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <polygon points="6 3 20 12 6 21 6 3"></polygon>
+              </svg>
             </div>
           </div>
         </div>
@@ -109,3 +140,119 @@ const videos = [
     </div>
   </div>
 </div>
+
+<script>
+  // Intersection Observer para cargar videos cuando sean visibles
+  const videoContainers = document.querySelectorAll('.video-container');
+  const loadedVideos = new Set();
+
+  const videoObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const container = entry.target;
+        const index = container.dataset.index;
+        
+        // Solo cargar una vez
+        if (!loadedVideos.has(index)) {
+          loadedVideos.add(index);
+          loadVideo(container);
+        }
+      }
+    });
+  }, {
+    rootMargin: '100px', // Cargar un poco antes de que sea visible
+    threshold: 0.1
+  });
+
+  // Observar todos los contenedores
+  videoContainers.forEach(container => {
+    videoObserver.observe(container);
+  });
+
+  // Función para cargar el video
+  function loadVideo(container) {
+    const video = container.querySelector('.lazy-video');
+    const source = video.querySelector('source');
+    const poster = container.querySelector('.video-poster');
+    const playButton = container.querySelector('.play-button');
+    
+    if (source && source.dataset.src) {
+      // Cargar el video
+      source.src = source.dataset.src;
+      video.load();
+      
+      // Cuando el video esté listo
+      video.addEventListener('loadeddata', () => {
+        // Ocultar poster y mostrar video
+        if (poster) {
+          poster.style.opacity = '0';
+          setTimeout(() => poster.style.display = 'none', 300);
+        }
+        
+        video.style.opacity = '1';
+        video.play().catch(e => console.log('Autoplay prevented:', e));
+        
+        // Ocultar botón de play
+        if (playButton) {
+          playButton.style.opacity = '0';
+          setTimeout(() => playButton.style.display = 'none', 300);
+        }
+      }, { once: true });
+    }
+  }
+
+  // Click para reproducir/pausar
+  videoContainers.forEach(container => {
+    container.addEventListener('click', () => {
+      const video = container.querySelector('.lazy-video');
+      
+      if (video.paused) {
+        video.play();
+      } else {
+        video.pause();
+      }
+    });
+  });
+
+  // Pausar videos que no están visibles (ahorro adicional de recursos)
+  const pauseObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const video = entry.target.querySelector('.lazy-video');
+      if (video && video.src) {
+        if (!entry.isIntersecting) {
+          video.pause();
+        } else if (loadedVideos.has(entry.target.dataset.index)) {
+          video.play().catch(e => console.log('Play prevented:', e));
+        }
+      }
+    });
+  }, {
+    threshold: 0.5
+  });
+
+  videoContainers.forEach(container => {
+    pauseObserver.observe(container);
+  });
+</script>
+
+<style>
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .video-poster {
+    transition: opacity 0.3s ease;
+  }
+
+  .play-button {
+    transition: opacity 0.3s ease;
+  }
+
+  .video-container:hover .play-button {
+    transform: scale(1.1);
+  }
+</style>

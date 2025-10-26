@@ -2,105 +2,109 @@
 import Package from "./Package.astro";
 
 // Tipos
-type IconName = 'star' | 'lock' | 'bolt' | 'check' | 'x';
+type IconName = "star" | "lock" | "bolt" | "check" | "x";
 
 interface Testimonial {
-    name: string;
-    role: string;
-    image: string;
-    text: string;
-    date: string;
-    rating: number;
+  name: string;
+  role: string;
+  image: string;
+  text: string;
+  date: string;
+  rating: number;
 }
 
 interface Feature {
-    title: string;
-    subtitle: string;
-    description: string;
-    icon: IconName;
-    gradient: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  icon: IconName;
+  gradient: string;
 }
 
 interface Rating {
-    stars: number;
-    count: number;
-    percentage: number;
+  stars: number;
+  count: number;
+  percentage: number;
 }
 
 interface ComparisonFeature {
-    name: string;
-    letraViva: boolean;
-    others: boolean;
+  name: string;
+  letraViva: boolean;
+  others: boolean;
 }
 
 // Datos de testimonios
 const testimonials: Testimonial[] = [
-    {
-        name: "María González",
-        role: "Cliente verificada",
-        image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/attachments/gen-images/public/happy-woman-smiling-UYZU8Vjj70pNX9gwmsv8RpTsNnthv8.png",
-        text: "¡Increíble! Le regalé una canción a mi esposo por nuestro aniversario y lloró de emoción. La calidad es profesional y la letra capturó perfectamente nuestra historia. Definitivamente volveré a pedir otra.",
-        date: "Hace 2 semanas",
-        rating: 5
-    }
+  {
+    name: "María González",
+    role: "Cliente verificada",
+    image:
+      "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/attachments/gen-images/public/happy-woman-smiling-UYZU8Vjj70pNX9gwmsv8RpTsNnthv8.png",
+    text: "¡Increíble! Le regalé una canción a mi esposo por nuestro aniversario y lloró de emoción. La calidad es profesional y la letra capturó perfectamente nuestra historia. Definitivamente volveré a pedir otra.",
+    date: "Hace 2 semanas",
+    rating: 5,
+  },
 ];
 
 // Características principales
 const features: Feature[] = [
-    {
-        title: "Calidad De Audio Profesional",
-        subtitle: "Tu canción, con sonido impecable",
-        description: "Entregamos archivos en formato WAV y MP3 con <span class='font-semibold text-gray-900'>calidad de estudio</span>. Listos para compartir, guardar o reproducir en cualquier plataforma.",
-        icon: "star",
-        gradient: "from-[#11676a] to-[#00343d]"
-    },
-    {
-        title: "Compra Segura y Protegida",
-        subtitle: "Tu información está a salvo",
-        description: "Usamos <span class='font-semibold text-gray-900'>plataformas seguras</span> para pagos y tus datos están protegidos bajo <span class='font-semibold text-gray-900'>estrictas políticas de privacidad</span>.",
-        icon: "lock",
-        gradient: "from-[#00343d] to-[#11676a]"
-    },
-    {
-        title: "Entrega Rápida y Puntual",
-        subtitle: "Recíbela de 24 a 48 horas o menos",
-        description: "Creamos y entregamos tu canción personalizada en un máximo de 2 días hábiles. Si la necesitas urgente, <span class='font-semibold text-gray-900'>tenemos opción express de solo 4 horas</span>.",
-        icon: "bolt",
-        gradient: "from-[#f89a3f] to-[#d67a2f]"
-    }
+  {
+    title: "Calidad De Audio Profesional",
+    subtitle: "Tu canción, con sonido impecable",
+    description:
+      "Entregamos archivos en formato WAV y MP3 con <span class='font-semibold text-gray-900'>calidad de estudio</span>. Listos para compartir, guardar o reproducir en cualquier plataforma.",
+    icon: "star",
+    gradient: "from-[#11676a] to-[#00343d]",
+  },
+  {
+    title: "Compra Segura y Protegida",
+    subtitle: "Tu información está a salvo",
+    description:
+      "Usamos <span class='font-semibold text-gray-900'>plataformas seguras</span> para pagos y tus datos están protegidos bajo <span class='font-semibold text-gray-900'>estrictas políticas de privacidad</span>.",
+    icon: "lock",
+    gradient: "from-[#00343d] to-[#11676a]",
+  },
+  {
+    title: "Entrega Rápida y Puntual",
+    subtitle: "Recíbela de 24 a 48 horas o menos",
+    description:
+      "Creamos y entregamos tu canción personalizada en un máximo de 2 días hábiles. Si la necesitas urgente, <span class='font-semibold text-gray-900'>tenemos opción express de solo 4 horas</span>.",
+    icon: "bolt",
+    gradient: "from-[#f89a3f] to-[#d67a2f]",
+  },
 ];
 
 // Datos de calificaciones
 const ratings: Rating[] = [
-    { stars: 5, count: 119, percentage: 90.84 },
-    { stars: 4, count: 12, percentage: 9.16 },
-    { stars: 3, count: 0, percentage: 0 },
-    { stars: 2, count: 0, percentage: 0 },
-    { stars: 1, count: 0, percentage: 0 }
+  { stars: 5, count: 119, percentage: 90.84 },
+  { stars: 4, count: 12, percentage: 9.16 },
+  { stars: 3, count: 0, percentage: 0 },
+  { stars: 2, count: 0, percentage: 0 },
+  { stars: 1, count: 0, percentage: 0 },
 ];
 
 // Tabla de comparación
 const comparisonFeatures: ComparisonFeature[] = [
-    { name: "Atención Directa y Humana", letraViva: true, others: false },
-    { name: "Entrega 24-48 Horas", letraViva: true, others: false },
-    { name: "Emoción Garantizada", letraViva: true, others: false },
-    { name: "Creación Profesional De Estudio", letraViva: true, others: false },
-    { name: "Calidad Audio Profesional", letraViva: true, others: true },
-    { name: "Revisiones Incluidas", letraViva: true, others: false },
-    { name: "Soporte Post-Entrega", letraViva: true, others: false }
+  { name: "Atención Directa y Humana", letraViva: true, others: false },
+  { name: "Entrega 24-48 Horas", letraViva: true, others: false },
+  { name: "Emoción Garantizada", letraViva: true, others: false },
+  { name: "Creación Profesional De Estudio", letraViva: true, others: false },
+  { name: "Calidad Audio Profesional", letraViva: true, others: true },
+  { name: "Revisiones Incluidas", letraViva: true, others: false },
+  { name: "Soporte Post-Entrega", letraViva: true, others: false },
 ];
 
 // Función para renderizar estrellas
 const renderStars = (count: number): number[] => {
-    return Array(count).fill(0);
+  return Array(count).fill(0);
 };
 
 // Iconos SVG
 const icons: Record<IconName, string> = {
-    star: `<path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path>`,
-    lock: `<path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>`,
-    bolt: `<path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"></path>`,
-    check: `<svg
+  star: `<path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path>`,
+  lock: `<path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>`,
+  bolt: `<path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"></path>`,
+  check: `<svg
                                             xmlns="http://www.w3.org/2000/svg"
                                             width="24"
                                             height="24"
@@ -113,184 +117,283 @@ const icons: Record<IconName, string> = {
                                             class="lucide lucide-check h-5 w-5 text-white"
                                             ><path d="M20 6 9 17l-5-5"
                                             ></path></svg>`,
-    x: `<path d="M18 6 6 18"></path><path d="m6 6 12 12"></path>`
+  x: `<path d="M18 6 6 18"></path><path d="m6 6 12 12"></path>`,
 };
 ---
+
 <div class="container mx-auto max-w-7xl relative z-10 animate-fade-up">
     <div class="text-center mb-8">
-
         <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4 text-balance">
-            Regala Una Canción Que Nunca Olvidarán
+        Regala Una Canción Que Nunca Olvidarán
         </h2>
 
         <p class="text-lg text-gray-600 max-w-2xl mx-auto text-pretty">
-            Elige tu tema favorito, selecciona tu paquete y recibe una canción
-            profesional hecha especialmente para ti
+        Elige tu tema favorito, selecciona tu paquete y recibe una canción
+        profesional hecha especialmente para ti
         </p>
 
-        <div class="cursor-pointer mt-4 inline-flex items-center gap-2 bg-gradient-to-r from-[#0b6b6e] to-[#00343d] text-white px-6 py-2 rounded-full text-sm font-bold mb-4 shadow-lg hover:scale-105 transition-transform duration-300">
-            <span class="animate-pulse">🎵</span>
-            <span>¡Crea Tu Canción Personalizada Ahora!</span>
-            <span class="animate-pulse">🎵</span>
-        </div>
+        <button class="group cursor-pointer mt-3 relative inline-flex items-center justify-center gap-3 bg-gradient-to-r from-[#f89a3f] via-[#ff6b35] to-[#f89a3f] hover:from-[#ff6b35] hover:via-[#f89a3f] hover:to-[#ff6b35] text-white px-4 md:py-3 rounded-full text-xl md:text-lg font-bold mb-4 transition-all duration-500 hover:scale-[1.02] w-full max-w-lg mx-auto md:w-auto md:max-w-none overflow-hidden border-2 border-[#ff6b35]/30">
+            <span class="relative z-10 flex items-center gap-3">
+                <svg class="w-7 h-7 md:w-6 md:h-6" fill="currentColor" viewBox="0 0 24 24"><path
+                    d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"></path>
+                </svg>
 
+                <span class="">¡Crea Tu Canción Personalizada Ahora!</span>
+                <svg class="w-6 h-6 md:w-5 md:h-5 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                </svg>
+            </span>
+            <div class="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12">
+            </div>
+        </button>
+        
     </div>
 
-    <div class="grid lg:grid-cols-2 gap-12 items-start mb-16">
-        <!-- Columna Izquierda -->
-        <div class="space-y-6">
-            <!-- Testimonios -->
-            {testimonials.map((testimonial) => (
-                <div class="text-card-foreground flex flex-col gap-6 bg-gradient-to-br from-white to-[#e8f5f5] border-2 border-[#11676a]/20 p-8 shadow-2xl rounded-3xl relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-[#11676a]/5 rounded-full -translate-y-1/2 translate-x-1/2"></div>
-                    <div class="relative">
-                        <div class="flex items-start gap-4 mb-6">
-                            <div class="flex-shrink-0">
-                                <div class="w-16 h-16 rounded-full bg-gradient-to-br from-[#11676a] to-[#2d8c89] p-0.5">
-                                    <div class="w-full h-full rounded-full bg-white flex items-center justify-center overflow-hidden">
-                                        <img
-                                            alt={testimonial.name}
-                                            loading="lazy"
-                                            width="64"
-                                            height="64"
-                                            class="w-full h-full object-cover"
-                                            src={testimonial.image}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex-1">
-                                <div class="flex items-center gap-1 mb-2">
-                                    {renderStars(testimonial.rating).map(() => (
-                                        <svg class="h-5 w-5 fill-[#f89a3f] text-[#f89a3f]" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <Fragment set:html={icons.star} />
-                                        </svg>
-                                    ))}
-                                </div>
-                                <h3 class="font-bold text-gray-900 text-lg">{testimonial.name}</h3>
-                                <p class="text-sm text-gray-600">{testimonial.role}</p>
-                            </div>
-                        </div>
-                        <blockquote class="text-gray-700 text-lg leading-relaxed mb-4">
-                            "{testimonial.text}"
-                        </blockquote>
-                        <div class="flex items-center gap-2 text-sm text-gray-500">
-                            <svg class="h-4 w-4 text-[#11676a]" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <Fragment set:html={icons.check} />
-                            </svg>
-                            <span>Compra verificada - {testimonial.date}</span>
-                        </div>
+  <div class="grid lg:grid-cols-2 gap-12 items-start mb-16">
+    <!-- Columna Izquierda -->
+    <div class="space-y-6">
+      <!-- Testimonios -->
+      {
+        testimonials.map((testimonial) => (
+          <div class="text-card-foreground flex flex-col gap-6 bg-gradient-to-br from-white to-[#e8f5f5] border-2 border-[#11676a]/20 p-8 shadow-2xl rounded-3xl relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-[#11676a]/5 rounded-full -translate-y-1/2 translate-x-1/2" />
+            <div class="relative">
+              <div class="flex items-start gap-4 mb-6">
+                <div class="flex-shrink-0">
+                  <div class="w-16 h-16 rounded-full bg-gradient-to-br from-[#11676a] to-[#2d8c89] p-0.5">
+                    <div class="w-full h-full rounded-full bg-white flex items-center justify-center overflow-hidden">
+                      <img
+                        alt={testimonial.name}
+                        loading="lazy"
+                        width="64"
+                        height="64"
+                        class="w-full h-full object-cover"
+                        src={testimonial.image}
+                      />
                     </div>
+                  </div>
                 </div>
-            ))}
-
-            <!-- Características -->
-            <div class="grid gap-4">
-                {features.map((feature) => (
-                    <div class="text-card-foreground flex flex-col gap-6 bg-white border-2 border-gray-200 p-6 shadow-lg rounded-2xl hover:shadow-xl transition-all hover:border-[#11676a]/30">
-                        <div class="flex items-start gap-4">
-                            <div class={`flex-shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br ${feature.gradient} flex items-center justify-center shadow-lg`}>
-                                <svg class="h-6 w-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <Fragment set:html={icons[feature.icon]} />
-                                </svg>
-                            </div>
-                            <div class="flex-1">
-                                <h4 class="font-bold text-gray-900 text-lg mb-2">{feature.title}</h4>
-                                <p class="text-gray-600 text-sm mb-3">
-                                    <span class="font-semibold">{feature.subtitle}</span>
-                                </p>
-                                <p class="text-gray-600 text-sm" set:html={feature.description}></p>
-                            </div>
-                        </div>
-                    </div>
-                ))}
-            </div>
-        </div>
-
-        <!-- Columna Derecha -->
-        <div class="space-y-8">
-            <!-- Rating Summary -->
-            <div class="flex flex-col bg-gradient-to-br from-white to-[#e7ebeb] border-2 border-[#11676a]/20 p-8 shadow-2xl rounded-3xl relative overflow-hidden">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-[#11676a]/5 rounded-full -translate-y-1/2 translate-x-1/2"></div>
-                <div class="text-center mb-8">
-                    <div class="flex items-center justify-center gap-3 mb-1">
-                        <svg class="h-16 w-16 fill-[#f89a3f] text-[#f89a3f]" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <Fragment set:html={icons.star} />
-                        </svg>
-                        <div class="text-5xl font-bold text-gray-900">4.9</div>
-                    </div>
-                    <p class="text-xl font-semibold text-gray-700">131 Clientes Emocionados</p>
-                </div>
-                <div class="space-y-3">
-                    {ratings.map((rating) => (
-                        <div class="flex items-center gap-3">
-                            <div class="flex gap-0.5 w-24">
-                                {renderStars(rating.stars).map(() => (
-                                    <svg class="h-4 w-4 fill-[#f89a3f] text-[#f89a3f]" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <Fragment set:html={icons.star} />
-                                    </svg>
-                                ))}
-                                {renderStars(5 - rating.stars).map(() => (
-                                    <svg class="h-4 w-4 fill-gray-200 text-gray-200" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <Fragment set:html={icons.star} />
-                                    </svg>
-                                ))}
-                            </div>
-                            <div class="flex-1 h-3 bg-gray-200 rounded-full overflow-hidden">
-                                <div
-                                    class="h-full bg-gradient-to-r from-[#11676a] to-[#2d8c89] rounded-full transition-all"
-                                    style={`width: ${rating.percentage}%;`}
-                                ></div>
-                            </div>
-                            <span class="text-sm text-gray-600 w-10 text-right">({rating.count})</span>
-                        </div>
+                <div class="flex-1">
+                  <div class="flex items-center gap-1 mb-2">
+                    {renderStars(testimonial.rating).map(() => (
+                      <svg
+                        class="h-5 w-5 fill-[#f89a3f] text-[#f89a3f]"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <Fragment set:html={icons.star} />
+                      </svg>
                     ))}
+                  </div>
+                  <h3 class="font-bold text-gray-900 text-lg">
+                    {testimonial.name}
+                  </h3>
+                  <p class="text-sm text-gray-600">{testimonial.role}</p>
                 </div>
+              </div>
+              <blockquote class="text-gray-700 text-lg leading-relaxed mb-4">
+                "{testimonial.text}"
+              </blockquote>
+              <div class="flex items-center gap-2 text-sm text-gray-500">
+                <svg
+                  class="h-4 w-4 text-[#11676a]"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <Fragment set:html={icons.check} />
+                </svg>
+                <span>Compra verificada - {testimonial.date}</span>
+              </div>
             </div>
+          </div>
+        ))
+      }
 
-            <!-- Tabla de Comparación -->
-            <div class="flex flex-col bg-gradient-to-br from-white to-[#e7ebeb] border-2 border-[#11676a]/20 p-8 shadow-2xl rounded-3xl relative overflow-hidden">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-[#11676a]/5 rounded-full -translate-y-1/2 translate-x-1/2"></div>
-                <h3 class="text-2xl font-bold text-gray-900 mb-1 text-center">
-                    ¿Por Qué Elegir LetraViva Oficial?
-                </h3>
-                <div class="overflow-x-auto">
-                    <table class="w-full">
-                        <thead>
-                            <tr class="border-b-2 border-gray-200">
-                                <th class="text-left py-4 px-2 text-gray-600 font-semibold text-sm">Característica</th>
-                                <th class="text-center py-4 px-2">
-                                    <div class="inline-flex items-center gap-2 bg-gradient-to-r from-[#11676a] to-[#2d8c89] text-white px-4 py-2 rounded-full text-sm font-bold">
-                                        LetraViva Oficial
-                                    </div>
-                                </th>
-                                <th class="text-center py-4 px-2 text-gray-600 font-semibold text-sm">Otros</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {comparisonFeatures.map((feature) => (
-                                <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                                    <td class="py-4 px-2 text-gray-700 font-medium text-sm">{feature.name}</td>
-                                    <td class="py-4 px-2 text-center">
-                                        <div class={`inline-flex items-center justify-center w-8 h-8 rounded-full ${feature.letraViva ? 'bg-gradient-to-br from-[#11676a] to-[#2d8c89]' : 'bg-gray-200'}`}>
-                                            <svg class={`h-5 w-5 ${feature.letraViva ? 'text-white' : 'text-gray-400'}`} viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                <Fragment set:html={feature.letraViva ? icons.check : icons.x} />
-                                            </svg>
-                                        </div>
-                                    </td>
-                                    <td class="py-4 px-2 text-center">
-                                        <div class={`inline-flex items-center justify-center w-8 h-8 rounded-full ${feature.others ? 'bg-gray-300' : 'bg-gray-200'}`}>
-                                            <svg class={`h-5 w-5 ${feature.others ? 'text-gray-600' : 'text-gray-400'}`} viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                <Fragment set:html={feature.others ? icons.check : icons.x} />
-                                            </svg>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+      <!-- Características -->
+      <div class="grid gap-4">
+        {
+          features.map((feature) => (
+            <div class="text-card-foreground flex flex-col gap-6 bg-white border-2 border-gray-200 p-6 shadow-lg rounded-2xl hover:shadow-xl transition-all hover:border-[#11676a]/30">
+              <div class="flex items-start gap-4">
+                <div
+                  class={`flex-shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br ${feature.gradient} flex items-center justify-center shadow-lg`}
+                >
+                  <svg
+                    class="h-6 w-6 text-white"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <Fragment set:html={icons[feature.icon]} />
+                  </svg>
                 </div>
+                <div class="flex-1">
+                  <h4 class="font-bold text-gray-900 text-lg mb-2">
+                    {feature.title}
+                  </h4>
+                  <p class="text-gray-600 text-sm mb-3">
+                    <span class="font-semibold">{feature.subtitle}</span>
+                  </p>
+                  <p
+                    class="text-gray-600 text-sm"
+                    set:html={feature.description}
+                  />
+                </div>
+              </div>
             </div>
-        </div>
+          ))
+        }
+      </div>
     </div>
+
+    <!-- Columna Derecha -->
+    <div class="space-y-8">
+      <!-- Rating Summary -->
+      <div
+        class="flex flex-col bg-gradient-to-br from-white to-[#e7ebeb] border-2 border-[#11676a]/20 p-8 shadow-2xl rounded-3xl relative overflow-hidden"
+      >
+        <div
+          class="absolute top-0 right-0 w-32 h-32 bg-[#11676a]/5 rounded-full -translate-y-1/2 translate-x-1/2"
+        >
+        </div>
+        <div class="text-center mb-8">
+          <div class="flex items-center justify-center gap-3 mb-1">
+            <svg
+              class="h-16 w-16 fill-[#f89a3f] text-[#f89a3f]"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <Fragment set:html={icons.star} />
+            </svg>
+            <div class="text-5xl font-bold text-gray-900">4.9</div>
+          </div>
+          <p class="text-xl font-semibold text-gray-700">
+            131 Clientes Emocionados
+          </p>
+        </div>
+        <div class="space-y-3">
+          {
+            ratings.map((rating) => (
+              <div class="flex items-center gap-3">
+                <div class="flex gap-0.5 w-24">
+                  {renderStars(rating.stars).map(() => (
+                    <svg
+                      class="h-4 w-4 fill-[#f89a3f] text-[#f89a3f]"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <Fragment set:html={icons.star} />
+                    </svg>
+                  ))}
+                  {renderStars(5 - rating.stars).map(() => (
+                    <svg
+                      class="h-4 w-4 fill-gray-200 text-gray-200"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <Fragment set:html={icons.star} />
+                    </svg>
+                  ))}
+                </div>
+                <div class="flex-1 h-3 bg-gray-200 rounded-full overflow-hidden">
+                  <div
+                    class="h-full bg-gradient-to-r from-[#11676a] to-[#2d8c89] rounded-full transition-all"
+                    style={`width: ${rating.percentage}%;`}
+                  />
+                </div>
+                <span class="text-sm text-gray-600 w-10 text-right">
+                  ({rating.count})
+                </span>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+
+      <!-- Tabla de Comparación -->
+      <div
+        class="flex flex-col bg-gradient-to-br from-white to-[#e7ebeb] border-2 border-[#11676a]/20 p-8 shadow-2xl rounded-3xl relative overflow-hidden"
+      >
+        <div
+          class="absolute top-0 right-0 w-32 h-32 bg-[#11676a]/5 rounded-full -translate-y-1/2 translate-x-1/2"
+        >
+        </div>
+        <h3 class="text-2xl font-bold text-gray-900 mb-1 text-center">
+          ¿Por Qué Elegir LetraViva Oficial?
+        </h3>
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead>
+              <tr class="border-b-2 border-gray-200">
+                <th
+                  class="text-left py-4 px-2 text-gray-600 font-semibold text-sm"
+                  >Característica</th
+                >
+                <th class="text-center py-4 px-2">
+                  <div
+                    class="inline-flex items-center gap-2 bg-gradient-to-r from-[#11676a] to-[#2d8c89] text-white px-4 py-2 rounded-full text-sm font-bold"
+                  >
+                    LetraViva Oficial
+                  </div>
+                </th>
+                <th
+                  class="text-center py-4 px-2 text-gray-600 font-semibold text-sm"
+                  >Otros</th
+                >
+              </tr>
+            </thead>
+            <tbody>
+              {
+                comparisonFeatures.map((feature) => (
+                  <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                    <td class="py-4 px-2 text-gray-700 font-medium text-sm">
+                      {feature.name}
+                    </td>
+                    <td class="py-4 px-2 text-center">
+                      <div
+                        class={`inline-flex items-center justify-center w-8 h-8 rounded-full ${feature.letraViva ? "bg-gradient-to-br from-[#11676a] to-[#2d8c89]" : "bg-gray-200"}`}
+                      >
+                        <svg
+                          class={`h-5 w-5 ${feature.letraViva ? "text-white" : "text-gray-400"}`}
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          stroke-width="2"
+                        >
+                          <Fragment
+                            set:html={feature.letraViva ? icons.check : icons.x}
+                          />
+                        </svg>
+                      </div>
+                    </td>
+                    <td class="py-4 px-2 text-center">
+                      <div
+                        class={`inline-flex items-center justify-center w-8 h-8 rounded-full ${feature.others ? "bg-gray-300" : "bg-gray-200"}`}
+                      >
+                        <svg
+                          class={`h-5 w-5 ${feature.others ? "text-gray-600" : "text-gray-400"}`}
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          stroke-width="2"
+                        >
+                          <Fragment
+                            set:html={feature.others ? icons.check : icons.x}
+                          />
+                        </svg>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
