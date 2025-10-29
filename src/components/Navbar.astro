@@ -1,168 +1,168 @@
 ---
 import Banner from "./Banner.astro";
-
+import logoLetraViva from "../img/logo_letra_viva.png";
 const currentPath = Astro.url.pathname;
 ---
 
 <nav class="fixed top-0 left-0 w-full bg-white z-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center h-18">
-            <!-- Menú Hamburguesa (solo móvil) -->
-            <button 
-                id="menu-toggle" 
-                class="md:hidden flex flex-col justify-center items-center w-10 h-10 space-y-1.5 z-50"
-                aria-label="Menú"
-            >
-                <span class="block w-6 h-0.5 bg-[#00343d] transition-all duration-300"></span>
-                <span class="block w-6 h-0.5 bg-[#00343d] transition-all duration-300"></span>
-                <span class="block w-6 h-0.5 bg-[#00343d] transition-all duration-300"></span>
-            </button>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-18">
+      
+      <button id="menu-toggle" class="md:hidden flex flex-col justify-center items-center w-10 h-10 space-y-1.5 z-50" aria-label="Menú">
+        <span class="block w-6 h-0.5 bg-[#00343d] transition-all duration-300"
+        ></span>
+        <span class="block w-6 h-0.5 bg-[#00343d] transition-all duration-300"
+        ></span>
+        <span class="block w-6 h-0.5 bg-[#00343d] transition-all duration-300"
+        ></span>
+      </button>
 
-            <!-- Logo y Menú Desktop -->
-            <div class="flex flex-1 md:flex-none justify-center md:justify-start items-center md:gap-10">
-                <a href="/" class="header__heading-link link link--text focus-inset">
-                    <div class="header__heading-logo-wrapper">
-                        <img
-                            src="//letravivaoficial.com/cdn/shop/files/LOGO_RECORTADO_SHOPIFY_02f1e371-0d7c-41b0-9ae4-d5709067481a.png?v=1753490877&width=600"
-                            alt="Letra Viva"
-                            srcset="//letravivaoficial.com/cdn/shop/files/LOGO_RECORTADO_SHOPIFY_02f1e371-0d7c-41b0-9ae4-d5709067481a.png?v=1753490877&width=180 180w, //letravivaoficial.com/cdn/shop/files/LOGO_RECORTADO_SHOPIFY_02f1e371-0d7c-41b0-9ae4-d5709067481a.png?v=1753490877&width=270 270w, //letravivaoficial.com/cdn/shop/files/LOGO_RECORTADO_SHOPIFY_02f1e371-0d7c-41b0-9ae4-d5709067481a.png?v=1753490877&width=360 360w"
-                            width="180"
-                            height="69.49640287769785"
-                            loading="eager"
-                            class="h-12 md:h-16"
-                            sizes="(max-width: 360px) 50vw, 180px"
-                        />
-                    </div>
-                </a>
+      <!-- Logo y Menú Desktop -->
+      <div class="flex flex-1 md:flex-none justify-center md:justify-start items-center md:gap-10">
+        <a href="/" class="header__heading-link link link--text focus-inset">
+          <div class="header__heading-logo-wrapper">
+            <img
+              src={logoLetraViva.src}
+              alt="Letra Viva"
+              srcset="//letravivaoficial.com/cdn/shop/files/LOGO_RECORTADO_SHOPIFY_02f1e371-0d7c-41b0-9ae4-d5709067481a.png?v=1753490877&width=180 180w, //letravivaoficial.com/cdn/shop/files/LOGO_RECORTADO_SHOPIFY_02f1e371-0d7c-41b0-9ae4-d5709067481a.png?v=1753490877&width=270 270w, //letravivaoficial.com/cdn/shop/files/LOGO_RECORTADO_SHOPIFY_02f1e371-0d7c-41b0-9ae4-d5709067481a.png?v=1753490877&width=360 360w"
+          
+              loading="eager"
+              class="max-w-[120px] sm:max-w-[150px] md:max-w-[150px] h-auto"
+              sizes="(max-width: 640px) 120px, (max-width: 768px) 150px, (max-width: 1024px) 180px, 220px"
+            />
+          </div>
+        </a>
 
-                <!-- Menú Desktop (oculto en móvil) -->
-                <div class="hidden md:flex space-x-8 items-center">
-                    <a 
-                        href="/" 
-                        class={`px-3 py-1 rounded-md font-medium text-sm transition-colors ${
-                            currentPath === '/' 
-                                ? 'bg-[#00343d] text-white' 
-                                : 'text-gray-700 hover:text-[#00343d]'
-                        }`}
-                    >
-                        Crea Tu Canción Personalizada
-                    </a>
-                   
-                    <a 
-                        href="/contacto" 
-                        class={`px-3 py-1 rounded-md font-medium text-sm transition-colors ${
-                            currentPath === '/contacto' || currentPath === '/contacto/'
-                                ? 'bg-[#00343d] text-white' 
-                                : 'text-gray-700 hover:text-[#00343d]'
-                        }`}
-                    >
-                        Contáctanos
-                    </a>
-                </div>
-            </div>
+        <!-- Menú Desktop (oculto en móvil) -->
+        <div class="hidden md:flex space-x-8 items-center">
+          <a
+            href="/"
+            class={`px-3 py-1 rounded-md font-medium text-sm transition-colors ${
+              currentPath === "/"
+                ? "bg-[#00343d] text-white"
+                : "text-gray-700 hover:text-[#00343d]"
+            }`}
+          >
+            Crea Tu Canción Personalizada
+          </a>
 
-            <!-- Espacio para balance en móvil -->
-            <div class="w-10 md:hidden"></div>
+          <a
+            href="/contacto"
+            class={`px-3 py-1 rounded-md font-medium text-sm transition-colors ${
+              currentPath === "/contacto" || currentPath === "/contacto/"
+                ? "bg-[#00343d] text-white"
+                : "text-gray-700 hover:text-[#00343d]"
+            }`}
+          >
+            Contáctanos
+          </a>
         </div>
+      </div>
+
+      <!-- Espacio para balance en móvil -->
+      <div class="w-10 md:hidden"></div>
     </div>
+  </div>
 
-    <!-- Menú Desplegable -->
-     <div  id="mobile-menu"  class="md:hidden  fixed top-20 left-0 w-full h-[calc(100vh-5rem)] bg-[#00343d] transform -translate-x-full transition-transform duration-300 ease-in-out z-40">
-        
-        <div class="flex flex-col pt-8 space-y-1">
-            <a href="/" 
-                class={`px-4 py-4 text-white text-lg font-normal border-b border-[#004d5a] transition-colors ${
-                    currentPath === '/' 
-                        ? 'bg-[#004d5a]' 
-                        : 'hover:bg-[#004d5a]'
-                }`}
-            >
-                Inicio
-            </a>
-            <a 
-                href="/personalizedSong" 
-                class={`px-4 py-4 text-white text-lg font-normal border-b border-[#004d5a] transition-colors ${
-                    currentPath === '/personalizedSong' || currentPath === '/personalizedSong/'
-                        ? 'bg-[#004d5a]' 
-                        : 'hover:bg-[#004d5a]'
-                }`}
-            >
-                Crea Tu Canción Personalizada
-            </a>
-            <a 
-                href="/contacto" 
-                class={`px-4 py-4 text-white text-lg font-normal border-b border-[#004d5a] transition-colors ${
-                    currentPath === '/contacto' || currentPath === '/contacto/'
-                        ? 'bg-[#004d5a]' 
-                        : 'hover:bg-[#004d5a]'
-                }`}
-            >
-                Contáctanos
-            </a>
-        </div>
-    </div>  
-    <Banner/>
+  <!-- Menú Desplegable -->
+  <div
+    id="mobile-menu"
+    class="md:hidden fixed top-20 left-0 w-full h-[calc(100vh-5rem)] bg-[#00343d] transform -translate-x-full transition-transform duration-300 ease-in-out z-40"
+  >
+    <div class="flex flex-col pt-8 space-y-1">
+      <a
+        href="/"
+        class={`px-4 py-4 text-white text-lg font-normal border-b border-[#004d5a] transition-colors ${
+          currentPath === "/" ? "bg-[#004d5a]" : "hover:bg-[#004d5a]"
+        }`}
+      >
+        Inicio
+      </a>
+      <a
+        href="/personalizedSong"
+        class={`px-4 py-4 text-white text-lg font-normal border-b border-[#004d5a] transition-colors ${
+          currentPath === "/personalizedSong" ||
+          currentPath === "/personalizedSong/"
+            ? "bg-[#004d5a]"
+            : "hover:bg-[#004d5a]"
+        }`}
+      >
+        Crea Tu Canción Personalizada
+      </a>
+      <a
+        href="/contacto"
+        class={`px-4 py-4 text-white text-lg font-normal border-b border-[#004d5a] transition-colors ${
+          currentPath === "/contacto" || currentPath === "/contacto/"
+            ? "bg-[#004d5a]"
+            : "hover:bg-[#004d5a]"
+        }`}
+      >
+        Contáctanos
+      </a>
+    </div>
+  </div>
+  <Banner />
 </nav>
 
 <script>
-    const menuToggle = document.getElementById('menu-toggle');
-    const mobileMenu = document.getElementById('mobile-menu');
-    const menuOverlay = document.getElementById('menu-overlay');
-    const menuLines = menuToggle?.querySelectorAll('span');
+  const menuToggle = document.getElementById("menu-toggle");
+  const mobileMenu = document.getElementById("mobile-menu");
+  const menuOverlay = document.getElementById("menu-overlay");
+  const menuLines = menuToggle?.querySelectorAll("span");
 
-    function toggleMenu() {
-        const isOpen = mobileMenu?.classList.contains('translate-x-0');
-        
-        if (isOpen) {
-            // Cerrar menú
-            mobileMenu?.classList.remove('translate-x-0');
-            mobileMenu?.classList.add('-translate-x-full');
-            menuOverlay?.classList.remove('opacity-100', 'pointer-events-auto');
-            menuOverlay?.classList.add('opacity-0', 'pointer-events-none');
-            
-            // Restaurar hamburguesa
-            if (menuLines) {
-                menuLines[0].style.transform = '';
-                menuLines[1].style.opacity = '1';
-                menuLines[2].style.transform = '';
-            }
-        } else {
-            // Abrir menú
-            mobileMenu?.classList.remove('-translate-x-full');
-            mobileMenu?.classList.add('translate-x-0');
-            menuOverlay?.classList.remove('opacity-0', 'pointer-events-none');
-            menuOverlay?.classList.add('opacity-100', 'pointer-events-auto');
-            
-            // Animar a X
-            if (menuLines) {
-                menuLines[0].style.transform = 'rotate(45deg) translateY(8px)';
-                menuLines[1].style.opacity = '0';
-                menuLines[2].style.transform = 'rotate(-45deg) translateY(-8px)';
-            }
-        }
+  function toggleMenu() {
+    const isOpen = mobileMenu?.classList.contains("translate-x-0");
+
+    if (isOpen) {
+      // Cerrar menú
+      mobileMenu?.classList.remove("translate-x-0");
+      mobileMenu?.classList.add("-translate-x-full");
+      menuOverlay?.classList.remove("opacity-100", "pointer-events-auto");
+      menuOverlay?.classList.add("opacity-0", "pointer-events-none");
+
+      // Restaurar hamburguesa
+      if (menuLines) {
+        menuLines[0].style.transform = "";
+        menuLines[1].style.opacity = "1";
+        menuLines[2].style.transform = "";
+      }
+    } else {
+      // Abrir menú
+      mobileMenu?.classList.remove("-translate-x-full");
+      mobileMenu?.classList.add("translate-x-0");
+      menuOverlay?.classList.remove("opacity-0", "pointer-events-none");
+      menuOverlay?.classList.add("opacity-100", "pointer-events-auto");
+
+      // Animar a X
+      if (menuLines) {
+        menuLines[0].style.transform = "rotate(45deg) translateY(8px)";
+        menuLines[1].style.opacity = "0";
+        menuLines[2].style.transform = "rotate(-45deg) translateY(-8px)";
+      }
     }
+  }
 
-    menuToggle?.addEventListener('click', toggleMenu);
-    menuOverlay?.addEventListener('click', toggleMenu);
+  menuToggle?.addEventListener("click", toggleMenu);
+  menuOverlay?.addEventListener("click", toggleMenu);
 
-    // Cerrar menú al hacer clic en un enlace
-    const menuLinks = mobileMenu?.querySelectorAll('a');
-    menuLinks?.forEach(link => {
-        link.addEventListener('click', toggleMenu);
-    });
+  // Cerrar menú al hacer clic en un enlace
+  const menuLinks = mobileMenu?.querySelectorAll("a");
+  menuLinks?.forEach((link) => {
+    link.addEventListener("click", toggleMenu);
+  });
 </script>
 
 <style>
-    /* Asegurar que el overlay esté detrás del menú pero encima del contenido */
-    #menu-overlay {
-        z-index: 30;
-    }
-    
-    #mobile-menu {
-        z-index: 40;
-    }
-    
-    nav {
-        z-index: 50;
-    }
+  /* Asegurar que el overlay esté detrás del menú pero encima del contenido */
+  #menu-overlay {
+    z-index: 30;
+  }
+
+  #mobile-menu {
+    z-index: 40;
+  }
+
+  nav {
+    z-index: 50;
+  }
 </style>

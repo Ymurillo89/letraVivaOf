@@ -79,8 +79,8 @@ const videos = [
         </div>
 
         <!-- Botón de play inicial -->
-        <div class="play-button absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
-          <div class="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center shadow-lg">
+        <div class="play-button absolute inset-0 flex items-center justify-center z-20 pointer-events-none transition-opacity duration-300">
+          <div class="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
             <svg xmlns="http://www.w3.org/2000/svg" class="lucide lucide-play h-8 w-8 text-[#11676a] ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <polygon points="6 3 20 12 6 21 6 3"></polygon>
             </svg>
@@ -128,7 +128,7 @@ const videos = [
           </div>
 
           <!-- Botón de play inicial -->
-          <div class="play-button absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
+          <div class="play-button absolute inset-0 flex items-center justify-center z-20 pointer-events-none transition-opacity duration-300">
             <div class="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center shadow-lg">
               <svg xmlns="http://www.w3.org/2000/svg" class="lucide lucide-play h-8 w-8 text-[#11676a] ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <polygon points="6 3 20 12 6 21 6 3"></polygon>
@@ -142,10 +142,10 @@ const videos = [
 </div>
 
 <script>
-  // Intersection Observer para cargar videos cuando sean visibles
   const videoContainers = document.querySelectorAll('.video-container');
   const loadedVideos = new Set();
 
+  // Intersection Observer para cargar videos cuando sean visibles
   const videoObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -160,7 +160,7 @@ const videos = [
       }
     });
   }, {
-    rootMargin: '100px', // Cargar un poco antes de que sea visible
+    rootMargin: '100px',
     threshold: 0.1
   });
 
@@ -169,65 +169,116 @@ const videos = [
     videoObserver.observe(container);
   });
 
-  // Función para cargar el video
+  // Función para cargar el video (mantiene poster visible)
   function loadVideo(container) {
     const video = container.querySelector('.lazy-video');
     const source = video.querySelector('source');
-    const poster = container.querySelector('.video-poster');
-    const playButton = container.querySelector('.play-button');
     
-    if (source && source.dataset.src) {
-      // Cargar el video
+    if (source && source.dataset.src && !video.src) {
+      // Solo cargar el video en memoria, NO mostrarlo ni reproducirlo
       source.src = source.dataset.src;
       video.load();
-      
-      // Cuando el video esté listo
-      video.addEventListener('loadeddata', () => {
-        // Ocultar poster y mostrar video
-        if (poster) {
-          poster.style.opacity = '0';
-          setTimeout(() => poster.style.display = 'none', 300);
-        }
-        
-        video.style.opacity = '1';
-        video.play().catch(e => console.log('Autoplay prevented:', e));
-        
-        // Ocultar botón de play
-        if (playButton) {
-          playButton.style.opacity = '0';
-          setTimeout(() => playButton.style.display = 'none', 300);
-        }
-      }, { once: true });
     }
   }
 
-  // Click para reproducir/pausar
+  // Click para reproducir/pausar (mejorado para móvil)
   videoContainers.forEach(container => {
-    container.addEventListener('click', () => {
-      const video = container.querySelector('.lazy-video');
+    const playButton = container.querySelector('.play-button');
+    const poster = container.querySelector('.video-poster');
+    
+    container.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
       
-      if (video.paused) {
-        video.play();
+      const video = container.querySelector('.lazy-video');
+      const source = video.querySelector('source');
+      
+      if (!video.src) {
+        // Si el video no está cargado, cargarlo primero
+        if (source && source.dataset.src) {
+          source.src = source.dataset.src;
+          video.load();
+          
+          video.addEventListener('loadeddata', () => {
+            // Ocultar poster
+            if (poster) {
+              poster.style.opacity = '0';
+              setTimeout(() => poster.style.display = 'none', 300);
+            }
+            
+            // Mostrar video
+            video.style.opacity = '1';
+            
+            // Reproducir
+            const playPromise = video.play();
+            
+            if (playPromise !== undefined) {
+              playPromise.then(() => {
+                // Reproducción exitosa
+                if (playButton) {
+                  playButton.style.opacity = '0';
+                }
+              }).catch(error => {
+                console.log('Error al reproducir:', error);
+                // En móvil, algunos navegadores requieren interacción adicional
+              });
+            }
+          }, { once: true });
+        }
       } else {
-        video.pause();
+        // Si ya está cargado, reproducir/pausar
+        if (video.paused) {
+          // Ocultar poster si aún está visible
+          if (poster && poster.style.display !== 'none') {
+            poster.style.opacity = '0';
+            setTimeout(() => poster.style.display = 'none', 300);
+          }
+          
+          video.style.opacity = '1';
+          
+          const playPromise = video.play();
+          
+          if (playPromise !== undefined) {
+            playPromise.then(() => {
+              if (playButton) {
+                playButton.style.opacity = '0';
+              }
+            }).catch(error => {
+              console.log('Error al reproducir:', error);
+            });
+          }
+        } else {
+          video.pause();
+          if (playButton) {
+            playButton.style.opacity = '1';
+          }
+        }
       }
     });
+    
+    // Prevenir comportamiento por defecto en móvil
+    container.addEventListener('touchstart', (e) => {
+      e.stopPropagation();
+    }, { passive: true });
   });
 
-  // Pausar videos que no están visibles (ahorro adicional de recursos)
+  // Pausar videos que no están visibles
   const pauseObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       const video = entry.target.querySelector('.lazy-video');
+      const playButton = entry.target.querySelector('.play-button');
+      
       if (video && video.src) {
-        if (!entry.isIntersecting) {
+        if (!entry.isIntersecting && !video.paused) {
           video.pause();
-        } else if (loadedVideos.has(entry.target.dataset.index)) {
-          video.play().catch(e => console.log('Play prevented:', e));
+          if (playButton) {
+            playButton.style.opacity = '1';
+          }
         }
       }
     });
   }, {
-    threshold: 0.5
+    threshold: 0.3
   });
 
   videoContainers.forEach(container => {
@@ -249,10 +300,6 @@ const videos = [
   }
 
   .play-button {
-    transition: opacity 0.3s ease;
-  }
-
-  .video-container:hover .play-button {
-    transform: scale(1.1);
+    transition: opacity 0.3s ease, transform 0.3s ease;
   }
 </style>
