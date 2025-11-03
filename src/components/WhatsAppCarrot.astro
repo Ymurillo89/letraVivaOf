@@ -71,7 +71,7 @@ const images = [
             <div class="carousel-track">
                 {
                     images.map((image, index) => (
-                        <div class="carousel-item">
+                        <div class="carousel-item" data-index={index}>
                             <img
                                 src={image.src}
                                 alt={`Imagen ${index + 1}`}
@@ -86,7 +86,7 @@ const images = [
             <div class="carousel-track" aria-hidden="true">
                 {
                     images.map((image, index) => (
-                        <div class="carousel-item">
+                        <div class="carousel-item" data-index={index + images.length}>
                             <img
                                 src={image.src}
                                 alt={`Imagen ${index + 1}`}
@@ -97,14 +97,21 @@ const images = [
                 }
             </div>
         </div>
-        
-        <!-- Indicador visual para mobile (opcional) -->
-        <div id="play-indicator" class="play-indicator md:hidden">
-            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M8 5v14l11-7z"/>
-            </svg>
+    </div>
+    
+    <!-- Modal de imagen ampliada (solo móvil) -->
+    <div id="image-modal" class="image-modal md:hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <button id="close-modal" class="close-button">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+            <img id="modal-image" src="" alt="Imagen ampliada" />
         </div>
     </div>
+
     <div class="text-center mt-8">
         <div
             class="inline-flex items-center gap-2 bg-white px-6 py-3 rounded-full shadow-lg border-2 border-[#25D366]/20"
@@ -130,35 +137,6 @@ const images = [
 
 
 <style>
-    .carousel-container {
-        width: 100%;
-        overflow: hidden;
-        background: linear-gradient(to bottom, #f9fafb, #ffffff);
-        padding: 3rem 0;
-        position: relative;
-    }
-
-    .carousel-container::before,
-    .carousel-container::after {
-        content: "";
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        width: 100px;
-        z-index: 2;
-        pointer-events: none;
-    }
-
-    .carousel-container::before {
-        left: 0;
-        background: linear-gradient(to right, #f9fafb, transparent);
-    }
-
-    .carousel-container::after {
-        right: 0;
-        background: linear-gradient(to left, #f9fafb, transparent);
-    }
-
     .carousel-wrapper {
         display: flex;
         width: fit-content;
@@ -205,32 +183,69 @@ const images = [
         display: block;
     }
 
-    /* Indicador de play/pause */
-    .play-indicator {
+    /* Modal de imagen */
+    .image-modal {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: none;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .image-modal.active {
+        display: flex;
+    }
+
+    .modal-overlay {
         position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: rgba(37, 211, 102, 0.9);
-        color: white;
-        width: 60px;
-        height: 60px;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.95);
+        backdrop-filter: blur(4px);
+    }
+
+    .modal-content {
+        position: relative;
+        width: 90%;
+        max-width: 500px;
+        z-index: 10;
+        animation: modalZoom 0.3s ease-out;
+    }
+
+    .modal-content img {
+        width: 100%;
+        height: auto;
+        border-radius: 1rem;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    .close-button {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: white;
+        color: #1f2937;
+        width: 44px;
+        height: 44px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.3s ease;
-        z-index: 10;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        z-index: 10000;
+        border: 2px solid rgba(255, 255, 255, 0.9);
     }
 
-    .play-indicator.show {
-        opacity: 1;
-    }
-
-    .play-indicator.paused svg {
-        transform: translateX(2px);
+    @keyframes modalZoom {
+        from {
+            opacity: 0;
+            transform: scale(0.8);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
     }
 
     @keyframes scroll {
@@ -264,109 +279,83 @@ const images = [
         .carousel-item {
             width: 250px;
         }
-
-        .carousel-container::before,
-        .carousel-container::after {
-            width: 50px;
-        }
     }
 </style>
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const carouselWrapper = document.getElementById('carousel-wrapper');
-        const playIndicator = document.getElementById('play-indicator');
-        let isPaused = false;
-        let hideIndicatorTimeout: number | null = null;
+        const imageModal = document.getElementById('image-modal');
+        const modalImage = document.getElementById('modal-image');
+        const closeModal = document.getElementById('close-modal');
 
         // Detectar si es dispositivo móvil
         const isMobile = () => window.matchMedia('(max-width: 768px)').matches;
 
-        // Función para mostrar el indicador temporalmente
-        const showIndicator = (paused: boolean) => {
-            if (!playIndicator || !isMobile()) return;
-
-            // Actualizar el ícono según el estado
-            const icon = paused 
-                ? '<path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>' // Pause icon
-                : '<path d="M8 5v14l11-7z"/>'; // Play icon
-            
-            const svg = playIndicator.querySelector('svg');
-            if (svg) {
-                svg.innerHTML = icon;
-            }
-
-            playIndicator.classList.add('show');
-
-            // Limpiar timeout anterior si existe
-            if (hideIndicatorTimeout !== null) {
-                clearTimeout(hideIndicatorTimeout);
-            }
-
-            // Ocultar después de 1 segundo
-            hideIndicatorTimeout = window.setTimeout(() => {
-                playIndicator.classList.remove('show');
-            }, 1000);
+        // Abrir modal con imagen
+        const openModal = (imageSrc: string) => {
+            if (!imageModal || !modalImage) return;
+            modalImage.setAttribute('src', imageSrc);
+            imageModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
         };
 
-        // Toggle de pausa/reproducción
-        const togglePlayPause = () => {
-            if (!carouselWrapper || !isMobile()) return;
-
-            isPaused = !isPaused;
-            
-            if (isPaused) {
-                carouselWrapper.classList.add('paused');
-                showIndicator(true);
-            } else {
-                carouselWrapper.classList.remove('paused');
-                showIndicator(false);
-            }
+        // Cerrar modal
+        const closeModalFn = () => {
+            if (!imageModal) return;
+            imageModal.classList.remove('active');
+            document.body.style.overflow = '';
         };
 
-        // Event listeners para mobile
-        if (carouselWrapper && isMobile()) {
-            // Touch event
-            carouselWrapper.addEventListener('touchstart', (e) => {
-                // Prevenir comportamiento por defecto solo si es un tap, no un scroll
-                const touch = e.touches[0];
-                const startX = touch.clientX;
-                const startY = touch.clientY;
-                
-                const handleTouchEnd = (endEvent: TouchEvent) => {
-                    const endTouch = endEvent.changedTouches[0];
-                    const deltaX = Math.abs(endTouch.clientX - startX);
-                    const deltaY = Math.abs(endTouch.clientY - startY);
-                    
-                    // Si el movimiento es mínimo, considerar como tap
-                    if (deltaX < 10 && deltaY < 10) {
-                        togglePlayPause();
+        // Event listeners para las imágenes
+        if (carouselWrapper) {
+            const carouselItems = carouselWrapper.querySelectorAll('.carousel-item');
+            
+            carouselItems.forEach((item) => {
+                let touchStartX = 0;
+                let touchStartY = 0;
+                let touchStartTime = 0;
+
+                item.addEventListener('touchstart', (e) => {
+                    const touch = (e as TouchEvent).touches[0];
+                    touchStartX = touch.clientX;
+                    touchStartY = touch.clientY;
+                    touchStartTime = Date.now();
+                });
+
+                item.addEventListener('touchend', (e) => {
+                    if (!isMobile()) return;
+
+                    const touch = (e as TouchEvent).changedTouches[0];
+                    const deltaX = Math.abs(touch.clientX - touchStartX);
+                    const deltaY = Math.abs(touch.clientY - touchStartY);
+                    const deltaTime = Date.now() - touchStartTime;
+
+                    // Si es un tap rápido (no un swipe)
+                    if (deltaX < 10 && deltaY < 10 && deltaTime < 300) {
+                        e.preventDefault();
+                        const img = item.querySelector('img');
+                        if (img) {
+                            openModal(img.src);
+                        }
                     }
-                    
-                    carouselWrapper.removeEventListener('touchend', handleTouchEnd);
-                };
-                
-                carouselWrapper.addEventListener('touchend', handleTouchEnd);
-            });
-
-            // Click event como respaldo
-            carouselWrapper.addEventListener('click', (e) => {
-                // Solo activar en mobile
-                if (isMobile()) {
-                    e.preventDefault();
-                    togglePlayPause();
-                }
+                });
             });
         }
 
-        // Reiniciar estado cuando cambie el tamaño de pantalla
-        window.addEventListener('resize', () => {
-            if (!isMobile() && isPaused && carouselWrapper) {
-                isPaused = false;
-                carouselWrapper.classList.remove('paused');
-                if (playIndicator) {
-                    playIndicator.classList.remove('show');
-                }
+        // Cerrar modal
+        closeModal?.addEventListener('click', closeModalFn);
+        
+        imageModal?.addEventListener('click', (e) => {
+            if (e.target === imageModal || (e.target as HTMLElement).classList.contains('modal-overlay')) {
+                closeModalFn();
+            }
+        });
+
+        // Cerrar modal con tecla Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModalFn();
             }
         });
     });
