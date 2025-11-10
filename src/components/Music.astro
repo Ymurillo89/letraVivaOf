@@ -1,223 +1,370 @@
 ---
+// src/components/MusicPlayer.astro
 
+const songs = [
+  {
+    title: "Contigo Soy",
+    artist: "Letra Viva",
+    src: "https://maquila.nyc3.cdn.digitaloceanspaces.com/Requerimiento/music/ContigoSoy.mp3",
+    duration: "2:42",
+    description: "Hay personas que nos transforman. Esta canción no solo habla de amor..."
+  },
+  {
+    title: "Lo Que No Dije",
+    artist: "Letra Viva",
+    src: "https://maquila.nyc3.cdn.digitaloceanspaces.com/Requerimiento/music/LoQueNoTeDije.mp3",
+    duration: "3:02",
+    description: "¡Nunca es tarde; aveces solo una canción puede expresar lo que capaces de decirlo!"
+  },
+  {
+    title: "Tu Historia En Canción",
+    artist: "Letra Viva",
+    src: "https://maquila.nyc3.cdn.digitaloceanspaces.com/Requerimiento/music/TuHistoriaHechaCancion.mp3",
+    duration: "2:58",
+    description: "¡Animáte a contar tu historia, esta canción es solo para ti!"
+  },
+  {
+    title: "Madre Eterna",
+    artist: "Letra Viva",
+    src: "https://maquila.nyc3.cdn.digitaloceanspaces.com/Requerimiento/music/MadreEterna.mp3",
+    duration: "3:19",
+    description: "Hasta llorar... de emoción. No hay mejor forma de decir \"gracias mamá\""
+  },
+  {
+    title: "Noticia Bendita",
+    artist: "Letra Viva",
+    src: "https://maquila.nyc3.cdn.digitaloceanspaces.com/Requerimiento/music/NoticiaBendita.mp3",
+    duration: "2:59",
+    description: "¡Perfecto! Anunciar de la noticia que vas a ser papá o mamá"
+  }
+];
 ---
 
 <div class="py-24 bg-gradient-to-br from-[oklch(0.35_0.10_200)] to-[oklch(0.42_0.12_195)] relative overflow-hidden">
   <div class="text-center mb-16">
     <div class="inline-flex items-center gap-2 mb-4">
       <span class="text-5xl">🎧</span>
-    </div><h2
-      class="text-4xl md:text-5xl font-bold text-white mb-4 text-balance"
-    >
+    </div>
+    <h2 class="text-4xl md:text-5xl font-bold text-white mb-4 text-balance">
       Escucha Cómo Suena Una Historia Hecha Canción
-    </h2><p class="text-xl text-white/90 max-w-2xl mx-auto text-pretty">
+    </h2>
+    <p class="text-xl text-white/90 max-w-2xl mx-auto text-pretty">
       Cada melodía cuenta una historia única y especial
     </p>
-  </div><div class="max-w-4xl mx-auto">
-    <div
-      data-slot="card"
-      class="text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm bg-[oklch(0.35_0.10_200)]/80 backdrop-blur-sm border-white/10"
-    >
+  </div>
+
+  <div class="max-w-4xl mx-auto">
+    <div data-slot="card" class="text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm bg-[oklch(0.35_0.10_200)]/80 backdrop-blur-sm border-white/10">
       <div data-slot="card-content" class="p-8">
+
+        <!-- Reproductor Visual -->
         <div class="flex items-center justify-center mb-8">
           <div class="relative">
             <img
               alt="Reproductor de vinilo"
               class="w-64 h-64 rounded-full"
               src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/attachments/gen-images/public/vinyl-record-player-interface-2mIw0pdzdeUxBQZxIYOIulnWiws5uj.jpg"
-            /><div class="absolute inset-0 flex items-center justify-center">
+            />
+            <div class="absolute inset-0 flex items-center justify-center">
               <button
-                data-slot="button"
+                id="play-btn"
                 class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive text-primary-foreground size-9 h-16 w-16 rounded-full bg-[oklch(0.88_0.04_45)] hover:bg-[oklch(0.88_0.04_45)]/90"
-                ><svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  class="lucide lucide-play h-8 w-8 text-[oklch(0.35_0.10_200)]"
-                  ><polygon points="6 3 20 12 6 21 6 3"></polygon></svg
-                ></button
               >
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-play h-8 w-8 text-[oklch(0.35_0.10_200)]" id="play-icon">
+                  <polygon points="6 3 20 12 6 21 6 3"></polygon>
+                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pause h-8 w-8 text-[oklch(0.35_0.10_200)] hidden" id="pause-icon">
+                  <rect x="6" y="4" width="4" height="16"></rect>
+                  <rect x="14" y="4" width="4" height="16"></rect>
+                </svg>
+              </button>
             </div>
           </div>
-        </div><div class="text-center mb-6">
-          <h3 class="text-2xl font-bold text-white mb-2">
-            Contigo Soy - Letra Viva
-          </h3><p class="text-white/70">
-            Hay personas que nos transforman. Esta canción no solo habla de
-            amor...
-          </p>
-        </div><div class="mb-6">
-          <div class="flex items-center gap-4">
-            <span class="text-white/70 text-sm">0:00</span><div
-              class="flex-1 h-2 bg-white/20 rounded-full overflow-hidden"
-            >
-              <div class="h-full w-1/3 bg-[oklch(0.88_0.04_45)] rounded-full">
-              </div>
-            </div><span class="text-white/70 text-sm">2:42</span>
-          </div>
-        </div><div class="flex items-center justify-center gap-4 mb-8">
-          <button
-            data-slot="button"
-            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:text-accent-foreground dark:hover:bg-accent/50 size-9 text-white hover:bg-white/10"
-            ><svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="lucide lucide-skip-back h-6 w-6"
-              ><polygon points="19 20 9 12 19 4 19 20"></polygon><line
-                x1="5"
-                x2="5"
-                y1="19"
-                y2="5"></line></svg
-            ></button
-          ><button
-            data-slot="button"
-            class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive text-primary-foreground size-9 h-14 w-14 rounded-full bg-[oklch(0.88_0.04_45)] hover:bg-[oklch(0.88_0.04_45)]/90"
-            ><svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="lucide lucide-play h-6 w-6 text-[oklch(0.35_0.10_200)]"
-              ><polygon points="6 3 20 12 6 21 6 3"></polygon></svg
-            ></button
-          ><button
-            data-slot="button"
-            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:text-accent-foreground dark:hover:bg-accent/50 size-9 text-white hover:bg-white/10"
-            ><svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="lucide lucide-skip-forward h-6 w-6"
-              ><polygon points="5 4 15 12 5 20 5 4"></polygon><line
-                x1="19"
-                x2="19"
-                y1="5"
-                y2="19"></line></svg
-            ></button
-          ><button
-            data-slot="button"
-            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:text-accent-foreground dark:hover:bg-accent/50 size-9 text-white hover:bg-white/10"
-            ><svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="lucide lucide-volume2 h-6 w-6"
-              ><path
-                d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"
-              ></path><path d="M16 9a5 5 0 0 1 0 6"></path><path
-                d="M19.364 18.364a9 9 0 0 0 0-12.728"></path></svg
-            ></button
-          ><button
-            data-slot="button"
-            class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:text-accent-foreground dark:hover:bg-accent/50 size-9 text-white hover:bg-white/10"
-            ><svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="lucide lucide-list h-6 w-6"
-              ><path d="M3 12h.01"></path><path d="M3 18h.01"></path><path
-                d="M3 6h.01"></path><path d="M8 12h13"></path><path d="M8 18h13"
-              ></path><path d="M8 6h13"></path></svg
-            ></button
-          >
-        </div><div class="space-y-2">
-          <button
-            class="w-full text-left p-4 rounded-lg transition-colors hover:bg-white/10"
-            ><div class="flex items-center justify-between">
-              <div class="flex-1">
-                <div class="text-white font-semibold">
-                  Lo Que No Dije - Letra Viva
-                </div><div class="text-white/60 text-sm line-clamp-1">
-                  ¡Nunca es tarde; aveces solo una canción puede expresar lo que
-                  capaces de decirlo!
-                </div>
-              </div><div class="text-white/70 text-sm ml-4">3:02</div>
-            </div></button
-          ><button
-            class="w-full text-left p-4 rounded-lg transition-colors hover:bg-white/10"
-            ><div class="flex items-center justify-between">
-              <div class="flex-1">
-                <div class="text-white font-semibold">
-                  Tu Historia En Canción - Letra Viva
-                </div><div class="text-white/60 text-sm line-clamp-1">
-                  ¡Animáte a contar tu historia, esta canción es solo para ti!
-                </div>
-              </div><div class="text-white/70 text-sm ml-4">2:58</div>
-            </div></button
-          ><button
-            class="w-full text-left p-4 rounded-lg transition-colors bg-white/20"
-            ><div class="flex items-center justify-between">
-              <div class="flex-1">
-                <div class="text-white font-semibold">
-                  Contigo Soy - Letra Viva
-                </div><div class="text-white/60 text-sm line-clamp-1">
-                  Hay personas que nos transforman. Esta canción no solo habla
-                  de amor...
-                </div>
-              </div><div class="text-white/70 text-sm ml-4">2:42</div>
-            </div></button
-          ><button
-            class="w-full text-left p-4 rounded-lg transition-colors hover:bg-white/10"
-            ><div class="flex items-center justify-between">
-              <div class="flex-1">
-                <div class="text-white font-semibold">
-                  Madre Eterna - Letra Viva
-                </div><div class="text-white/60 text-sm line-clamp-1">
-                  Hasta llorar... de emoción. No hay mejor forma de decir
-                  "gracias mamá"
-                </div>
-              </div><div class="text-white/70 text-sm ml-4">3:19</div>
-            </div></button
-          ><button
-            class="w-full text-left p-4 rounded-lg transition-colors hover:bg-white/10"
-            ><div class="flex items-center justify-between">
-              <div class="flex-1">
-                <div class="text-white font-semibold">
-                  Noticia Bendita - Letra Viva
-                </div><div class="text-white/60 text-sm line-clamp-1">
-                  ¡Perfecto! Anunciar de la noticia que vas a ser papá o mamá
-                </div>
-              </div><div class="text-white/70 text-sm ml-4">2:59</div>
-            </div></button
-          >
         </div>
+
+        <!-- Información de la canción actual -->
+        <div class="text-center mb-6">
+          <h3 id="song-title" class="text-2xl font-bold text-white mb-2">
+            {songs[0].title} - {songs[0].artist}
+          </h3>
+          <p id="song-description" class="text-white/70">
+            {songs[0].description}
+          </p>
+        </div>
+
+        <!-- Barra de progreso -->
+        <div class="mb-6" style="display: none;">
+          <div class="flex items-center gap-4">
+            <span id="current-time" class="text-white/70 text-sm">0:00</span>
+            <div id="progress-container" class="flex-1 h-2 bg-white/20 rounded-full overflow-hidden cursor-pointer">
+              <div id="progress-bar" class="h-full w-0 bg-[oklch(0.88_0.04_45)] rounded-full"></div>
+            </div>
+            <span id="total-duration" class="text-white/70 text-sm">{songs[0].duration}</span>
+          </div>
+        </div>
+
+        <!-- Controles -->
+        <div class="flex items-center justify-center gap-4 mb-8">
+          <button id="prev-btn" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all size-9 text-white hover:bg-white/10">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-skip-back h-6 w-6">
+              <polygon points="19 20 9 12 19 4 19 20"></polygon>
+              <line x1="5" x2="5" y1="19" y2="5"></line>
+            </svg>
+          </button>
+
+          <button id="play-btn-2" class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all text-primary-foreground size-9 h-14 w-14 rounded-full bg-[oklch(0.88_0.04_45)] hover:bg-[oklch(0.88_0.04_45)]/90">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-play h-6 w-6 text-[oklch(0.35_0.10_200)]" id="play-icon-2">
+              <polygon points="6 3 20 12 6 21 6 3"></polygon>
+            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pause h-6 w-6 text-[oklch(0.35_0.10_200)] hidden" id="pause-icon-2">
+              <rect x="6" y="4" width="4" height="16"></rect>
+              <rect x="14" y="4" width="4" height="16"></rect>
+            </svg>
+          </button>
+
+          <button id="next-btn" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all size-9 text-white hover:bg-white/10">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-skip-forward h-6 w-6">
+              <polygon points="5 4 15 12 5 20 5 4"></polygon>
+              <line x1="19" x2="19" y1="5" y2="19"></line>
+            </svg>
+          </button>
+
+          <!-- <button id="volume-btn" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all size-9 text-white hover:bg-white/10">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-volume2 h-6 w-6">
+              <path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"></path>
+              <path d="M16 9a5 5 0 0 1 0 6"></path>
+              <path d="M19.364 18.364a9 9 0 0 0 0-12.728"></path>
+            </svg>
+          </button> -->
+
+         <!--  <button id="toggle-playlist" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all size-9 text-white hover:bg-white/10">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-list h-6 w-6">
+              <path d="M3 12h.01"></path>
+              <path d="M3 18h.01"></path>
+              <path d="M3 6h.01"></path>
+              <path d="M8 12h13"></path>
+              <path d="M8 18h13"></path>
+              <path d="M8 6h13"></path>
+            </svg>
+          </button> -->
+        </div>
+
+        <!-- Lista de canciones -->
+        <div id="playlist" class="space-y-2">
+          {songs.map((song, index) => (
+            <button
+              data-index={index}
+              class={`w-full text-left p-4 rounded-lg transition-colors ${index === 0 ? 'bg-white/20' : 'hover:bg-white/10'}`}
+            >
+              <div class="flex items-center justify-between">
+                <div class="flex-1">
+                  <div class="text-white font-semibold">{song.title} - {song.artist}</div>
+                  <div class="text-white/60 text-sm line-clamp-1">{song.description}</div>
+                </div>
+                <div class="text-white/70 text-sm ml-4">{song.duration}</div>
+              </div>
+            </button>
+          ))}
+        </div>
+
+        <!-- Audio oculto -->
+        <audio id="audio-player" src={songs[0].src} preload="metadata"></audio>
       </div>
     </div>
   </div>
 </div>
+
+<!-- Script del lado del cliente -->
+<script>
+  // Datos de las canciones (mismo orden que en Astro)
+  const songs = [
+    { title: "Contigo Soy", artist: "Letra Viva", src: "https://maquila.nyc3.cdn.digitaloceanspaces.com/Requerimiento/music/ContigoSoy.mp3", duration: "2:42", description: "Hay personas que nos transforman. Esta canción no solo habla de amor..." },
+    { title: "Lo Que No Dije", artist: "Letra Viva", src: "https://maquila.nyc3.cdn.digitaloceanspaces.com/Requerimiento/music/LoQueNoTeDije.mp3", duration: "3:02", description: "¡Nunca es tarde; aveces solo una canción puede expresar lo que capaces de decirlo!" },
+    { title: "Tu Historia En Canción", artist: "Letra Viva", src: "https://maquila.nyc3.cdn.digitaloceanspaces.com/Requerimiento/music/TuHistoriaHechaCancion.mp3", duration: "2:58", description: "¡Animáte a contar tu historia, esta canción es solo para ti!" },
+    { title: "Madre Eterna", artist: "Letra Viva", src: "https://maquila.nyc3.cdn.digitaloceanspaces.com/Requerimiento/music/MadreEterna.mp3", duration: "3:19", description: "Hasta llorar... de emoción. No hay mejor forma de decir \"gracias mamá\"" },
+    { title: "Noticia Bendita", artist: "Letra Viva", src: "https://maquila.nyc3.cdn.digitaloceanspaces.com/Requerimiento/music/NoticiaBendita.mp3", duration: "2:59", description: "¡Perfecto! Anunciar de la noticia que vas a ser papá o mamá" }
+  ];
+
+  const audio = document.getElementById('audio-player');
+const playBtn = document.getElementById('play-btn');
+const playBtn2 = document.getElementById('play-btn-2');
+const playIcon = document.getElementById('play-icon');
+const pauseIcon = document.getElementById('pause-icon');
+const playIcon2 = document.getElementById('play-icon-2');
+const pauseIcon2 = document.getElementById('pause-icon-2');
+const prevBtn = document.getElementById('prev-btn');
+const nextBtn = document.getElementById('next-btn');
+const progressContainer = document.getElementById('progress-container');
+const progressBar = document.getElementById('progress-bar');
+const currentTimeEl = document.getElementById('current-time');
+const totalDurationEl = document.getElementById('total-duration');
+const songTitleEl = document.getElementById('song-title');
+const songDescriptionEl = document.getElementById('song-description');
+const playlist = document.getElementById('playlist');
+const togglePlaylistBtn = document.getElementById('toggle-playlist');
+
+let currentSongIndex = 0;
+let isPlaying = false;
+
+// Formatear tiempo
+function formatTime(seconds) {
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${mins}:${secs.toString().padStart(2, '0')}`;
+}
+
+// Actualizar interfaz según canción actual
+function updateSongInfo() {
+  const song = songs[currentSongIndex];
+  songTitleEl.textContent = `${song.title} - ${song.artist}`;
+  songDescriptionEl.textContent = song.description;
+  totalDurationEl.textContent = song.duration;
+  audio.src = song.src;
+  audio.load();
+  // Reset progress bar
+  progressBar.style.width = '0%';
+  currentTimeEl.textContent = '0:00';
+}
+
+// Reproducir/Pausar
+function togglePlay() {
+  if (isPlaying) {
+    audio.pause();
+  } else {
+    audio.play().catch(e => console.warn("Reproducción bloqueada:", e));
+  }
+  isPlaying = !isPlaying;
+  updatePlayPauseIcons();
+}
+
+// Actualizar íconos de play/pause
+function updatePlayPauseIcons() {
+  if (isPlaying) {
+    playIcon.classList.add('hidden');
+    pauseIcon.classList.remove('hidden');
+    playIcon2.classList.add('hidden');
+    pauseIcon2.classList.remove('hidden');
+  } else {
+    playIcon.classList.remove('hidden');
+    pauseIcon.classList.add('hidden');
+    playIcon2.classList.remove('hidden');
+    pauseIcon2.classList.add('hidden');
+  }
+}
+
+// Siguiente canción
+function nextSong() {
+  currentSongIndex = (currentSongIndex + 1) % songs.length;
+  updateSongInfo();
+  if (isPlaying) {
+    audio.play().catch(e => console.warn("Reproducción bloqueada:", e));
+  }
+  updatePlaylistHighlight();
+}
+
+// Canción anterior
+function prevSong() {
+  currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+  updateSongInfo();
+  if (isPlaying) {
+    audio.play().catch(e => console.warn("Reproducción bloqueada:", e));
+  }
+  updatePlaylistHighlight();
+}
+
+// Seleccionar canción desde la lista
+function selectSong(index) {
+  currentSongIndex = index;
+  updateSongInfo();
+  if (isPlaying) {
+    audio.play().catch(e => console.warn("Reproducción bloqueada:", e));
+  }
+  updatePlaylistHighlight();
+}
+
+// Resaltar canción actual en la lista
+function updatePlaylistHighlight() {
+  const buttons = playlist.querySelectorAll('button');
+  buttons.forEach((btn, i) => {
+    if (i === currentSongIndex) {
+      btn.classList.add('bg-white/20');
+      btn.classList.remove('hover:bg-white/10');
+    } else {
+      btn.classList.remove('bg-white/20');
+      btn.classList.add('hover:bg-white/10');
+    }
+  });
+}
+
+// Buscar en la canción
+function seek(e) {
+  const width = progressContainer.clientWidth;
+  const clickX = e.offsetX;
+  const duration = audio.duration || getDurationFromStr(songs[currentSongIndex].duration);
+  audio.currentTime = (clickX / width) * duration;
+}
+
+// Obtener duración en segundos desde string "M:SS"
+function getDurationFromStr(timeStr) {
+  const [m, s] = timeStr.split(':').map(Number);
+  return m * 60 + s;
+}
+
+// Eventos
+playBtn.addEventListener('click', togglePlay);
+playBtn2.addEventListener('click', togglePlay);
+prevBtn.addEventListener('click', prevSong);
+nextBtn.addEventListener('click', nextSong);
+progressContainer.addEventListener('click', seek);
+togglePlaylistBtn.addEventListener('click', () => {
+  playlist.classList.toggle('hidden');
+});
+
+// Eventos del audio
+audio.addEventListener('timeupdate', () => {
+  const currentTime = audio.currentTime;
+  const duration = audio.duration;
+  
+  currentTimeEl.textContent = formatTime(currentTime);
+  
+  // Solo actualizar si la duración es válida
+  if (duration && !isNaN(duration) && isFinite(duration)) {
+    const progressPercent = (currentTime / duration) * 100;
+    progressBar.style.width = `${progressPercent}%`;
+  }
+});
+
+audio.addEventListener('loadedmetadata', () => {
+  // Actualizar duración cuando se carguen los metadatos
+  if (audio.duration && !isNaN(audio.duration)) {
+    totalDurationEl.textContent = formatTime(audio.duration);
+  }
+});
+
+audio.addEventListener('ended', nextSong);
+
+audio.addEventListener('play', () => {
+  isPlaying = true;
+  updatePlayPauseIcons();
+});
+
+audio.addEventListener('pause', () => {
+  isPlaying = false;
+  updatePlayPauseIcons();
+});
+
+// Inicializar playlist
+playlist.querySelectorAll('button').forEach((btn, index) => {
+  btn.addEventListener('click', () => selectSong(index));
+});
+
+// Iniciar
+updatePlaylistHighlight();
+</script>
+
+<style>
+  /* Inicialmente mostrar la lista */
+  #playlist {
+    display: block;
+  }
+</style>
