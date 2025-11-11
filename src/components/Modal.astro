@@ -1,0 +1,321 @@
+---
+// TuComponente.astro
+---
+
+<!-- Botón que abre el modal -->
+<button
+  onclick="openModal('song-modal')"
+  class="group cursor-pointer mt-3 relative inline-flex items-center justify-center gap-3 bg-gradient-to-r from-[#f89a3f] via-[#ff6b35] to-[#f89a3f] hover:from-[#ff6b35] hover:via-[#f89a3f] hover:to-[#ff6b35] text-white px-4 md:py-3 rounded-full text-xl md:text-lg font-bold mb-4 transition-all duration-500 hover:scale-[1.02] w-full max-w-lg mx-auto md:w-auto md:max-w-none overflow-hidden border-2 border-[#ff6b35]/30"
+>
+  <span class="relative z-10 flex items-center gap-3">
+    <svg class="w-7 h-7 md:w-6 md:h-6" fill="currentColor" viewBox="0 0 24 24">
+      <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"></path>
+    </svg>
+    <span>¡Toca aquí para crear tu canción personalizada!</span>
+    <svg class="w-6 h-6 md:w-5 md:h-5 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+    </svg>
+  </span>
+  <div class="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12"></div>
+</button>
+
+<!-- Modal -->
+<div id="song-modal" class="modal-overlay" aria-hidden="true">
+  <div class="modal-backdrop"></div>
+  <div class="modal-container">
+    <div class="modal-content">
+      <!-- Botón cerrar -->
+      <button 
+        id="song-modal-close"
+        class="modal-close"
+        aria-label="Cerrar modal"
+      >
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+
+      <!-- Contenido del Modal -->
+      <div class="p-4 md:p-8 text-center overflow-y-auto max-h-[90vh]">
+        
+        <!-- Header -->
+        <div class="mb-6">
+          <div class="text-5xl md:text-6xl mb-3 animate-bounce">🎵</div>
+          <h2 class="text-2xl md:text-4xl font-bold text-gray-900 mb-3">
+            Bienvenido a...<br />
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#11676a] to-[#2d8c89]">
+              ¡Letra Viva!
+            </span>
+          </h2>
+          <p class="text-base md:text-lg text-gray-600">
+            Donde tus emociones se convierten en música
+          </p>
+        </div>
+
+        <!-- Cómo funciona -->
+        <div class="bg-gradient-to-br from-[#e8f5f5] to-white rounded-2xl p-4 md:p-6 mb-5">
+          <h3 class="text-lg md:text-xl font-bold text-gray-900 mb-3">
+            ¿Cómo funciona?
+          </h3>
+          <p class="text-sm md:text-base text-gray-700 mb-4 font-semibold">
+            Solo 4 pasos simples:
+          </p>
+          
+          <div class="space-y-3 text-left">
+            <!-- Paso 1 -->
+            <div class="flex items-start gap-3">
+              <div class="flex-shrink-0 w-7 h-7 md:w-9 md:h-9 rounded-full bg-gradient-to-br from-[#11676a] to-[#2d8c89] text-white font-bold flex items-center justify-center text-sm md:text-base">
+                1
+              </div>
+              <div class="flex-1 pt-0.5">
+                <p class="text-xs md:text-sm text-gray-700 font-medium">
+                  Cuéntanos tu historia de amor especial
+                </p>
+              </div>
+            </div>
+
+            <!-- Paso 2 -->
+            <div class="flex items-start gap-3">
+              <div class="flex-shrink-0 w-7 h-7 md:w-9 md:h-9 rounded-full bg-gradient-to-br from-[#11676a] to-[#2d8c89] text-white font-bold flex items-center justify-center text-sm md:text-base">
+                2
+              </div>
+              <div class="flex-1 pt-0.5">
+                <p class="text-xs md:text-sm text-gray-700 font-medium">
+                  Danos tu WhatsApp para la entrega
+                </p>
+              </div>
+            </div>
+
+            <!-- Paso 3 -->
+            <div class="flex items-start gap-3">
+              <div class="flex-shrink-0 w-7 h-7 md:w-9 md:h-9 rounded-full bg-gradient-to-br from-[#11676a] to-[#2d8c89] text-white font-bold flex items-center justify-center text-sm md:text-base">
+                3
+              </div>
+              <div class="flex-1 pt-0.5">
+                <p class="text-xs md:text-sm text-gray-700 font-medium">
+                  Elige el género y estilo musical
+                </p>
+              </div>
+            </div>
+
+            <!-- Paso 4 -->
+            <div class="flex items-start gap-3">
+              <div class="flex-shrink-0 w-7 h-7 md:w-9 md:h-9 rounded-full bg-gradient-to-br from-[#11676a] to-[#2d8c89] text-white font-bold flex items-center justify-center text-sm md:text-base">
+                4
+              </div>
+              <div class="flex-1 pt-0.5">
+                <p class="text-xs md:text-sm text-gray-700 font-medium">
+                  Selecciona tu paquete y método de pago
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pago contra entrega -->
+<!--         <div class="bg-gradient-to-r from-[#f89a3f]/10 to-[#ff6b35]/10 rounded-2xl p-4 md:p-5 mb-5 border-2 border-[#f89a3f]/20">
+          <div class="flex items-start gap-2 md:gap-3">
+            <span class="text-xl md:text-2xl">💡</span>
+            <div class="text-left flex-1">
+              <h4 class="font-bold text-gray-900 text-sm md:text-base mb-1">
+                Pago contra entrega:
+              </h4>
+              <p class="text-xs md:text-sm text-gray-700">
+                Escucha primero tu canción, si te encanta, pagas. Si no, no pagas nada. 
+                <span class="font-bold text-[#f89a3f]">¡Sin riesgo!</span>
+              </p>
+            </div>
+          </div>
+        </div> -->
+
+        <!-- Mensaje final -->
+        <div class="mb-5">
+          <p class="text-xs md:text-sm text-gray-600 italic mb-3">
+            Miles de parejas ya han creado su canción perfecta con nosotros.
+          </p>
+          <p class="text-base md:text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#11676a] to-[#f89a3f]">
+            Tu historia merece una melodía única.
+          </p>
+        </div>
+
+        <!-- CTA Button -->
+        <button
+          onclick="window.location.href='#formulario'"
+          class="w-full bg-gradient-to-r from-[#11676a] to-[#2d8c89] hover:from-[#2d8c89] hover:to-[#11676a] text-white px-6 py-3 rounded-xl text-sm md:text-base font-bold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+        >
+          Comenzar Ahora
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+  }
+
+  .modal-overlay.active {
+    display: flex;
+  }
+
+  .modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(4px);
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  .modal-container {
+    position: relative;
+    width: 100%;
+    max-width: 650px;
+    max-height: 95vh;
+    animation: slideUp 0.3s ease-out;
+  }
+
+  .modal-content {
+    background: white;
+    border-radius: 1.5rem;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    position: relative;
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border: 2px solid #e5e7eb;
+    color: #6b7280;
+    cursor: pointer;
+    transition: all 0.2s;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .modal-close:hover {
+    background: #fee2e2;
+    border-color: #ff6b35;
+    color: #ff6b35;
+    transform: rotate(90deg);
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(50px) scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  /* Scroll personalizado */
+  .modal-container::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .modal-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+
+  .modal-container::-webkit-scrollbar-thumb {
+    background: #f89a3f;
+    border-radius: 10px;
+  }
+
+  .modal-container::-webkit-scrollbar-thumb:hover {
+    background: #ff6b35;
+  }
+
+  /* Responsive */
+  @media (max-width: 640px) {
+    .modal-container {
+      max-height: 92vh;
+    }
+    
+    .modal-close {
+      width: 36px;
+      height: 36px;
+      top: 0.5rem;
+      right: 0.5rem;
+    }
+  }
+
+  @media (max-height: 700px) {
+    .modal-container {
+      max-height: 95vh;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const modal = document.getElementById("song-modal");
+    const closeButton = document.getElementById("song-modal-close");
+    const backdrop = modal?.querySelector(".modal-backdrop");
+
+    // Función global para abrir el modal
+    window.openModal = function (id) {
+      const targetModal = document.getElementById(id);
+      if (targetModal) {
+        targetModal.classList.add("active");
+        document.body.style.overflow = "hidden";
+      }
+    };
+
+    // Función global para cerrar el modal
+    window.closeModal = function (id) {
+      const targetModal = document.getElementById(id);
+      if (targetModal) {
+        targetModal.classList.remove("active");
+        document.body.style.overflow = "";
+      }
+    };
+
+    // Cerrar modal con botón X
+    closeButton?.addEventListener("click", () => {
+      modal?.classList.remove("active");
+      document.body.style.overflow = "";
+    });
+
+    // Cerrar modal al hacer click en el backdrop
+    backdrop?.addEventListener("click", () => {
+      modal?.classList.remove("active");
+      document.body.style.overflow = "";
+    });
+
+    // Cerrar modal con tecla Escape
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && modal?.classList.contains("active")) {
+        modal.classList.remove("active");
+        document.body.style.overflow = "";
+      }
+    });
+  });
+</script>
