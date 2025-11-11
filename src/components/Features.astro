@@ -1,6 +1,6 @@
 ---
 import Modal from "./Modal.astro";
-import Package from "./Package.astro";
+import Contador from "./svelte/Contador.svelte";
 
 // Tipos
 type IconName = "star" | "lock" | "bolt" | "check" | "x";
@@ -132,6 +132,7 @@ const icons: Record<IconName, string> = {
       profesional hecha especialmente para ti
     </p>
 
+    <Contador client:load/>
     <Modal/>
     <!-- <button class="group cursor-pointer mt-3 relative inline-flex items-center justify-center gap-3 bg-gradient-to-r from-[#f89a3f] via-[#ff6b35] to-[#f89a3f] hover:from-[#ff6b35] hover:via-[#f89a3f] hover:to-[#ff6b35] text-white px-4 md:py-3 rounded-full text-xl md:text-lg font-bold mb-4 transition-all duration-500 hover:scale-[1.02] w-full max-w-lg mx-auto md:w-auto md:max-w-none overflow-hidden border-2 border-[#ff6b35]/30">
       <span class="relative z-10 flex items-center gap-3">
