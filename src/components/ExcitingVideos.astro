@@ -61,14 +61,14 @@ const videos = [
         <img 
           src={video.poster}
           alt={video.title}
-          class="video-poster absolute inset-0 w-full h-full object-cover z-10"
+          class="video-poster absolute inset-0 w-full h-full object-cover "
           loading="lazy"
         />
 
         <!-- Video (se crea dinámicamente solo cuando se necesita) -->
-        <div class="video-placeholder absolute inset-0 w-full h-full z-5" style="display: none;"></div>
+        <div class="video-placeholder absolute inset-0 w-full h-full " style="display: none;"></div>
 
-        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent flex items-end p-4 pointer-events-none z-20">
+        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent flex items-end p-4 pointer-events-none ">
           <div class="text-white">
             <h4 class="text-lg font-bold mb-1">{video.title}</h4>
             <p class="text-xs opacity-90">{video.desc}</p>
@@ -76,7 +76,7 @@ const videos = [
         </div>
 
         <!-- Botón de play -->
-        <div class="play-button absolute inset-0 flex items-center justify-center z-30 pointer-events-none transition-opacity duration-300">
+        <div class="play-button absolute inset-0 flex items-center justify-center pointer-events-none transition-opacity duration-300">
           <div class="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-[#11676a] ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <polygon points="6 3 20 12 6 21 6 3"></polygon>
@@ -101,14 +101,14 @@ const videos = [
           <img 
             src={video.poster}
             alt={video.title}
-            class="video-poster absolute inset-0 w-full h-full object-cover z-10"
+            class="video-poster absolute inset-0 w-full h-full object-cover "
             loading="lazy"
           />
 
           <!-- Video (se crea dinámicamente solo cuando se necesita) -->
-          <div class="video-placeholder absolute inset-0 w-full h-full z-5" style="display: none;"></div>
+          <div class="video-placeholder absolute inset-0 w-full h-full " style="display: none;"></div>
 
-          <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent flex items-end p-6 pointer-events-none z-20">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent flex items-end p-6 pointer-events-none ">
             <div class="text-white">
               <h4 class="text-xl font-bold mb-2">{video.title}</h4>
               <p class="text-sm opacity-90">{video.desc}</p>
@@ -116,7 +116,7 @@ const videos = [
           </div>
 
           <!-- Botón de play -->
-          <div class="play-button absolute inset-0 flex items-center justify-center z-30 pointer-events-none transition-opacity duration-300">
+          <div class="play-button absolute inset-0 flex items-center justify-center pointer-events-none transition-opacity duration-300">
             <div class="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center shadow-lg">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-[#11676a] ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <polygon points="6 3 20 12 6 21 6 3"></polygon>
@@ -153,7 +153,7 @@ const videos = [
           
           // Crear elemento video dinámicamente
           video = document.createElement('video');
-          video.className = 'lazy-video absolute inset-0 w-full h-full object-cover z-5';
+          video.className = 'lazy-video absolute inset-0 w-full h-full object-cover ';
           video.loop = true;
           video.muted = true;
           video.playsInline = true;
