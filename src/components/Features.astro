@@ -1,5 +1,6 @@
 ---
 import Modal from "./svelte/Modal.svelte";
+import ModalReact from "./svelte/ModalReact.tsx";
 
 // Tipos
 type IconName = "star" | "lock" | "bolt" | "check" | "x";
@@ -130,39 +131,8 @@ const icons: Record<IconName, string> = {
       Elige tu tema favorito, selecciona tu paquete y recibe una canción
       profesional hecha especialmente para ti
     </p>
-
-    <Modal client:load/>
-
-    <!-- <button class="group cursor-pointer mt-3 relative inline-flex items-center justify-center gap-3 bg-gradient-to-r from-[#f89a3f] via-[#ff6b35] to-[#f89a3f] hover:from-[#ff6b35] hover:via-[#f89a3f] hover:to-[#ff6b35] text-white px-4 md:py-3 rounded-full text-xl md:text-lg font-bold mb-4 transition-all duration-500 hover:scale-[1.02] w-full max-w-lg mx-auto md:w-auto md:max-w-none overflow-hidden border-2 border-[#ff6b35]/30">
-      <span class="relative z-10 flex items-center gap-3">
-        <svg
-          class="w-7 h-7 md:w-6 md:h-6"
-          fill="currentColor"
-          viewBox="0 0 24 24"
-          ><path
-            d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"
-          ></path>
-        </svg>
-
-        <span class="">¡Toca aquí para crear tu canción personalizada!</span>
-        <svg
-          class="w-6 h-6 md:w-5 md:h-5 group-hover:translate-x-1 transition-transform duration-300"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="3"
-            d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-        </svg>
-      </span>
-      <div
-        class="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12"
-      >
-      </div>
-    </button> -->
+  
+    <ModalReact  client:load/>
   </div>
 
   <div class="grid lg:grid-cols-2 gap-12 items-start mb-16">
