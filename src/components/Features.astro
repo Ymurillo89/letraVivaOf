@@ -1,7 +1,9 @@
 ---
+import { fetchProductVariants } from "../lib/shopify.server";
 import Modal from "./svelte/Modal.svelte";
 import ModalReact from "./svelte/ModalReact.tsx";
 
+const variants = await fetchProductVariants('8847688794261');
 // Tipos
 type IconName = "star" | "lock" | "bolt" | "check" | "x";
 
@@ -132,7 +134,7 @@ const icons: Record<IconName, string> = {
       profesional hecha especialmente para ti
     </p>
   
-    <ModalReact  client:load/>
+    <ModalReact variants={variants} client:load/>
   </div>
 
   <div class="grid lg:grid-cols-2 gap-12 items-start mb-16">

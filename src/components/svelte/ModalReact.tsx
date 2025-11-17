@@ -1,6 +1,20 @@
-import React, { useState } from 'react';
 
-const ModalCancionPersonalizada = () => {
+import React, { useState, useEffect } from 'react';
+
+interface ShopifyVariant {
+  id: number;
+  product_id: number;
+  title: string;
+  price: string;
+  position: number;
+  compare_at_price: string | null;
+}
+
+interface ModalCancionPersonalizadaProps {
+  variants: ShopifyVariant[];
+}
+
+const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ variants }) => {
   const [showWelcome, setShowWelcome] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
@@ -26,6 +40,18 @@ const ModalCancionPersonalizada = () => {
     genero: false,
     paquete: false,
   });
+
+  // Leer variant ID del query param cuando se abre el formulario
+  useEffect(() => {
+    if (showForm) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const variantId = urlParams.get('variant');
+      
+      if (variantId && variants.some(v => v.id.toString() === variantId)) {
+        setFormData(prev => ({ ...prev, paquete: variantId }));
+      }
+    }
+  }, [showForm, variants]);
 
   const steps = [
     {
@@ -63,33 +89,43 @@ const ModalCancionPersonalizada = () => {
     { id: "vallenato", label: "Vallenato" },
   ];
 
-  const paquetes = [
-    {
-      id: "estandar",
-      nombre: "Paquete Estándar - El Más Elegido",
-      duracion: "(2:30 - 3:00 min)",
-      descripcion: "Canción Completa MP3 Formato Estudio + Tarjeta Digital",
-      precio: "$79.900",
-      highlighted: true,
-    },
-    {
-      id: "mas",
-      nombre: "Paquete Más - El Detalle Inolvidable",
-      duracion: "(1:30 a 2:30 min)",
-      descripcion: "Canción Personalizada en MP3",
-      precio: "$79.900",
-      highlighted: false,
-    },
-    {
-      id: "premium",
-      nombre: "Paquete Premium - La Experiencia Completa",
-      duracion: "(3:00 - 3:30 min)",
-      descripcion:
-        "Canción Extendida + MP3 Formato Estudio + Tarjeta Digital + Video Lyric Con Fotos y Letra Animadas",
-      precio: "$179.900",
-      highlighted: false,
-    },
-  ];
+  // Procesar variants de Shopify
+  const parseVariantInfo = (title: string) => {
+    const match = title.match(/^(.*?)\s*–\s*(.*?)\s*\|/);
+    const nombre = match ? match[1].trim() : title;
+    const subtitle = match ? match[2].trim() : '';
+    
+    const durationMatch = title.match(/\(([^)]+min)\)/);
+    const duracion = durationMatch ? durationMatch[1] : '';
+    
+    // Extraer descripción
+    const descripcionMatch = title.match(/\|\s*(.+?)\s*-\s*[\d,]+/);
+    const descripcion = descripcionMatch ? descripcionMatch[1].trim() : '';
+    
+    return { nombre, subtitle, duracion, descripcion };
+  };
+
+  const formatPrice = (price: string) => {
+    return new Intl.NumberFormat('es-CO').format(parseFloat(price));
+  };
+
+  // Convertir variants a formato paquetes
+  const paquetes = variants.map(variant => {
+    const info = parseVariantInfo(variant.title);
+    const isStandard = variant.position === 1;
+    
+    return {
+      id: variant.id.toString(),
+      variantId: variant.id,
+      nombre: info.nombre.replace(/🎼|🎤|🎬/g, '').trim(),
+      subtitle: info.subtitle.replace(/⭐/g, '').trim(),
+      duracion: `(${info.duracion})`,
+      descripcion: info.descripcion,
+      precio: `$${formatPrice(variant.price)}`,
+      precioNumerico: variant.price,
+      highlighted: isStandard,
+    };
+  });
 
   const openWelcome = () => {
     setShowWelcome(true);
@@ -118,7 +154,7 @@ const ModalCancionPersonalizada = () => {
         newErrors.nombre = !formData.nombre.trim();
         newErrors.paraQuien = !formData.paraQuien;
         newErrors.ocasion = !formData.ocasion;
-        newErrors.tonoEmocional =!formData.tonoEmocional;
+        newErrors.tonoEmocional = !formData.tonoEmocional;
         isValid = !newErrors.nombre && !newErrors.paraQuien && !newErrors.ocasion && !newErrors.tonoEmocional;
         break;
       case 1:
@@ -160,18 +196,22 @@ const ModalCancionPersonalizada = () => {
     }
   };
 
-  const selectGenero = (generoId:any) => {
+  const selectGenero = (generoId: string) => {
     setFormData({ ...formData, genero: generoId });
     setErrors({ ...errors, genero: false });
   };
 
-  const selectPaquete = (paqueteId:any) => {
+  const selectPaquete = (paqueteId: string) => {
     setFormData({ ...formData, paquete: paqueteId });
     setErrors({ ...errors, paquete: false });
   };
 
   const handleSubmit = () => {
-    console.log("Pedido enviado:", formData);
+    const selectedPaquete = paquetes.find(p => p.id === formData.paquete);
+    console.log("Pedido enviado:", {
+      ...formData,
+      paqueteDetalle: selectedPaquete
+    });
     alert("¡Pedido enviado exitosamente! Te contactaremos pronto por WhatsApp.");
     closeForm();
   };
@@ -508,9 +548,16 @@ const ModalCancionPersonalizada = () => {
           border-color: var(--color-primary);
         }
 
-        .paquete-card.selected:not(.highlighted) {
-          border-color: var(--color-primary);
-          background: #e8f5f5;
+        .paquete-card.selected {
+          background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark)) !important;
+          color: white !important;
+          border-color: var(--color-primary) !important;
+        }
+
+        .paquete-card.selected .paquete-info h3,
+        .paquete-card.selected .duracion,
+        .paquete-card.selected .descripcion {
+          color: white !important;
         }
 
         .paquete-info {
@@ -976,7 +1023,7 @@ const ModalCancionPersonalizada = () => {
                       value={formData.historia}
                       onChange={(e) => setFormData({ ...formData, historia: e.target.value })}
                       placeholder="Cuéntanos sobre esa persona especial, momentos inolvidables, lo que sientes..."
-                      rows="8"
+                      rows={8}
                       className={errors.historia ? 'error' : ''}
                     ></textarea>
                     {errors.historia ? (
@@ -1038,11 +1085,12 @@ const ModalCancionPersonalizada = () => {
                     {paquetes.map((paquete) => (
                       <button
                         key={paquete.id}
-                        className={`paquete-card ${formData.paquete === paquete.id ? 'selected' : ''} ${paquete.highlighted ? 'highlighted' : ''}`}
+                        className={`paquete-card ${formData.paquete === paquete.id ? 'selected' : ''} `}
                         onClick={() => selectPaquete(paquete.id)}
                       >
                         <div className="paquete-info">
                           <h3>{paquete.nombre}</h3>
+                          {paquete.subtitle && <p className="duracion">{paquete.subtitle}</p>}
                           <p className="duracion">{paquete.duracion}</p>
                           <p className="descripcion">{paquete.descripcion}</p>
                         </div>
@@ -1089,10 +1137,10 @@ const ModalCancionPersonalizada = () => {
                   </div>
 
                   <div className="resumen-section paquete-seleccionado">
-                    <h3>Paquete Seleccionado:</h3>
+                    <h3>Paquete Seleccionado</h3>
                     {formData.paquete && (() => {
                       const paq = paquetes.find((p) => p.id === formData.paquete);
-                      return (
+                      return paq ? (
                         <div className="paquete-detalle">
                           <div>
                             <h4>{paq.nombre}</h4>
@@ -1103,7 +1151,7 @@ const ModalCancionPersonalizada = () => {
                             <span className="moneda">COP</span>
                           </div>
                         </div>
-                      );
+                      ) : null;
                     })()}
                   </div>
 
@@ -1148,4 +1196,4 @@ const ModalCancionPersonalizada = () => {
   );
 };
 
-export default ModalCancionPersonalizada
+export default ModalCancionPersonalizada;
