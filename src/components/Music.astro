@@ -177,15 +177,15 @@ const songs = [
 <!-- Script del lado del cliente -->
 <script>
   // Datos de las canciones (mismo orden que en Astro)
-  const songs = [
-    { title: "Contigo Soy", artist: "Letra Viva", src: "https://maquila.nyc3.cdn.digitaloceanspaces.com/Requerimiento/music/ContigoSoy.mp3", duration: "2:42", description: "Hay personas que nos transforman. Esta canción no solo habla de amor..." },
-    { title: "Lo Que No Dije", artist: "Letra Viva", src: "https://maquila.nyc3.cdn.digitaloceanspaces.com/Requerimiento/music/LoQueNoTeDije.mp3", duration: "3:02", description: "¡Nunca es tarde; aveces solo una canción puede expresar lo que capaces de decirlo!" },
-    { title: "Tu Historia En Canción", artist: "Letra Viva", src: "https://maquila.nyc3.cdn.digitaloceanspaces.com/Requerimiento/music/TuHistoriaHechaCancion.mp3", duration: "2:58", description: "¡Animáte a contar tu historia, esta canción es solo para ti!" },
-    { title: "Madre Eterna", artist: "Letra Viva", src: "https://maquila.nyc3.cdn.digitaloceanspaces.com/Requerimiento/music/MadreEterna.mp3", duration: "3:19", description: "Hasta llorar... de emoción. No hay mejor forma de decir \"gracias mamá\"" },
-    { title: "Noticia Bendita", artist: "Letra Viva", src: "https://maquila.nyc3.cdn.digitaloceanspaces.com/Requerimiento/music/NoticiaBendita.mp3", duration: "2:59", description: "¡Perfecto! Anunciar de la noticia que vas a ser papá o mamá" }
-  ];
+const songs = [
+  { title: "Contigo Soy", artist: "Letra Viva", src: "https://maquila.nyc3.cdn.digitaloceanspaces.com/Requerimiento/music/ContigoSoy.mp3", duration: "2:42", description: "Hay personas que nos transforman. Esta canción no solo habla de amor..." },
+  { title: "Lo Que No Dije", artist: "Letra Viva", src: "https://maquila.nyc3.cdn.digitaloceanspaces.com/Requerimiento/music/LoQueNoTeDije.mp3", duration: "3:02", description: "¡Nunca es tarde; aveces solo una canción puede expresar lo que capaces de decirlo!" },
+  { title: "Tu Historia En Canción", artist: "Letra Viva", src: "https://maquila.nyc3.cdn.digitaloceanspaces.com/Requerimiento/music/TuHistoriaHechaCancion.mp3", duration: "2:58", description: "¡Animáte a contar tu historia, esta canción es solo para ti!" },
+  { title: "Madre Eterna", artist: "Letra Viva", src: "https://maquila.nyc3.cdn.digitaloceanspaces.com/Requerimiento/music/MadreEterna.mp3", duration: "3:19", description: "Hasta llorar... de emoción. No hay mejor forma de decir \"gracias mamá\"" },
+  { title: "Noticia Bendita", artist: "Letra Viva", src: "https://maquila.nyc3.cdn.digitaloceanspaces.com/Requerimiento/music/NoticiaBendita.mp3", duration: "2:59", description: "¡Perfecto! Anunciar de la noticia que vas a ser papá o mamá" }
+];
 
-  const audio = document.getElementById('audio-player');
+const audio = document.getElementById('audio-player');
 const playBtn = document.getElementById('play-btn');
 const playBtn2 = document.getElementById('play-btn-2');
 const playIcon = document.getElementById('play-icon');
@@ -201,7 +201,6 @@ const totalDurationEl = document.getElementById('total-duration');
 const songTitleEl = document.getElementById('song-title');
 const songDescriptionEl = document.getElementById('song-description');
 const playlist = document.getElementById('playlist');
-const togglePlaylistBtn = document.getElementById('toggle-playlist');
 
 let currentSongIndex = 0;
 let isPlaying = false;
@@ -230,10 +229,22 @@ function updateSongInfo() {
 function togglePlay() {
   if (isPlaying) {
     audio.pause();
+    isPlaying = false;
   } else {
-    audio.play().catch(e => console.warn("Reproducción bloqueada:", e));
+    const playPromise = audio.play();
+    if (playPromise !== undefined) {
+      playPromise
+        .then(() => {
+          isPlaying = true;
+          updatePlayPauseIcons();
+        })
+        .catch(e => {
+          console.warn("Reproducción bloqueada:", e);
+          isPlaying = false;
+          updatePlayPauseIcons();
+        });
+    }
   }
-  isPlaying = !isPlaying;
   updatePlayPauseIcons();
 }
 
@@ -272,16 +283,35 @@ function prevSong() {
   updatePlaylistHighlight();
 }
 
-// Seleccionar canción desde la lista
+// Seleccionar canción desde la lista - MEJORADO
 function selectSong(index) {
+  // Si se selecciona la misma canción
+  if (currentSongIndex === index) {
+    // Solo toggle play/pause
+    togglePlay();
+    return;
+  }
+  
+  // Si es una canción diferente
   currentSongIndex = index;
   updateSongInfo();
-  // Siempre reproducir al seleccionar una canción
-  audio.play().then(() => {
-    isPlaying = true;
-    updatePlayPauseIcons();
-  }).catch(e => console.warn("Reproducción bloqueada:", e));
   updatePlaylistHighlight();
+  
+  // Intentar reproducir
+  const playPromise = audio.play();
+  if (playPromise !== undefined) {
+    playPromise
+      .then(() => {
+        isPlaying = true;
+        updatePlayPauseIcons();
+      })
+      .catch(e => {
+        console.warn("Reproducción bloqueada:", e);
+        // Si falla, solo actualizar la canción pero no reproducir
+        isPlaying = false;
+        updatePlayPauseIcons();
+      });
+  }
 }
 
 // Resaltar canción actual en la lista
@@ -312,15 +342,12 @@ function getDurationFromStr(timeStr) {
   return m * 60 + s;
 }
 
-// Eventos
+// Eventos de los botones
 playBtn.addEventListener('click', togglePlay);
 playBtn2.addEventListener('click', togglePlay);
 prevBtn.addEventListener('click', prevSong);
 nextBtn.addEventListener('click', nextSong);
 progressContainer.addEventListener('click', seek);
-togglePlaylistBtn.addEventListener('click', () => {
-  playlist.classList.toggle('hidden');
-});
 
 // Eventos del audio
 audio.addEventListener('timeupdate', () => {
@@ -355,7 +382,7 @@ audio.addEventListener('pause', () => {
   updatePlayPauseIcons();
 });
 
-// Inicializar playlist
+// Inicializar playlist - MEJORADO
 playlist.querySelectorAll('button').forEach((btn, index) => {
   btn.addEventListener('click', () => selectSong(index));
 });

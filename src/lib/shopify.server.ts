@@ -26,6 +26,8 @@ export async function fetchProductVariants(productId: string): Promise<ShopifyVa
   
   return json.variants;
 }
+
+
 export async function createOrder(body: any): Promise<any> {
   const url = `https://${SHOP_DOMAIN}/admin/api/${API_VERSION}/orders.json`;
   
