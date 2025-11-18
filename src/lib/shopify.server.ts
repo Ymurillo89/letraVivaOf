@@ -83,11 +83,7 @@ export async function createOrder(body: any): Promise<any> {
       body: JSON.stringify(orderData),
     });
 
-    console.log('Shopify response status:', res.status);
-    console.log('Shopify response statusText:', res.statusText);
-
     const responseText = await res.text();
-    console.log('Shopify response text:', responseText);
 
     if (!res.ok) {
       console.error('❌ Error de Shopify:', responseText);
@@ -106,7 +102,6 @@ export async function createOrder(body: any): Promise<any> {
       throw new Error(`Respuesta inválida de Shopify: ${responseText}`);
     }
 
-    console.log('✅ Shopify response parsed:', JSON.stringify(json, null, 2));
     return json;
     
   } catch (error) {

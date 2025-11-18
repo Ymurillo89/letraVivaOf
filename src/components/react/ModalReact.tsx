@@ -227,110 +227,133 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
     setErrors({ ...errors, metodoPago: false });
   };
 
-const handleSubmit = async () => {
-  if (!validateCurrentStep()) return;
+  const handleSubmit = async () => {
+    if (!validateCurrentStep()) return;
 
-  setIsSubmitting(true);
+    setIsSubmitting(true);
 
-  try {
-    const selectedPaquete = paquetes.find(p => p.id === formData.paquete);
-    const selectedGenero = generos.find(g => g.id === formData.genero);
-
-    // Preparar datos del pedido
-    const orderData = {
-      line_items: [
-        {
-          variant_id: selectedPaquete?.variantId || 0,
-          quantity: 1
-        }
-      ],
-      customer: {
-        first_name: formData.nombre,
-        phone: formData.whatsapp
-      },
-      note_attributes: [
-        { name: "Nombre personalizado", value: formData.nombre },
-        { name: "Para", value: formData.paraQuien },
-        { name: "Ocasión", value: formData.ocasion },
-        { name: "Tono Emocional", value: formData.tonoEmocional },
-        { name: "Historia", value: formData.historia },
-        { name: "Género musical", value: selectedGenero?.label || "" },
-        { name: "WhatsApp", value: formData.whatsapp },
-        { name: "Método de Pago", value: formData.metodoPago === "online" ? "Pago en Línea" : "Contra Entrega" }
-      ],
-      financial_status: formData.metodoPago === "online" ? "pending" : "pending",
-      tags: formData.metodoPago === "online" ? "pago-online" : "contra-entrega",
-      note: `Historia: ${formData.historia}`
-    };
-
-    // Enviar petición al servidor
-    const response = await fetch('/api/shopify/create-order', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(orderData)
-    });
-
-    const responseText = await response.text();
-
-    // Intentar parsear JSON
-    let data;
     try {
-      data = JSON.parse(responseText);
-    } catch (e) {
-      console.error('Error parseando JSON:', e);
-      throw new Error(`Respuesta inválida del servidor: ${responseText}`);
-    }
+      const selectedPaquete = paquetes.find(p => p.id === formData.paquete);
+      const selectedGenero = generos.find(g => g.id === formData.genero);
 
-    if (!data.success) {
-      throw new Error(data.message || 'Error al crear el pedido');
-    }
+      // Extraer nombre y apellido si es posible
+      const nombreCompleto = formData.nombre.trim().split(' ');
+      const firstName = nombreCompleto[0] || '';
+      const lastName = nombreCompleto.slice(1).join(' ') || '';
 
-    // Cerrar el formulario
-    closeForm();
+      // Limpiar el número de WhatsApp para usarlo como teléfono
+      const phoneClean = formData.whatsapp.replace(/[^\d+]/g, '');
 
-    // Manejar respuesta exitosa según el método de pago
-    if (formData.metodoPago === "online") {
-      // Si es pago en línea, redirigir a checkout
-      window.location.href = data.checkoutUrl;
-    } else {
-      // Si es contra entrega, mostrar modal de éxito
-      setOrderSuccess({
-        orderNumber: data.orderNumber,
-        nombre: formData.nombre,
-        paquete: selectedPaquete?.nombre || '',
-        precio: selectedPaquete?.precio || '',
-        whatsapp: formData.whatsapp
+      // Preparar datos del pedido con TODA la información
+      const orderData = {
+        line_items: [
+          {
+            variant_id: selectedPaquete?.variantId || 0,
+            quantity: 1
+          }
+        ],
+        customer: {
+          first_name: firstName,
+          last_name: lastName,
+          phone: phoneClean,
+          email: `-`, // Si pides email en tu formulario, úsalo aquí
+          country_code: 'CO', // Colombia
+          // Información de dirección (puedes agregar campos al formulario si lo necesitas)
+          address: {
+            first_name: firstName,
+            last_name: lastName,
+            address1: '', // Puedes agregar campo "Dirección" en el paso 2
+            address2: '',
+            city: '', // Puedes agregar campo "Ciudad" en el paso 2
+            province: '', // Departamento
+            country: 'Colombia',
+            zip: '', // Código postal
+            phone: phoneClean,
+            company: ''
+          }
+        },
+        note_attributes: [
+          { name: "Nombre personalizado", value: formData.nombre },
+          { name: "Para", value: formData.paraQuien },
+          { name: "Ocasión", value: formData.ocasion },
+          { name: "Tono Emocional", value: formData.tonoEmocional },
+          { name: "Historia", value: formData.historia },
+          { name: "Género musical", value: selectedGenero?.label || "" },
+          { name: "WhatsApp", value: formData.whatsapp },
+          { name: "Método de Pago", value: formData.metodoPago === "online" ? "Pago en Línea" : "Contra Entrega" }
+        ],
+        note: `Historia: ${formData.historia}`
+      };
+
+      // Usar endpoint diferente según método de pago
+      const endpoint = formData.metodoPago === "online"
+        ? '/api/shopify/create-checkout'  // Storefront API - Pre-llena datos
+        : '/api/shopify/create-order';     // Admin API
+
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(orderData)
       });
-      setShowSuccess(true);
 
-      // Resetear el formulario
-      setFormData({
-        nombre: "",
-        paraQuien: "",
-        ocasion: "",
-        tonoEmocional: "",
-        historia: "",
-        whatsapp: "",
-        genero: "",
-        paquete: "",
-        metodoPago: "",
-      });
-      setCurrentStep(0);
+      const responseText = await response.text();
+
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch (e) {
+        console.error('Error parseando JSON:', e);
+        throw new Error(`Respuesta inválida del servidor: ${responseText}`);
+      }
+
+      if (!data.success) {
+        throw new Error(data.message || 'Error al procesar el pedido');
+      }
+
+      closeForm();
+
+      if (formData.metodoPago === "online") {
+        // Redirigir al checkout de Shopify con datos pre-llenados
+        window.location.href = data.checkoutUrl;
+      } else {
+        // Mostrar modal de éxito para contra entrega
+        setOrderSuccess({
+          orderNumber: data.orderNumber,
+          nombre: formData.nombre,
+          paquete: selectedPaquete?.nombre || '',
+          precio: selectedPaquete?.precio || '',
+          whatsapp: formData.whatsapp
+        });
+        setShowSuccess(true);
+
+        // Resetear el formulario
+        setFormData({
+          nombre: "",
+          paraQuien: "",
+          ocasion: "",
+          tonoEmocional: "",
+          historia: "",
+          whatsapp: "",
+          genero: "",
+          paquete: "",
+          metodoPago: "",
+        });
+        setCurrentStep(0);
+      }
+
+    } catch (error) {
+      console.error('Error al crear pedido:', error);
+      alert(error instanceof Error ? error.message : 'Hubo un error al procesar tu pedido. Por favor intenta nuevamente.');
+    } finally {
+      setIsSubmitting(false);
     }
+  };
 
-  } catch (error) {
-    console.error('Error al crear pedido:', error);
-    alert(error instanceof Error ? error.message : 'Hubo un error al procesar tu pedido. Por favor intenta nuevamente.');
-  } finally {
-    setIsSubmitting(false);
-  }
-};
+  const progressWidth = ((currentStep + 1) / steps.length) * 100;
 
-const progressWidth = ((currentStep + 1) / steps.length) * 100;
-
-return (
-  <div className="w-full">
-    <style>{`
+  return (
+    <div className="w-full">
+      <style>{`
         :root {
           --color-primary: #11676a;
           --color-primary-dark: #2d8c89;
@@ -1006,6 +1029,7 @@ return (
 
         .detail-grid {
           display: grid;
+          text-align: start;
           gap: 12px;
         }
 
@@ -1074,6 +1098,7 @@ return (
 
         .timeline-step {
           display: flex;
+          text-align: start;
           align-items: flex-start;
           gap: 12px;
         }
@@ -1095,6 +1120,7 @@ return (
 
         .timeline-content {
           flex: 1;
+          text-align: start;
           font-size: 14px;
           color: #78350f;
           line-height: 1.5;
@@ -1189,507 +1215,507 @@ return (
         }
       `}</style>
 
-    {/* Botón Principal */}
-    <button
-      onClick={openWelcome}
-      className="group cursor-pointer relative inline-flex items-center justify-center gap-3 bg-gradient-to-r from-[#f89a3f] via-[#ff6b35] to-[#f89a3f] hover:from-[#ff6b35] hover:via-[#f89a3f] hover:to-[#ff6b35] text-white px-6 py-4 rounded-full text-lg font-bold transition-all duration-500 hover:scale-[1.02] w-full max-w-lg mx-auto md:w-auto md:max-w-none overflow-hidden border-2 border-[#ff6b35]/30"
-    >
-      <span className="relative z-10 flex items-center gap-3">
-        <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"></path>
-        </svg>
-        <span>¡Toca aquí para crear tu canción personalizada!</span>
-        <svg
-          className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-        </svg>
-      </span>
-      <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12"></div>
-    </button>
+      {/* Botón Principal */}
+      <button
+        onClick={openWelcome}
+        className="group cursor-pointer relative inline-flex items-center justify-center gap-3 bg-gradient-to-r from-[#f89a3f] via-[#ff6b35] to-[#f89a3f] hover:from-[#ff6b35] hover:via-[#f89a3f] hover:to-[#ff6b35] text-white px-6 py-4 rounded-full text-lg font-bold transition-all duration-500 hover:scale-[1.02] w-full max-w-lg mx-auto md:w-auto md:max-w-none overflow-hidden border-2 border-[#ff6b35]/30"
+      >
+        <span className="relative z-10 flex items-center gap-3">
+          <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"></path>
+          </svg>
+          <span>¡Toca aquí para crear tu canción personalizada!</span>
+          <svg
+            className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+          </svg>
+        </span>
+        <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12"></div>
+      </button>
 
-    {/* Modal de Bienvenida */}
-    {showWelcome && (
-      <div className="modal-overlay" onClick={closeWelcome}>
-        <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-          <button className="close-btn" onClick={closeWelcome} aria-label="Cerrar">
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+      {/* Modal de Bienvenida */}
+      {showWelcome && (
+        <div className="modal-overlay" onClick={closeWelcome}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="close-btn" onClick={closeWelcome} aria-label="Cerrar">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
 
-          <div className="welcome-content">
-            <div className="text-5xl md:text-6xl mb-4 animate-bounce">🎵</div>
+            <div className="welcome-content">
+              <div className="text-5xl md:text-6xl mb-4 animate-bounce">🎵</div>
 
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
-              Bienvenido a...
-            </h1>
-            <h2 className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#11676a] to-[#2d8c89]">
-              ¡Letra Viva!
-            </h2>
-            <p className="text-lg text-gray-600">
-              Donde tus emociones se convierten en música
-            </p>
+              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+                Bienvenido a...
+              </h1>
+              <h2 className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#11676a] to-[#2d8c89]">
+                ¡Letra Viva!
+              </h2>
+              <p className="text-lg text-gray-600">
+                Donde tus emociones se convierten en música
+              </p>
 
-            <div className="how-it-works">
-              <h3 className="text-xl font-bold text-gray-900 mb-3">¿Cómo funciona?</h3>
-              <p className="text-gray-700 mb-6 font-semibold">Solo 4 pasos simples:</p>
+              <div className="how-it-works">
+                <h3 className="text-xl font-bold text-gray-900 mb-3">¿Cómo funciona?</h3>
+                <p className="text-gray-700 mb-6 font-semibold">Solo 4 pasos simples:</p>
 
-              <div className="steps-list">
-                <div className="step-item">
-                  <div className="step-number">1</div>
-                  <p>Cuéntanos tu historia de amor especial</p>
-                </div>
+                <div className="steps-list">
+                  <div className="step-item">
+                    <div className="step-number">1</div>
+                    <p>Cuéntanos tu historia de amor especial</p>
+                  </div>
 
-                <div className="step-item">
-                  <div className="step-number">2</div>
-                  <p>Danos tu WhatsApp para la entrega</p>
-                </div>
+                  <div className="step-item">
+                    <div className="step-number">2</div>
+                    <p>Danos tu WhatsApp para la entrega</p>
+                  </div>
 
-                <div className="step-item">
-                  <div className="step-number">3</div>
-                  <p>Elige el género y estilo musical</p>
-                </div>
+                  <div className="step-item">
+                    <div className="step-number">3</div>
+                    <p>Elige el género y estilo musical</p>
+                  </div>
 
-                <div className="step-item">
-                  <div className="step-number">4</div>
-                  <p>Selecciona tu paquete y método de pago</p>
+                  <div className="step-item">
+                    <div className="step-number">4</div>
+                    <p>Selecciona tu paquete y método de pago</p>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <button className="btn-start" onClick={startForm}>
-              Comenzar Ahora
-            </button>
+              <button className="btn-start" onClick={startForm}>
+                Comenzar Ahora
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-    )}
+      )}
 
-    {/* Modal del Formulario */}
-    {showForm && (
-      <div className="modal-overlay" onClick={closeForm}>
-        <div className="modal-content modal-form-content" onClick={(e) => e.stopPropagation()}>
-          <button className="close-btn" onClick={closeForm} aria-label="Cerrar">
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+      {/* Modal del Formulario */}
+      {showForm && (
+        <div className="modal-overlay" onClick={closeForm}>
+          <div className="modal-content modal-form-content" onClick={(e) => e.stopPropagation()}>
+            <button className="close-btn" onClick={closeForm} aria-label="Cerrar">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
 
-          {/* Progress Bar */}
-          <div className="progress-container">
-            <div className="step-circle">{currentStep + 1}</div>
-            <div className="progress-bar">
-              <div className="progress-fill" style={{ width: `${progressWidth}%` }}></div>
+            {/* Progress Bar */}
+            <div className="progress-container">
+              <div className="step-circle">{currentStep + 1}</div>
+              <div className="progress-bar">
+                <div className="progress-fill" style={{ width: `${progressWidth}%` }}></div>
+              </div>
             </div>
-          </div>
 
-          {/* Contenido del paso actual */}
-          <div className="form-content">
-            <h2 className="form-title">{steps[currentStep].title}</h2>
-            <p className="form-subtitle">{steps[currentStep].subtitle}</p>
+            {/* Contenido del paso actual */}
+            <div className="form-content">
+              <h2 className="form-title">{steps[currentStep].title}</h2>
+              <p className="form-subtitle">{steps[currentStep].subtitle}</p>
 
-            {/* Paso 0: Información Básica */}
-            {currentStep === 0 && (
-              <div className="form-fields">
-                <div className="form-group">
-                  <label>Tu nombre <span className="required">*</span></label>
-                  <input
-                    type="text"
-                    value={formData.nombre}
-                    onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
-                    placeholder="Escribe tu nombre"
-                    className={errors.nombre ? 'error' : ''}
-                  />
-                  {errors.nombre && <span className="error-msg">Este campo es requerido</span>}
-                </div>
-                <div className="form-group">
-                  <label>Tono emocional <span className="required">*</span></label>
-                  <select
-                    value={formData.tonoEmocional}
-                    onChange={(e) => setFormData({ ...formData, tonoEmocional: e.target.value })}
-                    className={errors.tonoEmocional ? 'error' : ''}
-                  >
-                    <option value="">Selecciona una opción</option>
-                    <option value="Romántica dulce">Romántica dulce</option>
-                    <option value="Pacífica">Pacífica</option>
-                    <option value="Energética">Energética</option>
-                    <option value="Animada">Animada</option>
-                    <option value="Electrizante">Electrizante</option>
-                  </select>
-                  {errors.tonoEmocional && <span className="error-msg">Este campo es requerido</span>}
-                </div>
-
-                <div className="form-group">
-                  <label>¿Para quién es esta canción? <span className="required">*</span></label>
-                  <select
-                    value={formData.paraQuien}
-                    onChange={(e) => setFormData({ ...formData, paraQuien: e.target.value })}
-                    className={errors.paraQuien ? 'error' : ''}
-                  >
-                    <option value="">Selecciona una opción</option>
-                    <option value="esposa/o">Mi Esposa/o</option>
-                    <option value="novio/a">Novio/a</option>
-                    <option value="amiga">Mejor amiga</option>
-                    <option value="mama">Mamá</option>
-                    <option value="papa">Papá</option>
-                    <option value="abuelo/a">Abuelo/a</option>
-                    <option value="hermano/a">Hermano/a</option>
-                    <option value="hijo/a">Hijo/a</option>
-                    <option value="importante">Alguien importante en mi vida</option>
-                    <option value="otro">Otro</option>
-                  </select>
-                  {errors.paraQuien && <span className="error-msg">Este campo es requerido</span>}
-                </div>
-
-                <div className="form-group">
-                  <label>¿Cuál es la ocasión? <span className="required">*</span></label>
-                  <select
-                    value={formData.ocasion}
-                    onChange={(e) => setFormData({ ...formData, ocasion: e.target.value })}
-                    className={errors.ocasion ? 'error' : ''}
-                  >
-                    <option value="">Selecciona una opción</option>
-                    <option value="detalle">Detalle especial</option>
-                    <option value="aniversario">Aniversario</option>
-                    <option value="cumpleanos">Cumpleaños</option>
-                    <option value="boda">Boda</option>
-                    <option value="propuesta">Propuesta de matrimonio</option>
-                    <option value="grado">Grado</option>
-                    <option value="dia-madre-padre">Día Madre/Padre</option>
-                    <option value="amor-amistad">Amor y amistad</option>
-                    <option value="nacimiento">Nacimiento</option>
-                    <option value="memorial">Memorial</option>
-                    <option value="otro">Otro</option>
-                  </select>
-                  {errors.ocasion && <span className="error-msg">Este campo es requerido</span>}
-                </div>
-              </div>
-            )}
-
-            {/* Paso 1: Cuéntanos Tu Historia */}
-            {currentStep === 1 && (
-              <div className="form-fields">
-                <div className="form-group">
-                  <label>Tu Historia de Amor:</label>
-                  <textarea
-                    value={formData.historia}
-                    onChange={(e) => setFormData({ ...formData, historia: e.target.value })}
-                    placeholder="Cuéntanos sobre esa persona especial, momentos inolvidables, lo que sientes..."
-                    rows={8}
-                    className={errors.historia ? 'error' : ''}
-                  ></textarea>
-                  {errors.historia ? (
-                    <span className="error-msg">Escribe al menos 20 caracteres</span>
-                  ) : (
-                    <span className="help-text">Mínimo 20 caracteres</span>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* Paso 2: Información de Contacto */}
-            {currentStep === 2 && (
-              <div className="form-fields">
-                <div className="form-group">
-                  <label>Número de WhatsApp:</label>
-                  <div className={`whatsapp-input ${errors.whatsapp ? 'error' : ''}`}>
-                    <svg className="w-6 h-6 text-green-500" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-                    </svg>
+              {/* Paso 0: Información Básica */}
+              {currentStep === 0 && (
+                <div className="form-fields">
+                  <div className="form-group">
+                    <label>Tu nombre <span className="required">*</span></label>
                     <input
-                      type="tel"
-                      value={formData.whatsapp}
-                      onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
-                      placeholder="+57 300 123 4567"
+                      type="text"
+                      value={formData.nombre}
+                      onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
+                      placeholder="Escribe tu nombre"
+                      className={errors.nombre ? 'error' : ''}
                     />
+                    {errors.nombre && <span className="error-msg">Este campo es requerido</span>}
                   </div>
-                  {errors.whatsapp ? (
-                    <span className="error-msg">Por favor ingresa un número válido (mínimo 10 dígitos)</span>
-                  ) : (
-                    <span className="help-text">Te contactaremos por WhatsApp para coordinar la entrega</span>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* Paso 3: Elige Tu Estilo Musical */}
-            {currentStep === 3 && (
-              <>
-                <div className="generos-grid">
-                  {generos.map((genero) => (
-                    <button
-                      key={genero.id}
-                      className={`genero-btn ${formData.genero === genero.id ? 'selected' : ''}`}
-                      onClick={() => selectGenero(genero.id)}
+                  <div className="form-group">
+                    <label>Tono emocional <span className="required">*</span></label>
+                    <select
+                      value={formData.tonoEmocional}
+                      onChange={(e) => setFormData({ ...formData, tonoEmocional: e.target.value })}
+                      className={errors.tonoEmocional ? 'error' : ''}
                     >
-                      {genero.label}
-                    </button>
-                  ))}
-                </div>
-                {errors.genero && <span className="error-msg">Por favor selecciona un género</span>}
-              </>
-            )}
+                      <option value="">Selecciona una opción</option>
+                      <option value="Romántica dulce">Romántica dulce</option>
+                      <option value="Pacífica">Pacífica</option>
+                      <option value="Energética">Energética</option>
+                      <option value="Animada">Animada</option>
+                      <option value="Electrizante">Electrizante</option>
+                    </select>
+                    {errors.tonoEmocional && <span className="error-msg">Este campo es requerido</span>}
+                  </div>
 
-            {/* Paso 4: Selecciona Tu Paquete */}
-            {currentStep === 4 && (
-              <>
-                <div className="paquetes-list">
-                  {paquetes.map((paquete) => (
-                    <button
-                      key={paquete.id}
-                      className={`paquete-card ${formData.paquete === paquete.id ? 'selected' : ''} `}
-                      onClick={() => selectPaquete(paquete.id)}
+                  <div className="form-group">
+                    <label>¿Para quién es esta canción? <span className="required">*</span></label>
+                    <select
+                      value={formData.paraQuien}
+                      onChange={(e) => setFormData({ ...formData, paraQuien: e.target.value })}
+                      className={errors.paraQuien ? 'error' : ''}
                     >
-                      <div className="paquete-info">
-                        <h3>{paquete.nombre}</h3>
-                        {paquete.subtitle && <p className="duracion">{paquete.subtitle}</p>}
-                        <p className="duracion">{paquete.duracion}</p>
-                        <p className="descripcion">{paquete.descripcion}</p>
-                      </div>
-                      <div className="paquete-precio">
-                        <span className="precio">{paquete.precio}</span>
-                        <span className="moneda">COP</span>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-                {errors.paquete && <span className="error-msg">Por favor selecciona un paquete</span>}
-              </>
-            )}
+                      <option value="">Selecciona una opción</option>
+                      <option value="esposa/o">Mi Esposa/o</option>
+                      <option value="novio/a">Novio/a</option>
+                      <option value="amiga">Mejor amiga</option>
+                      <option value="mama">Mamá</option>
+                      <option value="papa">Papá</option>
+                      <option value="abuelo/a">Abuelo/a</option>
+                      <option value="hermano/a">Hermano/a</option>
+                      <option value="hijo/a">Hijo/a</option>
+                      <option value="importante">Alguien importante en mi vida</option>
+                      <option value="otro">Otro</option>
+                    </select>
+                    {errors.paraQuien && <span className="error-msg">Este campo es requerido</span>}
+                  </div>
 
-            {/* Paso 5: Resumen */}
-            {currentStep === 5 && (
-              <div className="resumen">
-                <div className="resumen-section">
-                  <h3>Detalles del Pedido</h3>
-                  <div className="detalle-row">
-                    <span>Nombre:</span>
-                    <strong>{formData.nombre}</strong>
-                  </div>
-                  <div className="detalle-row">
-                    <span>Para:</span>
-                    <strong>{formData.paraQuien}</strong>
-                  </div>
-                  <div className="detalle-row">
-                    <span>Tono emocional:</span>
-                    <strong>{formData.tonoEmocional}</strong>
-                  </div>
-                  <div className="detalle-row">
-                    <span>Ocasión:</span>
-                    <strong>{formData.ocasion}</strong>
-                  </div>
-                  <div className="detalle-row">
-                    <span>Género:</span>
-                    <strong>{generos.find((g) => g.id === formData.genero)?.label || ''}</strong>
-                  </div>
-                  <div className="detalle-row">
-                    <span>WhatsApp:</span>
-                    <strong>{formData.whatsapp}</strong>
+                  <div className="form-group">
+                    <label>¿Cuál es la ocasión? <span className="required">*</span></label>
+                    <select
+                      value={formData.ocasion}
+                      onChange={(e) => setFormData({ ...formData, ocasion: e.target.value })}
+                      className={errors.ocasion ? 'error' : ''}
+                    >
+                      <option value="">Selecciona una opción</option>
+                      <option value="detalle">Detalle especial</option>
+                      <option value="aniversario">Aniversario</option>
+                      <option value="cumpleanos">Cumpleaños</option>
+                      <option value="boda">Boda</option>
+                      <option value="propuesta">Propuesta de matrimonio</option>
+                      <option value="grado">Grado</option>
+                      <option value="dia-madre-padre">Día Madre/Padre</option>
+                      <option value="amor-amistad">Amor y amistad</option>
+                      <option value="nacimiento">Nacimiento</option>
+                      <option value="memorial">Memorial</option>
+                      <option value="otro">Otro</option>
+                    </select>
+                    {errors.ocasion && <span className="error-msg">Este campo es requerido</span>}
                   </div>
                 </div>
+              )}
 
-                <div className="resumen-section paquete-seleccionado">
-                  <h3>Paquete Seleccionado</h3>
-                  {formData.paquete && (() => {
-                    const paq = paquetes.find((p) => p.id === formData.paquete);
-                    return paq ? (
-                      <div className="paquete-detalle">
-                        <div>
-                          <h4>{paq.nombre}</h4>
-                          <p>{paq.descripcion}</p>
+              {/* Paso 1: Cuéntanos Tu Historia */}
+              {currentStep === 1 && (
+                <div className="form-fields">
+                  <div className="form-group">
+                    <label>Tu Historia de Amor:</label>
+                    <textarea
+                      value={formData.historia}
+                      onChange={(e) => setFormData({ ...formData, historia: e.target.value })}
+                      placeholder="Cuéntanos sobre esa persona especial, momentos inolvidables, lo que sientes..."
+                      rows={8}
+                      className={errors.historia ? 'error' : ''}
+                    ></textarea>
+                    {errors.historia ? (
+                      <span className="error-msg">Escribe al menos 20 caracteres</span>
+                    ) : (
+                      <span className="help-text">Mínimo 20 caracteres</span>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Paso 2: Información de Contacto */}
+              {currentStep === 2 && (
+                <div className="form-fields">
+                  <div className="form-group">
+                    <label>Número de WhatsApp:</label>
+                    <div className={`whatsapp-input ${errors.whatsapp ? 'error' : ''}`}>
+                      <svg className="w-6 h-6 text-green-500" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                      </svg>
+                      <input
+                        type="tel"
+                        value={formData.whatsapp}
+                        onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
+                        placeholder="+57 300 123 4567"
+                      />
+                    </div>
+                    {errors.whatsapp ? (
+                      <span className="error-msg">Por favor ingresa un número válido (mínimo 10 dígitos)</span>
+                    ) : (
+                      <span className="help-text">Te contactaremos por WhatsApp para coordinar la entrega</span>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Paso 3: Elige Tu Estilo Musical */}
+              {currentStep === 3 && (
+                <>
+                  <div className="generos-grid">
+                    {generos.map((genero) => (
+                      <button
+                        key={genero.id}
+                        className={`genero-btn ${formData.genero === genero.id ? 'selected' : ''}`}
+                        onClick={() => selectGenero(genero.id)}
+                      >
+                        {genero.label}
+                      </button>
+                    ))}
+                  </div>
+                  {errors.genero && <span className="error-msg">Por favor selecciona un género</span>}
+                </>
+              )}
+
+              {/* Paso 4: Selecciona Tu Paquete */}
+              {currentStep === 4 && (
+                <>
+                  <div className="paquetes-list">
+                    {paquetes.map((paquete) => (
+                      <button
+                        key={paquete.id}
+                        className={`paquete-card ${formData.paquete === paquete.id ? 'selected' : ''} `}
+                        onClick={() => selectPaquete(paquete.id)}
+                      >
+                        <div className="paquete-info">
+                          <h3>{paquete.nombre}</h3>
+                          {paquete.subtitle && <p className="duracion">{paquete.subtitle}</p>}
+                          <p className="duracion">{paquete.duracion}</p>
+                          <p className="descripcion">{paquete.descripcion}</p>
                         </div>
-                        <div className="precio-final">
-                          <span className="precio">{paq.precio}</span>
+                        <div className="paquete-precio">
+                          <span className="precio">{paquete.precio}</span>
                           <span className="moneda">COP</span>
                         </div>
-                      </div>
-                    ) : null;
-                  })()}
-                </div>
+                      </button>
+                    ))}
+                  </div>
+                  {errors.paquete && <span className="error-msg">Por favor selecciona un paquete</span>}
+                </>
+              )}
 
-                <div className="metodos-pago">
-                  <div className="pago-header">
-                    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" />
-                    </svg>
-                    <h3>Selecciona tu Método de Pago</h3>
+              {/* Paso 5: Resumen */}
+              {currentStep === 5 && (
+                <div className="resumen">
+                  <div className="resumen-section">
+                    <h3>Detalles del Pedido</h3>
+                    <div className="detalle-row">
+                      <span>Nombre:</span>
+                      <strong>{formData.nombre}</strong>
+                    </div>
+                    <div className="detalle-row">
+                      <span>Para:</span>
+                      <strong>{formData.paraQuien}</strong>
+                    </div>
+                    <div className="detalle-row">
+                      <span>Tono emocional:</span>
+                      <strong>{formData.tonoEmocional}</strong>
+                    </div>
+                    <div className="detalle-row">
+                      <span>Ocasión:</span>
+                      <strong>{formData.ocasion}</strong>
+                    </div>
+                    <div className="detalle-row">
+                      <span>Género:</span>
+                      <strong>{generos.find((g) => g.id === formData.genero)?.label || ''}</strong>
+                    </div>
+                    <div className="detalle-row">
+                      <span>WhatsApp:</span>
+                      <strong>{formData.whatsapp}</strong>
+                    </div>
                   </div>
 
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                    <div
-                      className={`pago-opcion ${formData.metodoPago === 'online' ? 'selected' : ''}`}
-                      onClick={() => selectMetodoPago('online')}
-                    >
-                      <div className="pago-icon">💳</div>
-                      <div className="pago-text">
-                        <strong>Pago en Línea</strong>
-                        <p>Paga ahora y recibe tu canción más rápido</p>
+                  <div className="resumen-section paquete-seleccionado">
+                    <h3>Paquete Seleccionado</h3>
+                    {formData.paquete && (() => {
+                      const paq = paquetes.find((p) => p.id === formData.paquete);
+                      return paq ? (
+                        <div className="paquete-detalle">
+                          <div>
+                            <h4>{paq.nombre}</h4>
+                            <p>{paq.descripcion}</p>
+                          </div>
+                          <div className="precio-final">
+                            <span className="precio">{paq.precio}</span>
+                            <span className="moneda">COP</span>
+                          </div>
+                        </div>
+                      ) : null;
+                    })()}
+                  </div>
+
+                  <div className="metodos-pago">
+                    <div className="pago-header">
+                      <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" />
+                      </svg>
+                      <h3>Selecciona tu Método de Pago</h3>
+                    </div>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                      <div
+                        className={`pago-opcion ${formData.metodoPago === 'online' ? 'selected' : ''}`}
+                        onClick={() => selectMetodoPago('online')}
+                      >
+                        <div className="pago-icon">💳</div>
+                        <div className="pago-text">
+                          <strong>Pago en Línea</strong>
+                          <p>Paga ahora y recibe tu canción más rápido</p>
+                        </div>
+                      </div>
+
+                      <div
+                        className={`pago-opcion ${formData.metodoPago === 'contraentrega' ? 'selected' : ''}`}
+                        onClick={() => selectMetodoPago('contraentrega')}
+                      >
+                        <div className="pago-icon">💵</div>
+                        <div className="pago-text">
+                          <strong>Pago Contra Entrega</strong>
+                          <p>Escucha primero, paga después si te encanta</p>
+                        </div>
                       </div>
                     </div>
 
-                    <div
-                      className={`pago-opcion ${formData.metodoPago === 'contraentrega' ? 'selected' : ''}`}
-                      onClick={() => selectMetodoPago('contraentrega')}
-                    >
-                      <div className="pago-icon">💵</div>
-                      <div className="pago-text">
-                        <strong>Pago Contra Entrega</strong>
-                        <p>Escucha primero, paga después si te encanta</p>
-                      </div>
-                    </div>
+                    {errors.metodoPago && (
+                      <span className="error-msg" style={{ display: 'block', marginTop: '8px' }}>
+                        Por favor selecciona un método de pago
+                      </span>
+                    )}
                   </div>
-
-                  {errors.metodoPago && (
-                    <span className="error-msg" style={{ display: 'block', marginTop: '8px' }}>
-                      Por favor selecciona un método de pago
-                    </span>
-                  )}
                 </div>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
 
-          {/* Botones de navegación */}
-          <div className="form-footer">
-            {currentStep > 0 ? (
-              <button className="btn-secondary" onClick={prevStep}>Atrás</button>
-            ) : (
-              <div></div>
-            )}
+            {/* Botones de navegación */}
+            <div className="form-footer">
+              {currentStep > 0 ? (
+                <button className="btn-secondary" onClick={prevStep}>Atrás</button>
+              ) : (
+                <div></div>
+              )}
 
-            {currentStep < steps.length - 1 ? (
-              <button className="btn-primary" onClick={nextStep}>Siguiente</button>
-            ) : (
-              <button
-                className="btn-primary"
-                onClick={handleSubmit}
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? 'Procesando...' : 'Finalizar Pedido'}
-              </button>
-            )}
+              {currentStep < steps.length - 1 ? (
+                <button className="btn-primary" onClick={nextStep}>Siguiente</button>
+              ) : (
+                <button
+                  className="btn-primary"
+                  onClick={handleSubmit}
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? 'Procesando...' : 'Finalizar Pedido'}
+                </button>
+              )}
+            </div>
           </div>
         </div>
-      </div>
-    )}
+      )}
 
-    {/* Modal de Éxito */}
-    {showSuccess && orderSuccess && (
-      <div className="modal-overlay" onClick={closeSuccess}>
-        <div className="modal-content success-modal" onClick={(e) => e.stopPropagation()}>
-          <button className="close-btn" onClick={closeSuccess} aria-label="Cerrar">
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-
-          <div className="welcome-content">
-            {/* Icono de éxito animado */}
-            <div className="success-icon">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+      {/* Modal de Éxito */}
+      {showSuccess && orderSuccess && (
+        <div className="modal-overlay" onClick={closeSuccess}>
+          <div className="modal-content success-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="close-btn" onClick={closeSuccess} aria-label="Cerrar">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
-            </div>
-
-            <h1 className="success-title">¡Pedido Creado!</h1>
-            <p className="success-subtitle">Tu canción personalizada está en camino</p>
-
-            {/* Detalles del pedido */}
-            <div className="order-details">
-              <div className="order-number">
-                <p className="order-number-label">Número de Pedido</p>
-                <h2 className="order-number-value">{orderSuccess.orderNumber}</h2>
-              </div>
-
-              <div className="detail-grid">
-                <div className="detail-item">
-                  <div className="detail-icon">👤</div>
-                  <div className="detail-content">
-                    <p className="detail-label">Cliente</p>
-                    <p className="detail-value">{orderSuccess.nombre}</p>
-                  </div>
-                </div>
-
-                <div className="detail-item">
-                  <div className="detail-icon">🎵</div>
-                  <div className="detail-content">
-                    <p className="detail-label">Paquete Seleccionado</p>
-                    <p className="detail-value">{orderSuccess.paquete}</p>
-                  </div>
-                </div>
-
-                <div className="detail-item">
-                  <div className="detail-icon">💰</div>
-                  <div className="detail-content">
-                    <p className="detail-label">Total a Pagar</p>
-                    <p className="detail-value">{orderSuccess.precio} COP</p>
-                  </div>
-                </div>
-
-                <div className="detail-item">
-                  <div className="detail-icon">📱</div>
-                  <div className="detail-content">
-                    <p className="detail-label">WhatsApp</p>
-                    <p className="detail-value">{orderSuccess.whatsapp}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Próximos pasos */}
-            <div className="next-steps">
-              <div className="next-steps-title">
-                <span style={{ fontSize: '20px' }}>⏰</span>
-                <h3>¿Qué sigue ahora?</h3>
-              </div>
-
-              <div className="steps-timeline">
-                <div className="timeline-step">
-                  <div className="timeline-dot">1</div>
-                  <div className="timeline-content">
-                    <strong>Contacto en 24 horas:</strong> Nuestro equipo se comunicará contigo por WhatsApp para confirmar todos los detalles de tu canción.
-                  </div>
-                </div>
-
-                <div className="timeline-step">
-                  <div className="timeline-dot">2</div>
-                  <div className="timeline-content">
-                    <strong>Creación:</strong> Comenzaremos a trabajar en tu canción personalizada con todo el amor y dedicación que mereces.
-                  </div>
-                </div>
-
-                <div className="timeline-step">
-                  <div className="timeline-dot">3</div>
-                  <div className="timeline-content">
-                    <strong>Entrega:</strong> Te enviaremos un adelanto para que escuches tu canción antes de pagar.
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Recordatorio de pago */}
-            <div className="payment-reminder">
-              <p>💵 Pagarás cuando recibas y escuches tu canción personalizada</p>
-            </div>
-
-            {/* Botón de cierre */}
-            <button className="btn-success" onClick={closeSuccess}>
-              ¡Perfecto! Entendido
             </button>
 
-            <p style={{ textAlign: 'center', marginTop: '16px', fontSize: '14px', color: '#6b7280' }}>
-              ¡Gracias por confiar en Letra Viva! 💚🎶
-            </p>
+            <div className="welcome-content">
+              {/* Icono de éxito animado */}
+              <div className="success-icon">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+
+              <h1 className="success-title">¡Pedido Creado!</h1>
+              <p className="success-subtitle">Tu canción personalizada está en camino</p>
+
+              {/* Detalles del pedido */}
+              <div className="order-details">
+                <div className="order-number">
+                  <p className="order-number-label">Número de Pedido</p>
+                  <h2 className="order-number-value">{orderSuccess.orderNumber}</h2>
+                </div>
+
+                <div className="detail-grid">
+                  <div className="detail-item">
+                    <div className="detail-icon">👤</div>
+                    <div className="detail-content">
+                      <p className="detail-label">Cliente</p>
+                      <p className="detail-value">{orderSuccess.nombre}</p>
+                    </div>
+                  </div>
+
+                  <div className="detail-item">
+                    <div className="detail-icon">🎵</div>
+                    <div className="detail-content">
+                      <p className="detail-label">Paquete Seleccionado</p>
+                      <p className="detail-value">{orderSuccess.paquete}</p>
+                    </div>
+                  </div>
+
+                  <div className="detail-item">
+                    <div className="detail-icon">💰</div>
+                    <div className="detail-content">
+                      <p className="detail-label">Total a Pagar</p>
+                      <p className="detail-value">{orderSuccess.precio} COP</p>
+                    </div>
+                  </div>
+
+                  <div className="detail-item">
+                    <div className="detail-icon">📱</div>
+                    <div className="detail-content">
+                      <p className="detail-label">WhatsApp</p>
+                      <p className="detail-value">{orderSuccess.whatsapp}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Próximos pasos */}
+              <div className="next-steps">
+                <div className="next-steps-title">
+                  <span style={{ fontSize: '20px' }}>⏰</span>
+                  <h3>¿Qué sigue ahora?</h3>
+                </div>
+
+                <div className="steps-timeline">
+                  <div className="timeline-step">
+                    <div className="timeline-dot">1</div>
+                    <div className="timeline-content">
+                      <strong>Contacto en 24 horas:</strong> Nuestro equipo se comunicará contigo por WhatsApp para confirmar todos los detalles de tu canción.
+                    </div>
+                  </div>
+
+                  <div className="timeline-step">
+                    <div className="timeline-dot">2</div>
+                    <div className="timeline-content">
+                      <strong>Creación:</strong> Comenzaremos a trabajar en tu canción personalizada con todo el amor y dedicación que mereces.
+                    </div>
+                  </div>
+
+                  <div className="timeline-step">
+                    <div className="timeline-dot">3</div>
+                    <div className="timeline-content">
+                      <strong>Entrega:</strong> Te enviaremos un adelanto para que escuches tu canción antes de pagar.
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Recordatorio de pago */}
+              <div className="payment-reminder">
+                <p>💵 Pagarás cuando recibas y escuches tu canción personalizada</p>
+              </div>
+
+              {/* Botón de cierre */}
+              <button className="btn-success" onClick={closeSuccess}>
+                ¡Perfecto! Entendido
+              </button>
+
+              <p style={{ textAlign: 'center', marginTop: '16px', fontSize: '14px', color: '#6b7280' }}>
+                ¡Gracias por confiar en Letra Viva! 💚🎶
+              </p>
+            </div>
           </div>
         </div>
-      </div>
-    )}
-  </div>
-);
+      )}
+    </div>
+  );
 };
 
 export default ModalCancionPersonalizada;
