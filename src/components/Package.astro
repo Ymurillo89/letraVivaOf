@@ -58,11 +58,11 @@ function getFeatures(title: string) {
                 const icon = icons[variant.position as keyof typeof icons];
                 
                 return (
-                    <div class={`relative ${isStandard ? 'md:scale-105 md:z-10' : ''}`}>
+                    <div class={`relative ${isStandard ? 'md:scale-105 ' : ''}`}>
                         {/* Popular Badge */}
-                        {isStandard && (
+                      {isStandard && (
                             <div class="absolute -top-4 left-1/2 -translate-x-1/2 z-20">
-                                <span class="bg-gradient-to-r from-[#f89a3f] via-[#ff6b35] to-[#f89a3f] text-white px-5 py-2 rounded-full text-sm font-bold shadow-xl">
+                                <span class="bg-gradient-to-r from-[#f89a3f] via-[#ff6b35] to-[#f89a3f] text-white px-5 py-2 rounded-full text-sm font-bold shadow-xl whitespace-nowrap">
                                     ⭐ MÁS POPULAR
                                 </span>
                             </div>
@@ -72,7 +72,7 @@ function getFeatures(title: string) {
                         <button
                             data-variant-id={variant.id}
                             data-variant-price={variant.price}
-                            class={`package-btn w-full h-full p-8 rounded-2xl bg-gradient-to-br from-white to-gray-50/80 border-2 border-gray-200 hover:border-[#11676a] transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 group relative overflow-hidden`}>
+                            class={`package-btn w-full h-full p-8 cursor-pointer rounded-2xl bg-gradient-to-br from-white to-gray-50/80 border-2 border-gray-200 hover:border-[#11676a] transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 group relative overflow-hidden`}>
                             
                             {/* Background Pattern */}
                             <div class="absolute inset-0 opacity-5">

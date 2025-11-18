@@ -276,9 +276,11 @@ function prevSong() {
 function selectSong(index) {
   currentSongIndex = index;
   updateSongInfo();
-  if (isPlaying) {
-    audio.play().catch(e => console.warn("Reproducción bloqueada:", e));
-  }
+  // Siempre reproducir al seleccionar una canción
+  audio.play().then(() => {
+    isPlaying = true;
+    updatePlayPauseIcons();
+  }).catch(e => console.warn("Reproducción bloqueada:", e));
   updatePlaylistHighlight();
 }
 
