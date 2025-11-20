@@ -35,17 +35,7 @@ const currentPath = Astro.url.pathname;
 
         <!-- Menú Desktop (oculto en móvil) -->
         <div class="hidden md:flex space-x-8 items-center">
-          <a
-            href="/"
-            class={`px-3 py-1 rounded-md font-medium text-sm transition-colors ${
-              currentPath === "/"
-                ? "bg-[#00343d] text-white"
-                : "text-gray-700 hover:text-[#00343d]"
-            }`}
-          >
-            Crea Tu Canción Personalizada
-          </a>
-
+          
           <a
             href="/contacto"
             class={`px-3 py-1 rounded-md font-medium text-sm transition-colors ${
@@ -54,7 +44,67 @@ const currentPath = Astro.url.pathname;
                 : "text-gray-700 hover:text-[#00343d]"
             }`}
           >
-            Contáctanos
+            Crea Tu Canción Personalizada
+          </a>
+          <a
+            href="/contacto"
+            class={`px-3 py-1 rounded-md font-medium text-sm transition-colors ${
+              currentPath === "/contacto" || currentPath === "/contacto/"
+                ? "bg-[#00343d] text-white"
+                : "text-gray-700 hover:text-[#00343d]"
+            }`}
+          >
+            Testimonios
+          </a>
+          <a
+            href="/contacto"
+            class={`px-3 py-1 rounded-md font-medium text-sm transition-colors ${
+              currentPath === "/contacto" || currentPath === "/contacto/"
+                ? "bg-[#00343d] text-white"
+                : "text-gray-700 hover:text-[#00343d]"
+            }`}
+          >
+            Paquetes
+          </a>
+          <a
+            href="/contacto"
+            class={`px-3 py-1 rounded-md font-medium text-sm transition-colors ${
+              currentPath === "/contacto" || currentPath === "/contacto/"
+                ? "bg-[#00343d] text-white"
+                : "text-gray-700 hover:text-[#00343d]"
+            }`}
+          >
+            Videos Emocionantes
+          </a>
+          <a
+            href="/contacto"
+            class={`px-3 py-1 rounded-md font-medium text-sm transition-colors ${
+              currentPath === "/contacto" || currentPath === "/contacto/"
+                ? "bg-[#00343d] text-white"
+                : "text-gray-700 hover:text-[#00343d]"
+            }`}
+          >
+            Melodías
+          </a>
+          <a
+            href="/contacto"
+            class={`px-3 py-1 rounded-md font-medium text-sm transition-colors ${
+              currentPath === "/contacto" || currentPath === "/contacto/"
+                ? "bg-[#00343d] text-white"
+                : "text-gray-700 hover:text-[#00343d]"
+            }`}
+          >
+            Melodías
+          </a>
+          <a
+            href="/contacto"
+            class={`px-3 py-1 rounded-md font-medium text-sm transition-colors ${
+              currentPath === "/contacto" || currentPath === "/contacto/"
+                ? "bg-[#00343d] text-white"
+                : "text-gray-700 hover:text-[#00343d]"
+            }`}
+          >
+            Preguntas 
           </a>
         </div>
       </div>
@@ -69,17 +119,9 @@ const currentPath = Astro.url.pathname;
     id="mobile-menu"
     class="md:hidden fixed top-20 left-0 w-full h-[calc(100vh-5rem)] bg-[#00343d] transform -translate-x-full transition-transform duration-300 ease-in-out z-40"
   >
-    <div class="flex flex-col pt-8 space-y-1">
+    <div class="flex flex-col pt-8 space-y-1">     
       <a
         href="/"
-        class={`px-4 py-4 text-white text-lg font-normal border-b border-[#004d5a] transition-colors ${
-          currentPath === "/" ? "bg-[#004d5a]" : "hover:bg-[#004d5a]"
-        }`}
-      >
-        Inicio
-      </a>
-      <a
-        href="/personalizedSong"
         class={`px-4 py-4 text-white text-lg font-normal border-b border-[#004d5a] transition-colors ${
           currentPath === "/personalizedSong" ||
           currentPath === "/personalizedSong/"
@@ -88,6 +130,61 @@ const currentPath = Astro.url.pathname;
         }`}
       >
         Crea Tu Canción Personalizada
+      </a>
+      <a
+        href="/testimonials"
+        class={`px-4 py-4 text-white text-lg font-normal border-b border-[#004d5a] transition-colors ${
+          currentPath === "/testimonials" ||
+          currentPath === "/testimonials/"
+            ? "bg-[#004d5a]"
+            : "hover:bg-[#004d5a]"
+        }`}
+      >
+        Testimonios
+      </a>
+      <a
+        href="/packages"
+        class={`px-4 py-4 text-white text-lg font-normal border-b border-[#004d5a] transition-colors ${
+          currentPath === "/packages" ||
+          currentPath === "/packages/"
+            ? "bg-[#004d5a]"
+            : "hover:bg-[#004d5a]"
+        }`}
+      >
+        Paquetes
+      </a>
+      <a
+        href="/videos"
+        class={`px-4 py-4 text-white text-lg font-normal border-b border-[#004d5a] transition-colors ${
+          currentPath === "/videos" ||
+          currentPath === "/videos/"
+            ? "bg-[#004d5a]"
+            : "hover:bg-[#004d5a]"
+        }`}
+      >
+        Videos Emocionantes
+      </a>
+      <a
+        href="/melodies"
+        class={`px-4 py-4 text-white text-lg font-normal border-b border-[#004d5a] transition-colors ${
+          currentPath === "/melodies" ||
+          currentPath === "/melodies/"
+            ? "bg-[#004d5a]"
+            : "hover:bg-[#004d5a]"
+        }`}
+      >
+        Melodías
+      </a>
+      <a
+        href="/questions"
+        class={`px-4 py-4 text-white text-lg font-normal border-b border-[#004d5a] transition-colors ${
+          currentPath === "/questions" ||
+          currentPath === "/questions/"
+            ? "bg-[#004d5a]"
+            : "hover:bg-[#004d5a]"
+        }`}
+      >
+        Preguntas
       </a>
       <a
         href="/contacto"

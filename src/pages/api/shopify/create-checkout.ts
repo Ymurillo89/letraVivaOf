@@ -1,7 +1,7 @@
 // src/pages/api/shopify/create-checkout.ts
-
-// IMPORTANTE: Marcar como server-rendered
 export const prerender = false;
+
+
 
 import type { APIRoute } from 'astro';
 
@@ -96,8 +96,8 @@ export const POST: APIRoute = async ({ request }) => {
         note: orderData.note || '',
         // Información del comprador - PRE-LLENAR DATOS DEL CHECKOUT
         buyerIdentity: {
-          email: orderData.customer?.email || '',
-          phone: orderData.customer?.phone || '',
+          email: '1@letraviva.com' ,
+          phone: '3132948434',
           countryCode: orderData.customer?.country_code || 'CO',
           // Dirección de envío pre-llenada
           ...(orderData.customer?.address && {

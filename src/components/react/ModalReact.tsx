@@ -227,129 +227,169 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
     setErrors({ ...errors, metodoPago: false });
   };
 
-  const handleSubmit = async () => {
-    if (!validateCurrentStep()) return;
+  // Agrega estos useEffect en tu componente ModalCancionPersonalizada
 
-    setIsSubmitting(true);
+// Ocultar navbar cuando se abra cualquier modal
+useEffect(() => {
+  const nav = document.querySelector('nav');
+  if (showWelcome || showForm || showSuccess) {
+    nav?.classList.add('hidden');
+    // Prevenir scroll en el body
+    document.body.style.overflow = 'hidden';
+  } else {
+    nav?.classList.remove('hidden');
+    document.body.style.overflow = '';
+  }
 
-    try {
-      const selectedPaquete = paquetes.find(p => p.id === formData.paquete);
-      const selectedGenero = generos.find(g => g.id === formData.genero);
-
-      // Extraer nombre y apellido si es posible
-      const nombreCompleto = formData.nombre.trim().split(' ');
-      const firstName = nombreCompleto[0] || '';
-      const lastName = nombreCompleto.slice(1).join(' ') || '';
-
-      // Limpiar el número de WhatsApp para usarlo como teléfono
-      const phoneClean = formData.whatsapp.replace(/[^\d+]/g, '');
-
-      // Preparar datos del pedido con TODA la información
-      const orderData = {
-        line_items: [
-          {
-            variant_id: selectedPaquete?.variantId || 0,
-            quantity: 1
-          }
-        ],
-        customer: {
-          first_name: firstName,
-          last_name: lastName,
-          phone: phoneClean,
-          email: `-`, // Si pides email en tu formulario, úsalo aquí
-          country_code: 'CO', // Colombia
-          // Información de dirección (puedes agregar campos al formulario si lo necesitas)
-          address: {
-            first_name: firstName,
-            last_name: lastName,
-            address1: '', // Puedes agregar campo "Dirección" en el paso 2
-            address2: '',
-            city: '', // Puedes agregar campo "Ciudad" en el paso 2
-            province: '', // Departamento
-            country: 'Colombia',
-            zip: '', // Código postal
-            phone: phoneClean,
-            company: ''
-          }
-        },
-        note_attributes: [
-          { name: "Nombre personalizado", value: formData.nombre },
-          { name: "Para", value: formData.paraQuien },
-          { name: "Ocasión", value: formData.ocasion },
-          { name: "Tono Emocional", value: formData.tonoEmocional },
-          { name: "Historia", value: formData.historia },
-          { name: "Género musical", value: selectedGenero?.label || "" },
-          { name: "WhatsApp", value: formData.whatsapp },
-          { name: "Método de Pago", value: formData.metodoPago === "online" ? "Pago en Línea" : "Contra Entrega" }
-        ],
-        note: `Historia: ${formData.historia}`
-      };
-
-      // Usar endpoint diferente según método de pago
-      const endpoint = formData.metodoPago === "online"
-        ? '/api/shopify/create-checkout'  // Storefront API - Pre-llena datos
-        : '/api/shopify/create-order';     // Admin API
-
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(orderData)
-      });
-
-      const responseText = await response.text();
-
-      let data;
-      try {
-        data = JSON.parse(responseText);
-      } catch (e) {
-        console.error('Error parseando JSON:', e);
-        throw new Error(`Respuesta inválida del servidor: ${responseText}`);
-      }
-
-      if (!data.success) {
-        throw new Error(data.message || 'Error al procesar el pedido');
-      }
-
-      closeForm();
-
-      if (formData.metodoPago === "online") {
-        // Redirigir al checkout de Shopify con datos pre-llenados
-        window.location.href = data.checkoutUrl;
-      } else {
-        // Mostrar modal de éxito para contra entrega
-        setOrderSuccess({
-          orderNumber: data.orderNumber,
-          nombre: formData.nombre,
-          paquete: selectedPaquete?.nombre || '',
-          precio: selectedPaquete?.precio || '',
-          whatsapp: formData.whatsapp
-        });
-        setShowSuccess(true);
-
-        // Resetear el formulario
-        setFormData({
-          nombre: "",
-          paraQuien: "",
-          ocasion: "",
-          tonoEmocional: "",
-          historia: "",
-          whatsapp: "",
-          genero: "",
-          paquete: "",
-          metodoPago: "",
-        });
-        setCurrentStep(0);
-      }
-
-    } catch (error) {
-      console.error('Error al crear pedido:', error);
-      alert(error instanceof Error ? error.message : 'Hubo un error al procesar tu pedido. Por favor intenta nuevamente.');
-    } finally {
-      setIsSubmitting(false);
-    }
+  // Cleanup al desmontar el componente
+  return () => {
+    nav?.classList.remove('hidden');
+    document.body.style.overflow = '';
   };
+}, [showWelcome, showForm, showSuccess]);
+
+// Agregar también en las funciones de cierre para asegurar:
+
+
+
+const handleSubmit = async () => {
+  if (!validateCurrentStep()) return;
+
+  setIsSubmitting(true);
+
+  try {
+    const selectedPaquete = paquetes.find(p => p.id === formData.paquete);
+    const selectedGenero = generos.find(g => g.id === formData.genero);
+
+    // Extraer nombre y apellido
+    const nombreCompleto = formData.nombre.trim().split(' ');
+    const firstName = nombreCompleto[0] || 'Cliente';
+    const lastName = nombreCompleto.slice(1).join(' ') || 'Letra Viva';
+
+    // Limpiar el número de WhatsApp
+    const phoneClean = formData.whatsapp.replace(/[^\d+]/g, '');
+
+    // Preparar datos del pedido - ESTRUCTURA CORREGIDA
+    const orderData = {
+      line_items: [
+        {
+          variant_id: selectedPaquete?.variantId || 0,
+          quantity: 1
+        }
+      ],
+      customer: {
+        first_name: firstName,
+        last_name: lastName,
+        phone: phoneClean,
+        email: `${phoneClean}@letrativa.com`, // Email temporal basado en teléfono
+      },
+      // BILLING ADDRESS - estructura correcta como objeto plano
+      billing_address: {
+        first_name: firstName,
+        last_name: lastName,
+        address1: 'Dirección no especificada', // DEBE ser string
+        address2: '',
+        city: 'Medellín',
+        province: 'Antioquia',
+        country: 'Colombia',
+        zip: '050001',
+        phone: phoneClean
+      },
+      // SHIPPING ADDRESS - estructura correcta como objeto plano
+      shipping_address: {
+        first_name: firstName,
+        last_name: lastName,
+        address1: 'Dirección no especificada', // DEBE ser string
+        address2: '',
+        city: 'Medellín',
+        province: 'Antioquia',
+        country: 'Colombia',
+        zip: '050001',
+        phone: phoneClean
+      },
+      note_attributes: [
+        { name: "Nombre", value: formData.nombre },
+        { name: "Para quien", value: formData.paraQuien },
+        { name: "Ocasion", value: formData.ocasion },
+        { name: "Tono Emocional", value: formData.tonoEmocional },
+        { name: "Historia", value: formData.historia },
+        { name: "Genero musical", value: selectedGenero?.label || "" },
+        { name: "WhatsApp", value: formData.whatsapp },
+        { name: "Metodo de Pago", value: formData.metodoPago === "online" ? "Pago en Linea" : "Contra Entrega" }
+      ],
+      note: `Historia: ${formData.historia}\n\nPara: ${formData.paraQuien}\nOcasion: ${formData.ocasion}\nTono: ${formData.tonoEmocional}\nGenero: ${selectedGenero?.label || ""}`
+    };
+
+    // Usar endpoint diferente según método de pago
+    const endpoint = formData.metodoPago === "online"
+      ? '/api/shopify/create-checkout'  // Storefront API
+      : '/api/shopify/create-order';     // Admin API
+
+    console.log('Enviando pedido:', JSON.stringify(orderData, null, 2));
+
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(orderData)
+    });
+
+    const responseText = await response.text();
+    console.log('Respuesta del servidor:', responseText);
+
+    let data;
+    try {
+      data = JSON.parse(responseText);
+    } catch (e) {
+      console.error('Error parseando JSON:', e);
+      throw new Error(`Respuesta inválida del servidor: ${responseText}`);
+    }
+
+    if (!data.success) {
+      throw new Error(data.message || 'Error al procesar el pedido');
+    }
+
+    closeForm();
+
+    if (formData.metodoPago === "online") {
+      // Redirigir al checkout de Shopify
+      window.location.href = data.checkoutUrl;
+    } else {
+      // Mostrar modal de éxito
+      setOrderSuccess({
+        orderNumber: data.orderNumber,
+        nombre: formData.nombre,
+        paquete: selectedPaquete?.nombre || '',
+        precio: selectedPaquete?.precio || '',
+        whatsapp: formData.whatsapp
+      });
+      setShowSuccess(true);
+
+      // Resetear formulario
+      setFormData({
+        nombre: "",
+        paraQuien: "",
+        ocasion: "",
+        tonoEmocional: "",
+        historia: "",
+        whatsapp: "",
+        genero: "",
+        paquete: "",
+        metodoPago: "",
+      });
+      setCurrentStep(0);
+    }
+
+  } catch (error) {
+    console.error('Error al crear pedido:', error);
+    alert(error instanceof Error ? error.message : 'Hubo un error al procesar tu pedido. Por favor intenta nuevamente.');
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   const progressWidth = ((currentStep + 1) / steps.length) * 100;
+
+  
 
   return (
     <div className="w-full">
@@ -407,7 +447,7 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
           display: flex;
           align-items: center;
           justify-content: center;
-          z-index: 2147483647;
+          z-index: 9999;
           padding: 20px;
           animation: fadeIn 0.3s ease;
         }

@@ -352,18 +352,9 @@ const icons: Record<IconName, string> = {
                       </div>
                     </td>
                     <td class="py-4 px-2 text-center">
-                      <div
-                        class={`inline-flex items-center justify-center w-8 h-8 rounded-full ${feature.others ? "bg-gradient-to-br from-[#11676a] to-[#2d8c89]" : "bg-gray-200"}`}
-                      >
-                        <svg
-                          class={`h-5 w-5 ${feature.others ? "text-green-600" : "text-red-500 "}`}
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          stroke-width="2"
-                        >
-                          <Fragment
-                            set:html={feature.others ? icons.check : icons.x}
-                          />
+                      <div class={`inline-flex items-center justify-center w-8 h-8 rounded-full ${feature.others ? "bg-gray-400" : "bg-gray-200"}`}>
+                        <svg class={`h-5 w-5 ${feature.others ? "text-green-600" : "text-red-500 "}`} viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                          <Fragment set:html={feature.others ? icons.check : icons.x} />
                         </svg>
                       </div>
                     </td>
