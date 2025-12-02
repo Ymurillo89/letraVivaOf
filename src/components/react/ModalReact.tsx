@@ -77,7 +77,7 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
       subtitle: "Para enviarte tu canción personalizada",
     },
     {
-      title: "Elige Tu Estilo Musical",
+      title: "Elige Tu Género Musical",
       subtitle: "Selecciona el género que más te guste",
     },
     {
@@ -91,12 +91,25 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
   ];
 
   const generos = [
-    { id: "romantica", label: "Romántica" },
     { id: "pop", label: "Pop" },
     { id: "reggaeton", label: "Reggaeton" },
     { id: "balada", label: "Balada" },
     { id: "rock", label: "Rock" },
     { id: "vallenato", label: "Vallenato" },
+    { id: "salsa", label: "Salsa" },
+    { id: "Cumbia", label: "Cumbia" },
+    { id: "Merengue", label: "Merengue" },
+    { id: "Afro Beat", label: "Afro Beat" },
+    { id: "Bolero", label: "Bolero" },
+    { id: "Ranchera", label: "Ranchera" },
+    { id: "Tango", label: "Tango" },
+    { id: "Música Popular", label: "Música Popular" },
+    { id: "Trap Latino", label: "Trap Latino" },
+    { id: "R&B", label: "R&B" },
+    { id: "Jazz", label: "Jazz" },
+    { id: "Hip hop", label: "Hip hop" },
+    { id: "Indie/Alternativo", label: "Indie/Alternativo" },
+    { id: "Sorprende", label: "Sorprende" },
   ];
 
   // Procesar variants de Shopify
@@ -1258,7 +1271,7 @@ const handleSubmit = async () => {
       {/* Botón Principal */}
       <button
         onClick={openWelcome}
-        className="group cursor-pointer relative inline-flex items-center justify-center gap-3 bg-gradient-to-r from-[#f89a3f] via-[#ff6b35] to-[#f89a3f] hover:from-[#ff6b35] hover:via-[#f89a3f] hover:to-[#ff6b35] text-white px-6 py-4 rounded-full text-lg font-bold transition-all duration-500 hover:scale-[1.02] w-full max-w-lg mx-auto md:w-auto md:max-w-none overflow-hidden border-2 border-[#ff6b35]/30"
+        className="group cursor-pointer relative inline-flex items-center justify-center gap-3 bg-gradient-to-r from-[#f89a3f] via-[#ff6b35] to-[#f89a3f] hover:from-[#ff6b35] hover:via-[#f89a3f] hover:to-[#ff6b35] text-white px-6 py-4 rounded-full text-lg font-bold transition-all duration-500 hover:scale-[1.02] w-full max-w-lg mx-auto md:w-auto md:max-w-none overflow-hidden border-2 border-[#ff6b35]/30 shadow-xl"
       >
         <span className="relative z-10 flex items-center gap-3">
           <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
@@ -1307,7 +1320,7 @@ const handleSubmit = async () => {
                 <div className="steps-list">
                   <div className="step-item">
                     <div className="step-number">1</div>
-                    <p>Cuéntanos tu historia de amor especial</p>
+                    <p>Cuéntanos tu historia especial</p>
                   </div>
 
                   <div className="step-item">
@@ -1380,11 +1393,14 @@ const handleSubmit = async () => {
                       className={errors.tonoEmocional ? 'error' : ''}
                     >
                       <option value="">Selecciona una opción</option>
-                      <option value="Romántica dulce">Romántica dulce</option>
-                      <option value="Pacífica">Pacífica</option>
-                      <option value="Energética">Energética</option>
-                      <option value="Animada">Animada</option>
-                      <option value="Electrizante">Electrizante</option>
+                      <option value="Romántico ">Romántico</option>
+                      <option value="Alegre Festivo">Alegre y Festivo</option>
+                      <option value="Nostálgico">Nostálgico</option>
+                      <option value="Bailable">Bailable</option>
+                      <option value="Inspirador">Inspirador</option>
+                      <option value="Melancólico">Melancólico</option>
+                      <option value="Espiritual">Espiritual</option>
+                      <option value="Personal Intimo">Personal e Intimo</option>
                     </select>
                     {errors.tonoEmocional && <span className="error-msg">Este campo es requerido</span>}
                   </div>
@@ -1406,7 +1422,7 @@ const handleSubmit = async () => {
                       <option value="hermano/a">Hermano/a</option>
                       <option value="hijo/a">Hijo/a</option>
                       <option value="importante">Alguien importante en mi vida</option>
-                      <option value="otro">Otro</option>
+                     {/*  <option value="otro">Otro</option> */}
                     </select>
                     {errors.paraQuien && <span className="error-msg">Este campo es requerido</span>}
                   </div>
@@ -1429,7 +1445,7 @@ const handleSubmit = async () => {
                       <option value="amor-amistad">Amor y amistad</option>
                       <option value="nacimiento">Nacimiento</option>
                       <option value="memorial">Memorial</option>
-                      <option value="otro">Otro</option>
+                    {/*   <option value="otro">Otro</option> */}
                     </select>
                     {errors.ocasion && <span className="error-msg">Este campo es requerido</span>}
                   </div>
@@ -1503,17 +1519,17 @@ const handleSubmit = async () => {
               {/* Paso 4: Selecciona Tu Paquete */}
               {currentStep === 4 && (
                 <>
-                  <div className="paquetes-list">
+                  <div className="paquetes-list ">
                     {paquetes.map((paquete) => (
                       <button
                         key={paquete.id}
-                        className={`paquete-card ${formData.paquete === paquete.id ? 'selected' : ''} `}
+                        className={`paquete-card shadow-md ${formData.paquete === paquete.id ? 'selected' : ''} `}
                         onClick={() => selectPaquete(paquete.id)}
                       >
                         <div className="paquete-info">
                           <h3>{paquete.nombre}</h3>
                           {paquete.subtitle && <p className="duracion">{paquete.subtitle}</p>}
-                          <p className="duracion">{paquete.duracion}</p>
+                         {/*  <p className="duracion">{paquete.duracion}</p> */}
                           <p className="descripcion">{paquete.descripcion}</p>
                         </div>
                         <div className="paquete-precio">
@@ -1586,19 +1602,16 @@ const handleSubmit = async () => {
                     </div>
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                      <div
-                        className={`pago-opcion ${formData.metodoPago === 'online' ? 'selected' : ''}`}
-                        onClick={() => selectMetodoPago('online')}
-                      >
+                      <div className={`pago-opcion shadow-md border ${formData.metodoPago === 'online' ? 'selected' : ''}`} onClick={() => selectMetodoPago('online')}>
                         <div className="pago-icon">💳</div>
                         <div className="pago-text">
                           <strong>Pago en Línea</strong>
-                          <p>Paga ahora y recibe tu canción más rápido</p>
+                          <p>Salta la fila, recibe tu canción en solo 24H</p>
                         </div>
                       </div>
 
                       <div
-                        className={`pago-opcion ${formData.metodoPago === 'contraentrega' ? 'selected' : ''}`}
+                        className={`pago-opcion shadow-md border ${formData.metodoPago === 'contraentrega' ? 'selected' : ''}`}
                         onClick={() => selectMetodoPago('contraentrega')}
                       >
                         <div className="pago-icon">💵</div>

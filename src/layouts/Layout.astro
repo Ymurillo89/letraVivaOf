@@ -1,5 +1,5 @@
 ---
-import  SpeedInsights  from "@vercel/speed-insights/astro"
+import SpeedInsights from "@vercel/speed-insights/astro";
 import "../styles/global.css";
 import Navbar from "../components/Navbar.astro";
 import Banner from "../components/Banner.astro";
@@ -13,13 +13,17 @@ import Banner from "../components/Banner.astro";
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
 		<title>Astro Basics</title>
+		<link
+			rel="stylesheet"
+			href="https://fonts.googleapis.com/css2?family=Lora:wght@400&display=swap"
+		/>
 	</head>
 	<body>
 		<!-- <Navbar/> -->
-		<div >			
-			<slot/>
+		<div>
+			<slot />
 		</div>
-		<SpeedInsights/>
+		<SpeedInsights />
 	</body>
 </html>
 

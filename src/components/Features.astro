@@ -1,9 +1,10 @@
 ---
 import { fetchProductVariants } from "../lib/shopify.server";
-import Modal from "./react/Modal.svelte";
+import logo from "../img/logoPeque.png";
+import pareja from "../img/pareja.jpeg";
 import ModalReact from "./react/ModalReact.tsx";
 
-const variants = await fetchProductVariants('8847688794261');
+const variants = await fetchProductVariants("8847688794261");
 // Tipos
 type IconName = "star" | "lock" | "bolt" | "check" | "x";
 
@@ -38,6 +39,23 @@ interface ComparisonFeature {
 
 // Datos de testimonios
 const testimonials: Testimonial[] = [
+  {
+    name: "María González",
+    role: "Cliente verificada",
+    image: pareja.src,
+    text: "¡Definitivamente el mejor regalo para alguien que amas, mi esposo no lo podía creer cuando menciona su nombre en el coro jajaj Nos encantó",
+    date: "Hace 2 semanas",
+    rating: 5,
+  },
+  {
+    name: "María González",
+    role: "Cliente verificada",
+    image:
+      "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/attachments/gen-images/public/happy-woman-smiling-UYZU8Vjj70pNX9gwmsv8RpTsNnthv8.png",
+    text: "Es increíble lo emocionada que estaba mi mamá al escuchar su canción, nunca la había visto así, de verdad gracias por que se nota que lo hacen con el corazón.",
+    date: "Hace 2 semanas",
+    rating: 5,
+  },
   {
     name: "María González",
     role: "Cliente verificada",
@@ -79,8 +97,8 @@ const features: Feature[] = [
 
 // Datos de calificaciones
 const ratings: Rating[] = [
-  { stars: 5, count: 119, percentage: 90.84 },
-  { stars: 4, count: 12, percentage: 9.16 },
+  { stars: 5, count: 2900, percentage: 97.84 },
+  { stars: 4, count: 100, percentage: 3.16 },
   { stars: 3, count: 0, percentage: 0 },
   { stars: 2, count: 0, percentage: 0 },
   { stars: 1, count: 0, percentage: 0 },
@@ -126,78 +144,110 @@ const icons: Record<IconName, string> = {
 <div class="container mx-auto max-w-7xl relative z-10 animate-fade-up">
   <div class="text-center mb-8">
     <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4 text-balance">
-      Regala Una Canción Que Nunca Olvidarán
+      Regala Una Canción Personalizada Única
     </h2>
 
     <p class="text-lg text-gray-600 max-w-2xl mx-auto text-pretty">
-      Elige tu tema favorito, selecciona tu paquete y recibe una canción
-      profesional hecha especialmente para ti
+      Cuéntanos tu historia, todo lo que quieras expresar y lo convertiremos en
+      una obra musical única, creada con todo el arte y la sensibilidad de Letra
+      Viva
     </p>
-  
-    <ModalReact variants={variants} client:load/>
+
+    <ModalReact variants={variants} client:load />
   </div>
 
   <div class="grid lg:grid-cols-2 gap-12 items-start mb-16">
     <!-- Columna Izquierda -->
     <div class="space-y-6">
-      <!-- Testimonios -->
-      {
-        testimonials.map((testimonial) => (
-          <div class="text-card-foreground flex flex-col gap-6 bg-gradient-to-br from-white to-[#e8f5f5] border-2 border-[#11676a]/20 p-8 shadow-2xl rounded-3xl relative overflow-hidden">
-            <div class="absolute top-0 right-0 w-32 h-32 bg-[#11676a]/5 rounded-full -translate-y-1/2 translate-x-1/2" />
-            <div class="relative">
-              <div class="flex items-start gap-4 mb-6">
-                <div class="flex-shrink-0">
-                  <div class="w-16 h-16 rounded-full bg-gradient-to-br from-[#11676a] to-[#2d8c89] p-0.5">
-                    <div class="w-full h-full rounded-full bg-white flex items-center justify-center overflow-hidden">
-                      <img
-                        alt={testimonial.name}
-                        loading="lazy"
-                        width="64"
-                        height="64"
-                        class="w-full h-full object-cover"
-                        src={testimonial.image}
-                      />
+      <!-- Testimonios  -->
+
+      <div>
+        <div class="w-full max-w-4xl mx-auto">
+         
+          <div class="overflow-hidden rounded-3xl">
+            <div
+              id="carousel-track"
+              class="flex transition-transform duration-500"
+            >
+              {
+                testimonials.map((testimonial) => (
+                  <div class="w-full flex-shrink-0 px-4">
+                    <div class="text-card-foreground flex flex-col gap-6 bg-gradient-to-br from-white to-[#e8f5f5] border-2 border-[#11676a]/20 p-8 shadow-2xl rounded-3xl relative overflow-hidden">
+                      <div class="absolute top-0 right-0 w-32 h-32 bg-[#11676a]/5 rounded-full -translate-y-1/2 translate-x-1/2" />
+                      <div class="relative">
+                        <div class="flex items-start gap-4 mb-6">
+                          <div class="flex-shrink-0">
+                            <div class="w-16 h-16 rounded-full bg-gradient-to-br from-[#11676a] to-[#2d8c89] p-0.5">
+                              <div class="w-full h-full rounded-full bg-white flex items-center justify-center overflow-hidden">
+                                <img
+                                  alt={testimonial.name}
+                                  loading="lazy"
+                                  width="64"
+                                  height="64"
+                                  class="w-full h-full object-cover"
+                                  src={testimonial.image}
+                                />
+                              </div>
+                            </div>
+                          </div>
+                          <div class="flex-1">
+                            <div class="flex items-center gap-1 mb-2">
+                              {Array.from({ length: testimonial.rating }).map(
+                                () => (
+                                  <svg
+                                    class="h-5 w-5 fill-[#f89a3f] text-[#f89a3f]"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                  >
+                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                                  </svg>
+                                ),
+                              )}
+                            </div>
+                            <h3 class="font-bold text-gray-900 text-lg">
+                              {testimonial.name}
+                            </h3>
+                            <p class="text-sm text-gray-600">
+                              {testimonial.role}
+                            </p>
+                          </div>
+                        </div>
+                        <blockquote class="text-gray-700 text-lg leading-relaxed mb-4">
+                          "{testimonial.text}"
+                        </blockquote>
+                     {/*    <div class="flex items-center gap-2 text-sm text-gray-500">
+                          <svg
+                            class="h-4 w-4 text-[#11676a]"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            stroke-width="2"
+                          >
+                            <path d="M20 6L9 17l-5-5" />
+                          </svg>
+                          <span>Compra verificada - {testimonial.date}</span>
+                        </div> */}
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div class="flex-1">
-                  <div class="flex items-center gap-1 mb-2">
-                    {renderStars(testimonial.rating).map(() => (
-                      <svg
-                        class="h-5 w-5 fill-[#f89a3f] text-[#f89a3f]"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        stroke-width="2"
-                      >
-                        <Fragment set:html={icons.star} />
-                      </svg>
-                    ))}
-                  </div>
-                  <h3 class="font-bold text-gray-900 text-lg">
-                    {testimonial.name}
-                  </h3>
-                  <p class="text-sm text-gray-600">{testimonial.role}</p>
-                </div>
-              </div>
-              <blockquote class="text-gray-700 text-lg leading-relaxed mb-4">
-                "{testimonial.text}"
-              </blockquote>
-              <div class="flex items-center gap-2 text-sm text-gray-500">
-                <svg
-                  class="h-4 w-4 text-[#11676a]"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <Fragment set:html={icons.check} />
-                </svg>
-                <span>Compra verificada - {testimonial.date}</span>
-              </div>
+                ))
+              }
             </div>
           </div>
-        ))
-      }
+
+          <div class="flex justify-center gap-2 mt-8">
+            {
+              testimonials.map((_, index) => (
+                <button
+                  class="carousel-dot w-3 h-3 rounded-full transition-all duration-300"
+                  data-index={index}
+                  aria-label={`Ir al testimonio ${index + 1}`}
+                />
+              ))
+            }
+          </div>
+        </div>
+      </div>
 
       <!-- Características -->
       <div class="grid gap-4">
@@ -260,7 +310,7 @@ const icons: Record<IconName, string> = {
             <div class="text-5xl font-bold text-gray-900">4.9</div>
           </div>
           <p class="text-xl font-semibold text-[#ff6b35]">
-            131 Clientes Emocionados
+            2K - 3K Clientes Emocionados
           </p>
         </div>
         <div class="space-y-3">
@@ -319,52 +369,131 @@ const icons: Record<IconName, string> = {
           <table class="w-full">
             <thead>
               <tr class="border-b-2 border-gray-200">
-                <th class="text-left py-4 px-2 text-gray-600 font-semibold text-sm">Característica</th>
+                <th
+                  class="text-left py-4 px-2 text-gray-600 font-semibold text-sm"
+                  >Característica</th
+                >
                 <th class="text-center py-4 px-2">
-                  <div class="inline-flex items-center gap-2 bg-gradient-to-r from-[#11676a] to-[#2d8c89] text-white px-4 py-2 rounded-full text-sm font-bold">
-                    LetraViva Oficial
-                  </div>
+                  <img
+                    src={logo.src}
+                    alt="logo"
+                    class="w-full h-9 object-contain"
+                  />
                 </th>
-                <th class="text-center py-4 px-2 text-gray-600 font-semibold text-sm">Otros</th
+                <th
+                  class="text-center py-4 px-2 text-gray-600 font-semibold text-sm"
+                  >Otros</th
+                >
               </tr>
-            </thead>
-            <tbody>
-              {
-                comparisonFeatures.map((feature) => (
-                  <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td class="py-4 px-2 text-gray-700 font-medium text-sm">
-                      {feature.name}
-                    </td>
-                    <td class="py-4 px-2 text-center">
-                      <div
-                        class={`inline-flex items-center justify-center w-8 h-8 rounded-full ${feature.letraViva ? "bg-gradient-to-br from-[#11676a] to-[#2d8c89]" : "bg-gray-200"}`}
-                      >
-                        <svg
-                          class={`h-5 w-5 ${feature.letraViva ? "text-white" : "text-gray-400"}`}
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          stroke-width="2"
+              <tbody>
+                {
+                  comparisonFeatures.map((feature) => (
+                    <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                      <td class="py-4 px-2 text-gray-700 font-medium text-sm">
+                        {feature.name}
+                      </td>
+                      <td class="py-4 px-2 text-center">
+                        <div
+                          class={`inline-flex items-center justify-center w-8 h-8 rounded-full ${feature.letraViva ? "bg-gradient-to-br from-[#11676a] to-[#2d8c89]" : "bg-gray-200"}`}
                         >
-                          <Fragment
-                            set:html={feature.letraViva ? icons.check : icons.x}
-                          />
-                        </svg>
-                      </div>
-                    </td>
-                    <td class="py-4 px-2 text-center">
-                      <div class={`inline-flex items-center justify-center w-8 h-8 rounded-full ${feature.others ? "bg-gray-400" : "bg-gray-200"}`}>
-                        <svg class={`h-5 w-5 ${feature.others ? "text-green-600" : "text-red-500 "}`} viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                          <Fragment set:html={feature.others ? icons.check : icons.x} />
-                        </svg>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              }
-            </tbody>
+                          <svg
+                            class={`h-5 w-5 ${feature.letraViva ? "text-white" : "text-gray-400"}`}
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            stroke-width="2"
+                          >
+                            <Fragment
+                              set:html={
+                                feature.letraViva ? icons.check : icons.x
+                              }
+                            />
+                          </svg>
+                        </div>
+                      </td>
+                      <td class="py-4 px-2 text-center">
+                        <div
+                          class={`inline-flex items-center justify-center w-8 h-8 rounded-full ${feature.others ? "bg-gray-400" : "bg-gray-200"}`}
+                        >
+                          <svg
+                            class={`h-5 w-5 ${feature.others ? "text-green-600" : "text-red-500 "}`}
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            stroke-width="2"
+                          >
+                            <Fragment
+                              set:html={feature.others ? icons.check : icons.x}
+                            />
+                          </svg>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                }
+              </tbody>
+            </thead>
           </table>
         </div>
       </div>
     </div>
   </div>
+
+  <style>
+    .carousel-dot {
+      background-color: #11676a33;
+    }
+
+    .carousel-dot.active {
+      background-color: #11676a;
+      width: 2rem;
+    }
+  </style>
+
+  <script>
+    const track = document.getElementById("carousel-track");
+    const dots = document.querySelectorAll(".carousel-dot");
+    const totalSlides = dots.length;
+    let currentIndex = 0;
+    let autoplayInterval;
+
+    function goToSlide(index) {
+      currentIndex = index;
+      const offset = -100 * currentIndex;
+      track.style.transform = `translateX(${offset}%)`;
+
+      // Actualizar puntos activos
+      dots.forEach((dot, i) => {
+        dot.classList.toggle("active", i === currentIndex);
+      });
+    }
+
+    function nextSlide() {
+      currentIndex = (currentIndex + 1) % totalSlides;
+      goToSlide(currentIndex);
+    }
+
+    function startAutoplay() {
+      autoplayInterval = setInterval(nextSlide, 4000); // Cambia cada 4 segundos
+    }
+
+    function stopAutoplay() {
+      clearInterval(autoplayInterval);
+    }
+
+    // Navegación manual con los puntos
+    dots.forEach((dot, index) => {
+      dot.addEventListener("click", () => {
+        stopAutoplay();
+        goToSlide(index);
+        startAutoplay(); // Reinicia el autoplay después del clic
+      });
+    });
+
+    // Pausar autoplay al pasar el mouse
+    track.addEventListener("mouseenter", stopAutoplay);
+    track.addEventListener("mouseleave", startAutoplay);
+
+    // Inicializar
+    goToSlide(0);
+    startAutoplay();
+  </script>
 </div>

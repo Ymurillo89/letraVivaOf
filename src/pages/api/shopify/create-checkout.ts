@@ -1,8 +1,6 @@
 // src/pages/api/shopify/create-checkout.ts
 export const prerender = false;
 
-
-
 import type { APIRoute } from 'astro';
 
 export const POST: APIRoute = async ({ request }) => {
