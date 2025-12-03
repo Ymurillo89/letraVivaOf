@@ -1,6 +1,8 @@
 ---
 import { fetchProductVariants } from "../lib/shopify.server";
 import logo from "../img/logoPeque.png";
+import testimonio1 from "../img/testimonio1.jpeg";
+import testimonio2 from "../img/testimonio2.jpeg";
 import pareja from "../img/pareja.jpeg";
 import ModalReact from "./react/ModalReact.tsx";
 
@@ -40,7 +42,7 @@ interface ComparisonFeature {
 // Datos de testimonios
 const testimonials: Testimonial[] = [
   {
-    name: "María González",
+    name: "Andrea Betancur",
     role: "Cliente verificada",
     image: pareja.src,
     text: "¡Definitivamente el mejor regalo para alguien que amas, mi esposo no lo podía creer cuando menciona su nombre en el coro jajaj Nos encantó",
@@ -48,19 +50,17 @@ const testimonials: Testimonial[] = [
     rating: 5,
   },
   {
-    name: "María González",
+    name: "Camila Rodriguez",
     role: "Cliente verificada",
-    image:
-      "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/attachments/gen-images/public/happy-woman-smiling-UYZU8Vjj70pNX9gwmsv8RpTsNnthv8.png",
+    image:testimonio1.src,      
     text: "Es increíble lo emocionada que estaba mi mamá al escuchar su canción, nunca la había visto así, de verdad gracias por que se nota que lo hacen con el corazón.",
     date: "Hace 2 semanas",
     rating: 5,
   },
   {
-    name: "María González",
-    role: "Cliente verificada",
-    image:
-      "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/attachments/gen-images/public/happy-woman-smiling-UYZU8Vjj70pNX9gwmsv8RpTsNnthv8.png",
+    name: "",
+    role: "Sandra Gomez",
+    image:testimonio2.src,
     text: "¡Increíble! Le regalé una canción a mi esposo por nuestro aniversario y lloró de emoción. La calidad es profesional y la letra capturó perfectamente nuestra historia. Definitivamente volveré a pedir otra.",
     date: "Hace 2 semanas",
     rating: 5,
@@ -97,8 +97,8 @@ const features: Feature[] = [
 
 // Datos de calificaciones
 const ratings: Rating[] = [
-  { stars: 5, count: 2900, percentage: 97.84 },
-  { stars: 4, count: 100, percentage: 3.16 },
+  { stars: 5, count: 2953, percentage: 96.84 },
+  { stars: 4, count: 134, percentage: 4.16 },
   { stars: 3, count: 0, percentage: 0 },
   { stars: 2, count: 0, percentage: 0 },
   { stars: 1, count: 0, percentage: 0 },
@@ -141,8 +141,8 @@ const icons: Record<IconName, string> = {
 };
 ---
 
-<div class="container mx-auto max-w-7xl relative z-10 animate-fade-up">
-  <div class="text-center mb-8">
+<section class="container mx-auto max-w-7xl relative z-10 animate-fade-up" id="crear-cancion">
+  <div class="text-center my-8">
     <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4 text-balance">
       Regala Una Canción Personalizada Única
     </h2>
@@ -159,93 +159,39 @@ const icons: Record<IconName, string> = {
   <div class="grid lg:grid-cols-2 gap-12 items-start mb-16">
     <!-- Columna Izquierda -->
     <div class="space-y-6">
-      <!-- Testimonios  -->
+      <!-- Testimonios - NUEVO DISEÑO SIMPLE -->
+      <div class="testimonial-section">
+        <div class="text-center ">
+          <div class="inline-flex items-center gap-2 bg-gradient-to-r from-[#11676a]/10 to-[#f89a3f]/10 px-4 py-2 rounded-full ">
+            <svg class="h-4 w-4 text-[#f89a3f]" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+            </svg>
+            <span class="text-xs font-semibold text-gray-700">Testimonios Verificados</span>
+          </div>         
+        </div>
 
-      <div>
-        <div class="w-full max-w-4xl mx-auto">
-         
-          <div class="overflow-hidden rounded-3xl">
-            <div
-              id="carousel-track"
-              class="flex transition-transform duration-500"
-            >
-              {
-                testimonials.map((testimonial) => (
-                  <div class="w-full flex-shrink-0 px-4">
-                    <div class="text-card-foreground flex flex-col gap-6 bg-gradient-to-br from-white to-[#e8f5f5] border-2 border-[#11676a]/20 p-8 shadow-2xl rounded-3xl relative overflow-hidden">
-                      <div class="absolute top-0 right-0 w-32 h-32 bg-[#11676a]/5 rounded-full -translate-y-1/2 translate-x-1/2" />
-                      <div class="relative">
-                        <div class="flex items-start gap-4 mb-6">
-                          <div class="flex-shrink-0">
-                            <div class="w-16 h-16 rounded-full bg-gradient-to-br from-[#11676a] to-[#2d8c89] p-0.5">
-                              <div class="w-full h-full rounded-full bg-white flex items-center justify-center overflow-hidden">
-                                <img
-                                  alt={testimonial.name}
-                                  loading="lazy"
-                                  width="64"
-                                  height="64"
-                                  class="w-full h-full object-cover"
-                                  src={testimonial.image}
-                                />
-                              </div>
-                            </div>
-                          </div>
-                          <div class="flex-1">
-                            <div class="flex items-center gap-1 mb-2">
-                              {Array.from({ length: testimonial.rating }).map(
-                                () => (
-                                  <svg
-                                    class="h-5 w-5 fill-[#f89a3f] text-[#f89a3f]"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                  >
-                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                                  </svg>
-                                ),
-                              )}
-                            </div>
-                            <h3 class="font-bold text-gray-900 text-lg">
-                              {testimonial.name}
-                            </h3>
-                            <p class="text-sm text-gray-600">
-                              {testimonial.role}
-                            </p>
-                          </div>
-                        </div>
-                        <blockquote class="text-gray-700 text-lg leading-relaxed mb-4">
-                          "{testimonial.text}"
-                        </blockquote>
-                     {/*    <div class="flex items-center gap-2 text-sm text-gray-500">
-                          <svg
-                            class="h-4 w-4 text-[#11676a]"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            stroke-width="2"
-                          >
-                            <path d="M20 6L9 17l-5-5" />
-                          </svg>
-                          <span>Compra verificada - {testimonial.date}</span>
-                        </div> */}
-                      </div>
-                    </div>
-                  </div>
-                ))
-              }
-            </div>
+        <!-- Testimonial actual -->
+        <div id="testimonial-display" class="mb-6">
+          <!-- Se llenará con JavaScript -->
+        </div>
+
+        <!-- Controles -->
+        <div class="flex items-center justify-between">
+          <button id="prev-testimonial" class="nav-btn">
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M15 18l-6-6 6-6" />
+            </svg>
+          </button>
+
+          <div class="flex gap-2" id="dots-container">
+            <!-- Dots generados con JS -->
           </div>
 
-          <div class="flex justify-center gap-2 mt-8">
-            {
-              testimonials.map((_, index) => (
-                <button
-                  class="carousel-dot w-3 h-3 rounded-full transition-all duration-300"
-                  data-index={index}
-                  aria-label={`Ir al testimonio ${index + 1}`}
-                />
-              ))
-            }
-          </div>
+          <button id="next-testimonial" class="nav-btn">
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 18l6-6-6-6" />
+            </svg>
+          </button>
         </div>
       </div>
 
@@ -310,7 +256,7 @@ const icons: Record<IconName, string> = {
             <div class="text-5xl font-bold text-gray-900">4.9</div>
           </div>
           <p class="text-xl font-semibold text-[#ff6b35]">
-            2K - 3K Clientes Emocionados
+            2K+ Clientes Emocionados
           </p>
         </div>
         <div class="space-y-3">
@@ -363,7 +309,7 @@ const icons: Record<IconName, string> = {
         >
         </div>
         <h3 class="text-2xl font-bold text-gray-900 mb-1 text-center">
-          ¿Por Qué Elegir LetraViva Oficial?
+          ¿Por Qué Elegir Letra Viva?
         </h3>
         <div class="overflow-x-auto">
           <table class="w-full">
@@ -436,64 +382,193 @@ const icons: Record<IconName, string> = {
       </div>
     </div>
   </div>
+</div>
 
-  <style>
-    .carousel-dot {
-      background-color: #11676a33;
-    }
+<style>
+  .testimonial-section {
+    background: linear-gradient(135deg, #ffffff 0%, #e8f5f5 100%);
+    border: 2px solid rgba(17, 103, 106, 0.2);
+    padding: 1.5rem;
+    border-radius: 1.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  }
 
-    .carousel-dot.active {
-      background-color: #11676a;
-      width: 2rem;
-    }
-  </style>
+  .testimonial-card {
+    background: white;
+    border: 1px solid rgba(17, 103, 106, 0.15);
+    padding: 1.25rem;
+    border-radius: 1.25rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    min-height: 240px;
+  }
 
-  <script>
-    const track = document.getElementById("carousel-track");
-    const dots = document.querySelectorAll(".carousel-dot");
-    const totalSlides = dots.length;
+  .nav-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #11676a, #2d8c89);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(17, 103, 106, 0.3);
+  }
+
+  .nav-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 16px rgba(17, 103, 106, 0.4);
+  }
+
+  .nav-btn:active {
+    transform: scale(0.95);
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: rgba(17, 103, 106, 0.3);
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0;
+  }
+
+  .dot.active {
+    width: 24px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, #11676a, #2d8c89);
+  }
+</style>
+
+<script is:inline define:vars={{ testimonials }}>
+  document.addEventListener('DOMContentLoaded', function() {
     let currentIndex = 0;
     let autoplayInterval;
 
-    function goToSlide(index) {
-      currentIndex = index;
-      const offset = -100 * currentIndex;
-      track.style.transform = `translateX(${offset}%)`;
+    const display = document.getElementById('testimonial-display');
+    const dotsContainer = document.getElementById('dots-container');
+    const prevBtn = document.getElementById('prev-testimonial');
+    const nextBtn = document.getElementById('next-testimonial');
 
-      // Actualizar puntos activos
-      dots.forEach((dot, i) => {
-        dot.classList.toggle("active", i === currentIndex);
+    function createTestimonialHTML(testimonial) {
+      const stars = Array(testimonial.rating).fill(0).map(() => 
+        `<svg class="h-4 w-4 fill-[#f89a3f] text-[#f89a3f]" viewBox="0 0 24 24">
+          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+        </svg>`
+      ).join('');
+
+      return `
+        <div class="testimonial-card">
+          <div class="flex items-start gap-3 mb-4">
+            <div class="flex-shrink-0">
+              <div class="w-14 h-14 rounded-full bg-gradient-to-br from-[#11676a] to-[#2d8c89] p-0.5">
+                <div class="w-full h-full rounded-full bg-white flex items-center justify-center overflow-hidden">
+                  <img alt="${testimonial.name}" class="w-full h-full object-cover" src="${testimonial.image}" />
+                </div>
+              </div>
+            </div>
+            <div class="flex-1">
+              <h4 class="font-bold text-gray-900 text-base mb-1">${testimonial.name}</h4>
+              <p class="text-xs text-gray-600 flex items-center gap-1">
+                <svg class="h-3 w-3 text-green-500" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                ${testimonial.role}
+              </p>
+            </div>
+          </div>
+          <div class="flex items-center gap-1 mb-3">${stars}</div>
+          <blockquote class="text-gray-700 text-sm leading-relaxed mb-3">"${testimonial.text}"</blockquote>
+          <div class="flex items-center gap-2 text-xs text-gray-500">
+            <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M12 6v6l4 2" />
+            </svg>
+            ${testimonial.date}
+          </div>
+        </div>
+      `;
+    }
+
+    function updateDisplay() {
+      if (display) {
+        display.innerHTML = createTestimonialHTML(testimonials[currentIndex]);
+      }
+      
+      // Update dots
+      document.querySelectorAll('.dot').forEach((dot, index) => {
+        dot.classList.toggle('active', index === currentIndex);
       });
     }
 
-    function nextSlide() {
-      currentIndex = (currentIndex + 1) % totalSlides;
-      goToSlide(currentIndex);
+    function next() {
+      currentIndex = (currentIndex + 1) % testimonials.length;
+      updateDisplay();
+    }
+
+    function prev() {
+      currentIndex = (currentIndex - 1 + testimonials.length) % testimonials.length;
+      updateDisplay();
+    }
+
+    function goTo(index) {
+      currentIndex = index;
+      updateDisplay();
     }
 
     function startAutoplay() {
-      autoplayInterval = setInterval(nextSlide, 4000); // Cambia cada 4 segundos
+      stopAutoplay();
+      autoplayInterval = setInterval(next, 5000);
     }
 
     function stopAutoplay() {
-      clearInterval(autoplayInterval);
+      if (autoplayInterval) clearInterval(autoplayInterval);
     }
 
-    // Navegación manual con los puntos
-    dots.forEach((dot, index) => {
-      dot.addEventListener("click", () => {
-        stopAutoplay();
-        goToSlide(index);
-        startAutoplay(); // Reinicia el autoplay después del clic
+    // Create dots
+    if (dotsContainer) {
+      testimonials.forEach((_, index) => {
+        const dot = document.createElement('button');
+        dot.className = 'dot';
+        dot.addEventListener('click', () => {
+          goTo(index);
+          stopAutoplay();
+          startAutoplay();
+        });
+        dotsContainer.appendChild(dot);
       });
-    });
+    }
 
-    // Pausar autoplay al pasar el mouse
-    track.addEventListener("mouseenter", stopAutoplay);
-    track.addEventListener("mouseleave", startAutoplay);
+    // Event listeners
+    if (prevBtn) {
+      prevBtn.addEventListener('click', () => {
+        prev();
+        stopAutoplay();
+        startAutoplay();
+      });
+    }
 
-    // Inicializar
-    goToSlide(0);
+    if (nextBtn) {
+      nextBtn.addEventListener('click', () => {
+        next();
+        stopAutoplay();
+        startAutoplay();
+      });
+    }
+
+    // Initialize
+    updateDisplay();
     startAutoplay();
-  </script>
-</div>
+
+    // Pause on hover
+    if (display) {
+      display.addEventListener('mouseenter', stopAutoplay);
+      display.addEventListener('mouseleave', startAutoplay);
+    }
+  });
+</script>

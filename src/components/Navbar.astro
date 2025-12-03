@@ -9,12 +9,9 @@ const currentPath = Astro.url.pathname;
     <div class="flex justify-between items-center h-18">
       
       <button id="menu-toggle" class="md:hidden flex flex-col justify-center items-center w-10 h-10 space-y-1.5 z-50" aria-label="Menú">
-        <span class="block w-6 h-0.5 bg-[#00343d] transition-all duration-300"
-        ></span>
-        <span class="block w-6 h-0.5 bg-[#00343d] transition-all duration-300"
-        ></span>
-        <span class="block w-6 h-0.5 bg-[#00343d] transition-all duration-300"
-        ></span>
+        <span class="block w-6 h-0.5 bg-[#00343d] transition-all duration-300"></span>
+        <span class="block w-6 h-0.5 bg-[#00343d] transition-all duration-300"></span>
+        <span class="block w-6 h-0.5 bg-[#00343d] transition-all duration-300"></span>
       </button>
 
       <!-- Logo y Menú Desktop -->
@@ -36,76 +33,26 @@ const currentPath = Astro.url.pathname;
         <!-- Menú Desktop (oculto en móvil) -->
         <div class="hidden md:flex space-x-8 items-center">
           
-          <a
-            href="/contacto"
-            class={`px-3 py-1 rounded-md font-medium text-sm transition-colors ${
-              currentPath === "/contacto" || currentPath === "/contacto/"
-                ? "bg-[#00343d] text-white"
-                : "text-gray-700 hover:text-[#00343d]"
-            }`}
-          >
+          <a href="#crear-cancion" class="px-3 py-1 rounded-md font-medium text-sm transition-colors">
             Crea Tu Canción Personalizada
-          </a>
-          <a
-            href="/contacto"
-            class={`px-3 py-1 rounded-md font-medium text-sm transition-colors ${
-              currentPath === "/contacto" || currentPath === "/contacto/"
-                ? "bg-[#00343d] text-white"
-                : "text-gray-700 hover:text-[#00343d]"
-            }`}
-          >
-            Testimonios
-          </a>
-          <a
-            href="/contacto"
-            class={`px-3 py-1 rounded-md font-medium text-sm transition-colors ${
-              currentPath === "/contacto" || currentPath === "/contacto/"
-                ? "bg-[#00343d] text-white"
-                : "text-gray-700 hover:text-[#00343d]"
-            }`}
-          >
+          </a>        
+          <a href="#paquetes" class="px-3 py-1 rounded-md font-medium text-sm transition-colors">
             Paquetes
           </a>
-          <a
-            href="/contacto"
-            class={`px-3 py-1 rounded-md font-medium text-sm transition-colors ${
-              currentPath === "/contacto" || currentPath === "/contacto/"
-                ? "bg-[#00343d] text-white"
-                : "text-gray-700 hover:text-[#00343d]"
-            }`}
-          >
+          <a href="#videos" class="px-3 py-1 rounded-md font-medium text-sm transition-colors">
             Videos Emocionantes
           </a>
-          <a
-            href="/contacto"
-            class={`px-3 py-1 rounded-md font-medium text-sm transition-colors ${
-              currentPath === "/contacto" || currentPath === "/contacto/"
-                ? "bg-[#00343d] text-white"
-                : "text-gray-700 hover:text-[#00343d]"
-            }`}
-          >
+          <a href="#testimonios" class="px-3 py-1 rounded-md font-medium text-sm transition-colors">
+            Testimonios
+          </a>
+          <a href="#melodias" class="px-3 py-1 rounded-md font-medium text-sm transition-colors">
             Melodías
           </a>
-          <a
-            href="/contacto"
-            class={`px-3 py-1 rounded-md font-medium text-sm transition-colors ${
-              currentPath === "/contacto" || currentPath === "/contacto/"
-                ? "bg-[#00343d] text-white"
-                : "text-gray-700 hover:text-[#00343d]"
-            }`}
-          >
-            Melodías
+        
+          <a href="#preguntas" class="px-3 py-1 rounded-md font-medium text-sm transition-colors">
+            Preguntas
           </a>
-          <a
-            href="/contacto"
-            class={`px-3 py-1 rounded-md font-medium text-sm transition-colors ${
-              currentPath === "/contacto" || currentPath === "/contacto/"
-                ? "bg-[#00343d] text-white"
-                : "text-gray-700 hover:text-[#00343d]"
-            }`}
-          >
-            Preguntas 
-          </a>
+         
         </div>
       </div>
 
@@ -115,87 +62,27 @@ const currentPath = Astro.url.pathname;
   </div>
 
   <!-- Menú Desplegable -->
-  <div
-    id="mobile-menu"
-    class="md:hidden fixed top-20 left-0 w-full h-[calc(100vh-5rem)] bg-[#00343d] transform -translate-x-full transition-transform duration-300 ease-in-out z-40"
-  >
+  <div id="mobile-menu" class="md:hidden fixed top-20 left-0 w-full h-[calc(100vh-5rem)] bg-[#00343d] transform -translate-x-full transition-transform duration-300 ease-in-out z-40">
     <div class="flex flex-col pt-8 space-y-1">     
-      <a
-        href="/"
-        class={`px-4 py-4 text-white text-lg font-normal border-b border-[#004d5a] transition-colors ${
-          currentPath === "/personalizedSong" ||
-          currentPath === "/personalizedSong/"
-            ? "bg-[#004d5a]"
-            : "hover:bg-[#004d5a]"
-        }`}
-      >
+      <a href="#crear-cancion" class="px-4 py-4 text-white text-lg font-normal border-b border-[#004d5a] transition-colors">
         Crea Tu Canción Personalizada
       </a>
-      <a
-        href="/testimonials"
-        class={`px-4 py-4 text-white text-lg font-normal border-b border-[#004d5a] transition-colors ${
-          currentPath === "/testimonials" ||
-          currentPath === "/testimonials/"
-            ? "bg-[#004d5a]"
-            : "hover:bg-[#004d5a]"
-        }`}
-      >
-        Testimonios
-      </a>
-      <a
-        href="/packages"
-        class={`px-4 py-4 text-white text-lg font-normal border-b border-[#004d5a] transition-colors ${
-          currentPath === "/packages" ||
-          currentPath === "/packages/"
-            ? "bg-[#004d5a]"
-            : "hover:bg-[#004d5a]"
-        }`}
-      >
+      <a href="#paquetes" class="px-4 py-4 text-white text-lg font-normal border-b border-[#004d5a] transition-colors">
         Paquetes
       </a>
-      <a
-        href="/videos"
-        class={`px-4 py-4 text-white text-lg font-normal border-b border-[#004d5a] transition-colors ${
-          currentPath === "/videos" ||
-          currentPath === "/videos/"
-            ? "bg-[#004d5a]"
-            : "hover:bg-[#004d5a]"
-        }`}
-      >
+      <a href="#videos" class="px-4 py-4 text-white text-lg font-normal border-b border-[#004d5a] transition-colors">
         Videos Emocionantes
       </a>
-      <a
-        href="/melodies"
-        class={`px-4 py-4 text-white text-lg font-normal border-b border-[#004d5a] transition-colors ${
-          currentPath === "/melodies" ||
-          currentPath === "/melodies/"
-            ? "bg-[#004d5a]"
-            : "hover:bg-[#004d5a]"
-        }`}
-      >
+      <a href="#testimonios" class="px-4 py-4 text-white text-lg font-normal border-b border-[#004d5a] transition-colors">
+        Testimonios
+      </a>
+      <a href="#melodias" class="px-4 py-4 text-white text-lg font-normal border-b border-[#004d5a] transition-colors">
         Melodías
       </a>
-      <a
-        href="/questions"
-        class={`px-4 py-4 text-white text-lg font-normal border-b border-[#004d5a] transition-colors ${
-          currentPath === "/questions" ||
-          currentPath === "/questions/"
-            ? "bg-[#004d5a]"
-            : "hover:bg-[#004d5a]"
-        }`}
-      >
+      <a href="#preguntas" class="px-4 py-4 text-white text-lg font-normal border-b border-[#004d5a] transition-colors">
         Preguntas
       </a>
-      <a
-        href="/contacto"
-        class={`px-4 py-4 text-white text-lg font-normal border-b border-[#004d5a] transition-colors ${
-          currentPath === "/contacto" || currentPath === "/contacto/"
-            ? "bg-[#004d5a]"
-            : "hover:bg-[#004d5a]"
-        }`}
-      >
-        Contáctanos
-      </a>
+   
     </div>
   </div>
   <Banner />

@@ -3,41 +3,16 @@ export const prerender = false;
 
 import type { APIRoute } from 'astro';
 
+// src/pages/api/shopify/create-checkout.ts
+
 export const POST: APIRoute = async ({ request }) => {
   try {
-    // Parsear el body correctamente
     const body = await request.text();
-    
-    if (!body) {
-      return new Response(
-        JSON.stringify({
-          success: false,
-          message: 'No se recibieron datos'
-        }),
-        { 
-          status: 400,
-          headers: { 'Content-Type': 'application/json' }
-        }
-      );
-    }
-
     const orderData = JSON.parse(body);
-
-    // Validar que existan los datos necesarios
-    if (!orderData.line_items || orderData.line_items.length === 0) {
-      return new Response(
-        JSON.stringify({
-          success: false,
-          message: 'No se especificaron productos'
-        }),
-        { 
-          status: 400,
-          headers: { 'Content-Type': 'application/json' }
-        }
-      );
-    }
-
-    // GraphQL mutation ACTUALIZADA - Usar cartCreate en lugar de checkoutCreate
+    
+    // Obtener la URL de origen desde el request
+    const origin = new URL(request.url).origin;
+    
     const mutation = `
       mutation cartCreate($input: CartInput!) {
         cartCreate(input: $input) {
@@ -50,27 +25,6 @@ export const POST: APIRoute = async ({ request }) => {
                 currencyCode
               }
             }
-            lines(first: 10) {
-              edges {
-                node {
-                  id
-                  quantity
-                  merchandise {
-                    ... on ProductVariant {
-                      id
-                      title
-                      product {
-                        title
-                      }
-                      price {
-                        amount
-                        currencyCode
-                      }
-                    }
-                  }
-                }
-              }
-            }
           }
           userErrors {
             field
@@ -80,111 +34,45 @@ export const POST: APIRoute = async ({ request }) => {
       }
     `;
 
-    // Preparar las variables con la nueva estructura
     const variables = {
       input: {
         lines: orderData.line_items.map((item: any) => ({
           merchandiseId: `gid://shopify/ProductVariant/${item.variant_id}`,
           quantity: item.quantity
         })),
-        attributes: orderData.note_attributes?.map((attr: any) => ({
-          key: attr.name,
-          value: attr.value
-        })) || [],
+        attributes: [
+          ...(orderData.note_attributes?.map((attr: any) => ({
+            key: attr.name,
+            value: attr.value
+          })) || []),
+          // Agregar URL de retorno como atributo
+          {
+            key: '_return_url',
+            value: `${origin}/gracias`  // o la página que quieras
+          }
+        ],
         note: orderData.note || '',
-        // Información del comprador - PRE-LLENAR DATOS DEL CHECKOUT
         buyerIdentity: {
-          email: '1@letraviva.com' ,
-          phone: '3132948434',
-          countryCode: orderData.customer?.country_code || 'CO',
-          // Dirección de envío pre-llenada
-          ...(orderData.customer?.address && {
-            deliveryAddressPreferences: [{
-              deliveryAddress: {
-                address1: orderData.customer.address.address1 || '',
-                address2: orderData.customer.address.address2 || '',
-                city: orderData.customer.address.city || '',
-                company: orderData.customer.address.company || '',
-                country: orderData.customer.address.country || 'Colombia',
-                firstName: orderData.customer.first_name || '',
-                lastName: orderData.customer.last_name || '',
-                phone: orderData.customer.phone || '',
-                province: orderData.customer.address.province || '',
-                zip: orderData.customer.address.zip || ''
-              }
-            }]
-          })
+          email: orderData.customer?.email || '1@letraviva.com',
+          phone: orderData.customer?.phone || '3132948434',
+          countryCode: 'CO'
         }
       }
     };
 
-    // Obtener variables de entorno
-    const storeDomain = import.meta.env.SHOPIFY_STORE_DOMAIN;
-    const storefrontToken = import.meta.env.SHOPIFY_STOREFRONT_TOKEN;
-
-    if (!storeDomain || !storefrontToken) {
-      console.error('Faltan variables de entorno de Shopify');
-      return new Response(
-        JSON.stringify({
-          success: false,
-          message: 'Error de configuración del servidor'
-        }),
-        { 
-          status: 500,
-          headers: { 'Content-Type': 'application/json' }
-        }
-      );
-    }
-
-    // Hacer la petición a Shopify Storefront API
     const response = await fetch(
-      `https://${storeDomain}/api/2025-01/graphql.json`,
+      `https://${import.meta.env.SHOPIFY_STORE_DOMAIN}/api/2025-01/graphql.json`,
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-Shopify-Storefront-Access-Token': storefrontToken,
+          'X-Shopify-Storefront-Access-Token': import.meta.env.SHOPIFY_STOREFRONT_TOKEN,
         },
-        body: JSON.stringify({ 
-          query: mutation, 
-          variables 
-        })
+        body: JSON.stringify({ query: mutation, variables })
       }
     );
 
     const result = await response.json();
-
-    // Verificar errores en la respuesta
-    if (result.errors) {
-      console.error('GraphQL errors:', result.errors);
-      return new Response(
-        JSON.stringify({
-          success: false,
-          message: result.errors[0]?.message || 'Error al crear el carrito'
-        }),
-        { 
-          status: 400,
-          headers: { 'Content-Type': 'application/json' }
-        }
-      );
-    }
-
-    // Verificar errores de usuario
-    if (result.data?.cartCreate?.userErrors?.length > 0) {
-      const userError = result.data.cartCreate.userErrors[0];
-      console.error('Cart user error:', userError);
-      return new Response(
-        JSON.stringify({
-          success: false,
-          message: userError.message
-        }),
-        { 
-          status: 400,
-          headers: { 'Content-Type': 'application/json' }
-        }
-      );
-    }
-
     const cart = result.data?.cartCreate?.cart;
 
     if (!cart || !cart.checkoutUrl) {
@@ -193,25 +81,21 @@ export const POST: APIRoute = async ({ request }) => {
           success: false,
           message: 'No se pudo obtener la URL del checkout'
         }),
-        { 
-          status: 500,
-          headers: { 'Content-Type': 'application/json' }
-        }
+        { status: 500, headers: { 'Content-Type': 'application/json' } }
       );
     }
 
-    // Retornar éxito
+    // Agregar parámetros de retorno a la URL del checkout
+    const checkoutUrl = new URL(cart.checkoutUrl);
+    checkoutUrl.searchParams.set('return_to', `${origin}/gracias`);
+    
     return new Response(
       JSON.stringify({
         success: true,
-        checkoutUrl: cart.checkoutUrl,
-        cartId: cart.id,
-        totalPrice: cart.cost?.totalAmount?.amount
+        checkoutUrl: checkoutUrl.toString(),
+        cartId: cart.id
       }),
-      { 
-        status: 200,
-        headers: { 'Content-Type': 'application/json' }
-      }
+      { status: 200, headers: { 'Content-Type': 'application/json' } }
     );
 
   } catch (error) {
@@ -221,10 +105,7 @@ export const POST: APIRoute = async ({ request }) => {
         success: false,
         message: error instanceof Error ? error.message : 'Error al crear el checkout'
       }),
-      { 
-        status: 500,
-        headers: { 'Content-Type': 'application/json' }
-      }
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
     );
   }
 };

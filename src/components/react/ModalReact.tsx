@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { EventBus } from '../utils/eventBus';
 
 interface ShopifyVariant {
   id: number;
@@ -34,6 +35,7 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
     tonoEmocional: "",
     historia: "",
     whatsapp: "",
+    email: "",
     genero: "",
     paquete: "",
     metodoPago: "",
@@ -46,6 +48,7 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
     tonoEmocional: false,
     historia: false,
     whatsapp: false,
+    email: false,
     genero: false,
     paquete: false,
     metodoPago: false,
@@ -62,6 +65,18 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
       }
     }
   }, [showForm, variants]);
+
+  useEffect(() => {
+    const handleOpenModal = () => {
+      openWelcome();
+    };
+
+    EventBus.on('openSongModal', handleOpenModal);
+
+    return () => {
+      EventBus.remove('openSongModal', handleOpenModal);
+    };
+  }, []);
 
   const steps = [
     {
@@ -192,6 +207,11 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
       case 2:
         newErrors.whatsapp = formData.whatsapp.trim().length < 10;
         isValid = !newErrors.whatsapp;
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        newErrors.email = !formData.email.trim() || !emailRegex.test(formData.email);
+
+        isValid = !newErrors.whatsapp && !newErrors.email;
         break;
       case 3:
         newErrors.genero = !formData.genero;
@@ -242,167 +262,169 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
 
   // Agrega estos useEffect en tu componente ModalCancionPersonalizada
 
-// Ocultar navbar cuando se abra cualquier modal
-useEffect(() => {
-  const nav = document.querySelector('nav');
-  if (showWelcome || showForm || showSuccess) {
-    nav?.classList.add('hidden');
-    // Prevenir scroll en el body
-    document.body.style.overflow = 'hidden';
-  } else {
-    nav?.classList.remove('hidden');
-    document.body.style.overflow = '';
-  }
-
-  // Cleanup al desmontar el componente
-  return () => {
-    nav?.classList.remove('hidden');
-    document.body.style.overflow = '';
-  };
-}, [showWelcome, showForm, showSuccess]);
-
-// Agregar también en las funciones de cierre para asegurar:
-
-
-
-const handleSubmit = async () => {
-  if (!validateCurrentStep()) return;
-
-  setIsSubmitting(true);
-
-  try {
-    const selectedPaquete = paquetes.find(p => p.id === formData.paquete);
-    const selectedGenero = generos.find(g => g.id === formData.genero);
-
-    // Extraer nombre y apellido
-    const nombreCompleto = formData.nombre.trim().split(' ');
-    const firstName = nombreCompleto[0] || 'Cliente';
-    const lastName = nombreCompleto.slice(1).join(' ') || 'Letra Viva';
-
-    // Limpiar el número de WhatsApp
-    const phoneClean = formData.whatsapp.replace(/[^\d+]/g, '');
-
-    // Preparar datos del pedido - ESTRUCTURA CORREGIDA
-    const orderData = {
-      line_items: [
-        {
-          variant_id: selectedPaquete?.variantId || 0,
-          quantity: 1
-        }
-      ],
-      customer: {
-        first_name: firstName,
-        last_name: lastName,
-        phone: phoneClean,
-        email: `${phoneClean}@letrativa.com`, // Email temporal basado en teléfono
-      },
-      // BILLING ADDRESS - estructura correcta como objeto plano
-      billing_address: {
-        first_name: firstName,
-        last_name: lastName,
-        address1: 'Dirección no especificada', // DEBE ser string
-        address2: '',
-        city: 'Medellín',
-        province: 'Antioquia',
-        country: 'Colombia',
-        zip: '050001',
-        phone: phoneClean
-      },
-      // SHIPPING ADDRESS - estructura correcta como objeto plano
-      shipping_address: {
-        first_name: firstName,
-        last_name: lastName,
-        address1: 'Dirección no especificada', // DEBE ser string
-        address2: '',
-        city: 'Medellín',
-        province: 'Antioquia',
-        country: 'Colombia',
-        zip: '050001',
-        phone: phoneClean
-      },
-      note_attributes: [
-        { name: "Nombre", value: formData.nombre },
-        { name: "Para quien", value: formData.paraQuien },
-        { name: "Ocasion", value: formData.ocasion },
-        { name: "Tono Emocional", value: formData.tonoEmocional },
-        { name: "Historia", value: formData.historia },
-        { name: "Genero musical", value: selectedGenero?.label || "" },
-        { name: "WhatsApp", value: formData.whatsapp },
-        { name: "Metodo de Pago", value: formData.metodoPago === "online" ? "Pago en Linea" : "Contra Entrega" }
-      ],
-      note: `Historia: ${formData.historia}\n\nPara: ${formData.paraQuien}\nOcasion: ${formData.ocasion}\nTono: ${formData.tonoEmocional}\nGenero: ${selectedGenero?.label || ""}`
-    };
-
-    // Usar endpoint diferente según método de pago
-    const endpoint = formData.metodoPago === "online"
-      ? '/api/shopify/create-checkout'  // Storefront API
-      : '/api/shopify/create-order';     // Admin API
-
-    console.log('Enviando pedido:', JSON.stringify(orderData, null, 2));
-
-    const response = await fetch(endpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(orderData)
-    });
-
-    const responseText = await response.text();
-    console.log('Respuesta del servidor:', responseText);
-
-    let data;
-    try {
-      data = JSON.parse(responseText);
-    } catch (e) {
-      console.error('Error parseando JSON:', e);
-      throw new Error(`Respuesta inválida del servidor: ${responseText}`);
-    }
-
-    if (!data.success) {
-      throw new Error(data.message || 'Error al procesar el pedido');
-    }
-
-    closeForm();
-
-    if (formData.metodoPago === "online") {
-      // Redirigir al checkout de Shopify
-      window.location.href = data.checkoutUrl;
+  // Ocultar navbar cuando se abra cualquier modal
+  useEffect(() => {
+    const nav = document.querySelector('nav');
+    if (showWelcome || showForm || showSuccess) {
+      nav?.classList.add('hidden');
+      // Prevenir scroll en el body
+      document.body.style.overflow = 'hidden';
     } else {
-      // Mostrar modal de éxito
-      setOrderSuccess({
-        orderNumber: data.orderNumber,
-        nombre: formData.nombre,
-        paquete: selectedPaquete?.nombre || '',
-        precio: selectedPaquete?.precio || '',
-        whatsapp: formData.whatsapp
-      });
-      setShowSuccess(true);
-
-      // Resetear formulario
-      setFormData({
-        nombre: "",
-        paraQuien: "",
-        ocasion: "",
-        tonoEmocional: "",
-        historia: "",
-        whatsapp: "",
-        genero: "",
-        paquete: "",
-        metodoPago: "",
-      });
-      setCurrentStep(0);
+      nav?.classList.remove('hidden');
+      document.body.style.overflow = '';
     }
 
-  } catch (error) {
-    console.error('Error al crear pedido:', error);
-    alert(error instanceof Error ? error.message : 'Hubo un error al procesar tu pedido. Por favor intenta nuevamente.');
-  } finally {
-    setIsSubmitting(false);
-  }
-};
+    // Cleanup al desmontar el componente
+    return () => {
+      nav?.classList.remove('hidden');
+      document.body.style.overflow = '';
+    };
+  }, [showWelcome, showForm, showSuccess]);
+
+  // Agregar también en las funciones de cierre para asegurar:
+
+
+
+  const handleSubmit = async () => {
+    if (!validateCurrentStep()) return;
+
+    setIsSubmitting(true);
+
+    try {
+      const selectedPaquete = paquetes.find(p => p.id === formData.paquete);
+      const selectedGenero = generos.find(g => g.id === formData.genero);
+
+      // Extraer nombre y apellido
+      const nombreCompleto = formData.nombre.trim().split(' ');
+      const firstName = nombreCompleto[0] || 'Cliente';
+      const lastName = nombreCompleto.slice(1).join(' ') || 'Letra Viva';
+
+      // Limpiar el número de WhatsApp
+      const phoneClean = formData.whatsapp.replace(/[^\d+]/g, '');
+
+      // Preparar datos del pedido - ESTRUCTURA CORREGIDA
+      const orderData = {
+        line_items: [
+          {
+            variant_id: selectedPaquete?.variantId || 0,
+            quantity: 1
+          }
+        ],
+        customer: {
+          first_name: firstName,
+          last_name: lastName,
+          phone: phoneClean,
+          email: formData.email, // Email temporal basado en teléfono
+        },
+        // BILLING ADDRESS - estructura correcta como objeto plano
+        billing_address: {
+          first_name: firstName,
+          last_name: lastName,
+          address1: 'Dirección no especificada', // DEBE ser string
+          address2: '',
+          city: 'Medellín',
+          province: 'Antioquia',
+          country: 'Colombia',
+          zip: '050001',
+          phone: phoneClean
+        },
+        // SHIPPING ADDRESS - estructura correcta como objeto plano
+        shipping_address: {
+          first_name: firstName,
+          last_name: lastName,
+          address1: 'Dirección no especificada', // DEBE ser string
+          address2: '',
+          city: 'Medellín',
+          province: 'Antioquia',
+          country: 'Colombia',
+          zip: '050001',
+          phone: phoneClean
+        },
+        note_attributes: [
+          { name: "Nombre", value: formData.nombre },
+          { name: "Para quien", value: formData.paraQuien },
+          { name: "Ocasion", value: formData.ocasion },
+          { name: "Tono Emocional", value: formData.tonoEmocional },
+          { name: "Historia", value: formData.historia },
+          { name: "Genero musical", value: selectedGenero?.label || "" },
+          { name: "WhatsApp", value: formData.whatsapp },
+          { name: "Email", value: formData.email },
+          { name: "Metodo de Pago", value: formData.metodoPago === "online" ? "Pago en Linea" : "Contra Entrega" }
+        ],
+        note: `Historia: ${formData.historia}\n\nPara: ${formData.paraQuien}\nOcasion: ${formData.ocasion}\nTono: ${formData.tonoEmocional}\nGenero: ${selectedGenero?.label || ""}`
+      };
+
+      // Usar endpoint diferente según método de pago
+      const endpoint = formData.metodoPago === "online"
+        ? '/api/shopify/create-checkout'  // Storefront API
+        : '/api/shopify/create-order';     // Admin API
+
+      console.log('Enviando pedido:', JSON.stringify(orderData, null, 2));
+
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(orderData)
+      });
+
+      const responseText = await response.text();
+      console.log('Respuesta del servidor:', responseText);
+
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch (e) {
+        console.error('Error parseando JSON:', e);
+        throw new Error(`Respuesta inválida del servidor: ${responseText}`);
+      }
+
+      if (!data.success) {
+        throw new Error(data.message || 'Error al procesar el pedido');
+      }
+
+      closeForm();
+
+      if (formData.metodoPago === "online") {
+        // Redirigir al checkout de Shopify
+        window.location.href = data.checkoutUrl;
+      } else {
+        // Mostrar modal de éxito
+        setOrderSuccess({
+          orderNumber: data.orderNumber,
+          nombre: formData.nombre,
+          paquete: selectedPaquete?.nombre || '',
+          precio: selectedPaquete?.precio || '',
+          whatsapp: formData.whatsapp
+        });
+        setShowSuccess(true);
+
+        // Resetear formulario
+        setFormData({
+          nombre: "",
+          paraQuien: "",
+          ocasion: "",
+          tonoEmocional: "",
+          historia: "",
+          whatsapp: "",
+          email: "",
+          genero: "",
+          paquete: "",
+          metodoPago: "",
+        });
+        setCurrentStep(0);
+      }
+
+    } catch (error) {
+      console.error('Error al crear pedido:', error);
+      alert(error instanceof Error ? error.message : 'Hubo un error al procesar tu pedido. Por favor intenta nuevamente.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const progressWidth = ((currentStep + 1) / steps.length) * 100;
 
-  
+
 
   return (
     <div className="w-full">
@@ -1265,7 +1287,100 @@ const handleSubmit = async () => {
           .precio-final {
             align-items: flex-start;
           }
+
+          .generos-scroll-container {
+    max-height: 400px; /* Altura fija */
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 8px;
+    margin-bottom: 16px;
+    
+    /* Scrollbar personalizado para webkit (Chrome, Safari, Edge) */
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-primary) #e5e7eb;
+  }
+
+  /* Scrollbar webkit */
+  .generos-scroll-container::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .generos-scroll-container::-webkit-scrollbar-track {
+    background: #e5e7eb;
+    border-radius: 4px;
+  }
+
+  .generos-scroll-container::-webkit-scrollbar-thumb {
+    background: var(--color-primary);
+    border-radius: 4px;
+    transition: background 0.3s;
+  }
+
+  .generos-scroll-container::-webkit-scrollbar-thumb:hover {
+    background: var(--color-primary-dark);
+  }
+
+  /* Firefox scrollbar */
+  .generos-scroll-container {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-primary) #e5e7eb;
+  }
+
+  .generos-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    /* Removido margin-bottom ya que está en el contenedor */
+  }
+
+  .genero-btn {
+    padding: 18px;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    background: white;
+    font-size: 16px;
+    font-weight: 600;
+    color: #374151;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .genero-btn:hover {
+    border-color: var(--color-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .genero-btn.selected {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+    color: white;
+    border-color: var(--color-primary);
+  }
+
+  /* Responsive para móviles */
+  @media (max-width: 768px) {
+    .generos-scroll-container {
+      max-height: 350px; /* Altura menor en móvil */
+    }
+
+    .generos-grid {
+      grid-template-columns: 1fr; /* Una columna en móvil */
+    }
+  }
+
+  @media (max-width: 480px) {
+    .generos-scroll-container {
+      max-height: 300px;
+      padding-right: 4px;
+    }
+
+    .genero-btn {
+      padding: 16px;
+      font-size: 15px;
+    }
+  }
         }
+
       `}</style>
 
       {/* Botón Principal */}
@@ -1304,7 +1419,7 @@ const handleSubmit = async () => {
               <div className="text-5xl md:text-6xl mb-4 animate-bounce">🎵</div>
 
               <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
-                Bienvenido a...
+
               </h1>
               <h2 className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#11676a] to-[#2d8c89]">
                 ¡Letra Viva!
@@ -1422,7 +1537,7 @@ const handleSubmit = async () => {
                       <option value="hermano/a">Hermano/a</option>
                       <option value="hijo/a">Hijo/a</option>
                       <option value="importante">Alguien importante en mi vida</option>
-                     {/*  <option value="otro">Otro</option> */}
+                      {/*  <option value="otro">Otro</option> */}
                     </select>
                     {errors.paraQuien && <span className="error-msg">Este campo es requerido</span>}
                   </div>
@@ -1445,7 +1560,7 @@ const handleSubmit = async () => {
                       <option value="amor-amistad">Amor y amistad</option>
                       <option value="nacimiento">Nacimiento</option>
                       <option value="memorial">Memorial</option>
-                    {/*   <option value="otro">Otro</option> */}
+                      {/*   <option value="otro">Otro</option> */}
                     </select>
                     {errors.ocasion && <span className="error-msg">Este campo es requerido</span>}
                   </div>
@@ -1477,7 +1592,7 @@ const handleSubmit = async () => {
               {currentStep === 2 && (
                 <div className="form-fields">
                   <div className="form-group">
-                    <label>Número de WhatsApp:</label>
+                    <label>Número de WhatsApp: <span className="required">*</span></label>
                     <div className={`whatsapp-input ${errors.whatsapp ? 'error' : ''}`}>
                       <svg className="w-6 h-6 text-green-500" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
@@ -1495,22 +1610,46 @@ const handleSubmit = async () => {
                       <span className="help-text">Te contactaremos por WhatsApp para coordinar la entrega</span>
                     )}
                   </div>
+
+                  {/* ← NUEVO CAMPO DE EMAIL */}
+                  <div className="form-group">
+                    <label>Correo Electrónico: <span className="required">*</span></label>
+                    <div className="flex items-center gap-3">
+                      <svg className="w-6 h-6 text-blue-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+                      </svg>
+                      <input
+                        type="email"
+                        value={formData.email}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        placeholder="tucorreo@ejemplo.com"
+                        className={errors.email ? 'error' : ''}
+                      />
+                    </div>
+                    {errors.email ? (
+                      <span className="error-msg">Por favor ingresa un correo electrónico válido</span>
+                    ) : (
+                      <span className="help-text">Te enviaremos la confirmación de tu pedido</span>
+                    )}
+                  </div>
                 </div>
               )}
 
               {/* Paso 3: Elige Tu Estilo Musical */}
               {currentStep === 3 && (
                 <>
-                  <div className="generos-grid">
-                    {generos.map((genero) => (
-                      <button
-                        key={genero.id}
-                        className={`genero-btn ${formData.genero === genero.id ? 'selected' : ''}`}
-                        onClick={() => selectGenero(genero.id)}
-                      >
-                        {genero.label}
-                      </button>
-                    ))}
+                  <div className="generos-scroll-container">
+                    <div className="generos-grid">
+                      {generos.map((genero) => (
+                        <button
+                          key={genero.id}
+                          className={`genero-btn ${formData.genero === genero.id ? 'selected' : ''}`}
+                          onClick={() => selectGenero(genero.id)}
+                        >
+                          {genero.label}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                   {errors.genero && <span className="error-msg">Por favor selecciona un género</span>}
                 </>
@@ -1529,7 +1668,7 @@ const handleSubmit = async () => {
                         <div className="paquete-info">
                           <h3>{paquete.nombre}</h3>
                           {paquete.subtitle && <p className="duracion">{paquete.subtitle}</p>}
-                         {/*  <p className="duracion">{paquete.duracion}</p> */}
+                          {/*  <p className="duracion">{paquete.duracion}</p> */}
                           <p className="descripcion">{paquete.descripcion}</p>
                         </div>
                         <div className="paquete-precio">
@@ -1571,6 +1710,10 @@ const handleSubmit = async () => {
                     <div className="detalle-row">
                       <span>WhatsApp:</span>
                       <strong>{formData.whatsapp}</strong>
+                    </div>
+                    <div className="detalle-row">
+                      <span>Email:</span>
+                      <strong>{formData.email}</strong>
                     </div>
                   </div>
 

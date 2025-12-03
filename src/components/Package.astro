@@ -1,179 +1,238 @@
 ---
-import { fetchProductVariants } from '../lib/shopify.server.ts';
+import { fetchProductVariants } from "../lib/shopify.server.ts";
 
-const variants = await fetchProductVariants('8847688794261');
+const variants = await fetchProductVariants("8847688794261");
 
 // Función para extraer info del título
 function parseVariantInfo(title: string) {
-  const match = title.match(/^(.*?)\s*–\s*(.*?)\s*\|/);
-  const name = match ? match[1].trim() : title;
-  const subtitle = match ? match[2].trim() : '';
-  
-  const durationMatch = title.match(/\(([^)]+min)\)/);
-  const duration = durationMatch ? durationMatch[1] : '';
-  
-  return { name, subtitle, duration };
+    const match = title.match(/^(.*?)\s*–\s*(.*?)\s*\|/);
+    const name = match ? match[1].trim() : title;
+    const subtitle = match ? match[2].trim() : "";
+
+    const durationMatch = title.match(/\(([^)]+min)\)/);
+    const duration = durationMatch ? durationMatch[1] : "";
+
+    return { name, subtitle, duration };
 }
 
 function formatPrice(price: string) {
-  return new Intl.NumberFormat('es-CO').format(parseFloat(price));
+    return new Intl.NumberFormat("es-CO").format(parseFloat(price));
 }
 
 // Obtener features del título
 function getFeatures(title: string) {
-  const features = [];
-  if (title.includes('MP3')) features.push('Canción en MP3');
-  if (title.includes('Tarjeta Digital')) features.push('Tarjeta Digital');
-  if (title.includes('Video')) features.push('Video Lyric Animado');
-  return features;
+    const features = [];
+    if (title.includes("MP3")) features.push("Canción en MP3");
+    if (title.includes("Tarjeta Digital")) features.push("Tarjeta Digital");
+    if (title.includes("Video")) features.push("Video Lyric Animado");
+    return features;
 }
 ---
 
-<div class="py-20 px-4">
+<div class="py-20 px-4"  id="paquetes">
     <div class="max-w-7xl mx-auto">
         <!-- Header -->
         <div class="text-center mb-16">
-            <h2 class="text-5xl md:text-6xl font-extrabold text-gray-900 mb-4 tracking-tight">
+            <h2
+                class="text-5xl md:text-6xl font-extrabold text-gray-900 mb-4 tracking-tight"
+            >
                 Canciones Personalizadas
             </h2>
-            <div class="inline-flex items-center gap-2 bg-gradient-to-r from-[#11676a] to-[#2d8c89] text-white px-6 py-2 rounded-full text-sm font-semibold mb-6 shadow-lg">
+            <div
+                class="inline-flex items-center gap-2 bg-gradient-to-r from-[#11676a] to-[#2d8c89] text-white px-6 py-2 rounded-full text-sm font-semibold mb-6 shadow-lg"
+            >
                 <span>🎁</span>
                 <span>Elige Tu Paquete</span>
             </div>
             <p class="text-xl text-gray-600 max-w-2xl mx-auto">
-                Estas a un paso de tener tu propia canción personalizada. Selecciona tu paquete y comienza a darle vida a lo que sientes
+                Estas a un paso de tener tu propia canción personalizada.
+                Selecciona tu paquete y comienza a darle vida a lo que sientes
             </p>
         </div>
 
         <!-- Pricing Cards Grid -->
         <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {variants.sort((a, b) => a.position - b.position).map((variant) => {
-                const info = parseVariantInfo(variant.title);
-                const features = getFeatures(variant.title);
-                const isStandard = variant.position === 1;
-                const isPremium = variant.position === 3;
-                const isMini = variant.position === 2;
-                
-                const icons = { 1: '🎤', 2: '🎵', 3: '👑' };
-                const icon = icons[variant.position as keyof typeof icons];
-                
-                return (
-                    <div class={`relative ${isStandard ? 'md:scale-105 ' : ''}`}>
-                        {/* Popular Badge */}
-                      {isStandard && (
-                            <div class="absolute -top-4 left-1/2 -translate-x-1/2 z-20">
-                                <span class="bg-gradient-to-r from-[#f89a3f] via-[#ff6b35] to-[#f89a3f] text-white px-5 py-2 rounded-full text-sm font-bold shadow-xl whitespace-nowrap">
-                                    ⭐ MÁS POPULAR
-                                </span>
-                            </div>
-                        )}
-                        
-                        {/* Card */}
-                        <button
-                            data-variant-id={variant.id}
-                            data-variant-price={variant.price}
-                            class={`package-btn w-full h-full p-8 cursor-pointer rounded-2xl bg-gradient-to-br from-white to-gray-50/80 border-2 border-gray-200 hover:border-[#11676a] transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 group relative overflow-hidden`}>
-                            
-                            {/* Background Pattern */}
-                            <div class="absolute inset-0 opacity-5">
-                                <div class="absolute inset-0" style="background-image: radial-gradient(circle, currentColor 1px, transparent 1px); background-size: 20px 20px;"></div>
-                            </div>
-                            
-                            {/* Content */}
-                            <div class="relative">
-                                {/* Icon */}
-                                <div class="text-6xl mb-4 transform group-hover:scale-110 transition-transform duration-300">
-                                    {icon}
-                                </div>
-                                
-                                {/* Title */}
-                                <h3 class="text-2xl font-bold text-gray-900 mb-2">
-                                    {info.name.replace(/🎼|🎤|🎬/g, '').trim()}
-                                </h3>
-                                <p class="text-sm font-medium text-gray-600 mb-6">
-                                    {info.subtitle.replace(/⭐/g, '').trim()}
-                                </p>
-                                
-                                {/* Duration */}
-                                <div class="flex items-center justify-center gap-2 mb-6 bg-white/60 backdrop-blur-sm rounded-lg py-2 px-4 border border-gray-200">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <circle cx="12" cy="12" r="10"></circle>
-                                        <polyline points="12 6 12 12 16 14"></polyline>
-                                    </svg>
-                                    <span class="text-sm font-semibold text-gray-700">
-                                        {info.duration}
-                                    </span>
-                                </div>
-                                
-                                {/* Features */}
-                                <div class="space-y-3 mb-8">
-                                    {features.map(feature => (
-                                        <div class="flex items-center gap-2 text-left">
-                                            <div class="bg-gradient-to-r from-[#11676a] to-[#2d8c89] rounded-full p-1 flex-shrink-0">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                                </svg>
-                                            </div>
-                                            <span class="text-sm text-gray-700 font-medium">
-                                                {feature}
-                                            </span>
-                                        </div>
-                                    ))}
-                                </div>
-                                
-                                {/* Price */}
-                                <div class="pt-6 border-t-2 border-gray-200">
-                                    <div class="flex items-baseline justify-center gap-1">
-                                        <span class="text-lg font-semibold text-gray-500">$</span>
-                                        <span class="text-4xl font-black text-gray-900">
-                                            {formatPrice(variant.price)}
+            {
+                variants
+                    .sort((a, b) => a.position - b.position)
+                    .map((variant) => {
+                        const info = parseVariantInfo(variant.title);
+                        const features = getFeatures(variant.title);
+                        const isStandard = variant.position === 1;
+                        const isPremium = variant.position === 3;
+                        const isMini = variant.position === 2;
+
+                        const icons = { 1: "🎤", 2: "🎵", 3: "👑" };
+                        const icon =
+                            icons[variant.position as keyof typeof icons];
+
+                        return (
+                            <div
+                                class={`relative ${isStandard ? "md:scale-105 " : ""}`}
+                            >
+                                {/* Popular Badge */}
+                                {isStandard && (
+                                    <div class="absolute -top-4 left-1/2 -translate-x-1/2 z-1">
+                                        <span class="bg-gradient-to-r from-[#f89a3f] via-[#ff6b35] to-[#f89a3f] text-white px-5 py-2 rounded-full text-sm font-bold shadow-xl whitespace-nowrap">
+                                            ⭐ MÁS POPULAR
                                         </span>
                                     </div>
-                                    <p class="text-sm text-gray-500 font-medium mt-1">COP</p>
-                                    
-                                    {variant.compare_at_price && (
-                                        <p class="text-sm text-gray-400 line-through mt-2">
-                                            ${formatPrice(variant.compare_at_price)}
-                                        </p>
-                                    )}
-                                </div>
-                                
-                                {/* CTA */}
-                                <div class="mt-6">
-                                    <div class="bg-gradient-to-r from-[#11676a] to-[#2d8c89] text-white py-3 px-6 rounded-xl font-bold group-hover:shadow-lg transition-all duration-300">
-                                        Seleccionar
+                                )}
+
+                                {/* Card */}
+                                <button
+                                    id="abrirModalDesdeAstro"
+                                    data-variant-id={variant.id}
+                                    data-variant-price={variant.price}
+                                    class={`package-btn w-full h-full p-8 cursor-pointer rounded-2xl bg-gradient-to-br from-white to-gray-50/80 border-2 border-gray-200 hover:border-[#11676a] transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 group relative overflow-hidden`}
+                                >
+                                    {/* Background Pattern */}
+                                    <div class="absolute inset-0 opacity-5">
+                                        <div
+                                            class="absolute inset-0"
+                                            style="background-image: radial-gradient(circle, currentColor 1px, transparent 1px); background-size: 20px 20px;"
+                                        />
                                     </div>
-                                </div>
+
+                                    {/* Content */}
+                                    <div class="relative">
+                                        {/* Icon */}
+                                        <div class="text-6xl mb-4 transform group-hover:scale-110 transition-transform duration-300">
+                                            {icon}
+                                        </div>
+
+                                        {/* Title */}
+                                        <h3 class="text-2xl font-bold text-gray-900 mb-2">
+                                            {info.name
+                                                .replace(/🎼|🎤|🎬/g, "")
+                                                .trim()}
+                                        </h3>
+                                        <p class="text-sm font-medium text-gray-600 mb-6">
+                                            {info.subtitle
+                                                .replace(/⭐/g, "")
+                                                .trim()}
+                                        </p>
+
+                                        {/* Duration */}
+                                        <div class="flex items-center justify-center gap-2 mb-6 bg-white/60 backdrop-blur-sm rounded-lg py-2 px-4 border border-gray-200">
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                width="20"
+                                                height="20"
+                                                viewBox="0 0 24 24"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                stroke-width="2"
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                            >
+                                                <circle
+                                                    cx="12"
+                                                    cy="12"
+                                                    r="10"
+                                                />
+                                                <polyline points="12 6 12 12 16 14" />
+                                            </svg>
+                                            <span class="text-sm font-semibold text-gray-700">
+                                                {info.duration}
+                                            </span>
+                                        </div>
+
+                                        {/* Features */}
+                                        <div class="space-y-3 mb-8">
+                                            {features.map((feature) => (
+                                                <div class="flex items-center gap-2 text-left">
+                                                    <div class="bg-gradient-to-r from-[#11676a] to-[#2d8c89] rounded-full p-1 flex-shrink-0">
+                                                        <svg
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            width="14"
+                                                            height="14"
+                                                            viewBox="0 0 24 24"
+                                                            fill="none"
+                                                            stroke="white"
+                                                            stroke-width="3"
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                        >
+                                                            <polyline points="20 6 9 17 4 12" />
+                                                        </svg>
+                                                    </div>
+                                                    <span class="text-sm text-gray-700 font-medium">
+                                                        {feature}
+                                                    </span>
+                                                </div>
+                                            ))}
+                                        </div>
+
+                                        {/* Price */}
+                                        <div class="pt-6 border-t-2 border-gray-200">
+                                            <div class="flex items-baseline justify-center gap-1">
+                                                <span class="text-lg font-semibold text-gray-500">
+                                                    $
+                                                </span>
+                                                <span class="text-4xl font-black text-gray-900">
+                                                    {formatPrice(variant.price)}
+                                                </span>
+                                            </div>
+                                            <p class="text-sm text-gray-500 font-medium mt-1">
+                                                COP
+                                            </p>
+
+                                            {variant.compare_at_price && (
+                                                <p class="text-sm text-gray-400 line-through mt-2">
+                                                    $
+                                                    {formatPrice(
+                                                        variant.compare_at_price,
+                                                    )}
+                                                </p>
+                                            )}
+                                        </div>
+
+                                        {/* CTA */}
+                                        <div class="mt-6">
+                                            <div class="bg-gradient-to-r from-[#11676a] to-[#2d8c89] text-white py-3 px-6 rounded-xl font-bold group-hover:shadow-lg transition-all duration-300">
+                                                Seleccionar
+                                            </div>
+                                        </div>
+                                    </div>
+                                </button>
                             </div>
-                        </button>
-                    </div>
-                );
-            })}
+                        );
+                    })
+            }
         </div>
     </div>
 </div>
 
 <script>
     const urlParams = new URLSearchParams(window.location.search);
-    const selectedVariantId = urlParams.get('variant');
+    const selectedVariantId = urlParams.get("variant");
 
     if (selectedVariantId) {
-        const selectedBtn = document.querySelector(`[data-variant-id="${selectedVariantId}"]`);
+        const selectedBtn = document.querySelector(
+            `[data-variant-id="${selectedVariantId}"]`,
+        );
         if (selectedBtn) {
-            selectedBtn.classList.add('selected');
+            selectedBtn.classList.add("selected");
         }
     }
 
-    document.querySelectorAll('.package-btn').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            const variantId = this.getAttribute('data-variant-id');
-            
-            document.querySelectorAll('.package-btn').forEach(b => b.classList.remove('selected'));
-            this.classList.add('selected');
-            
+    document.querySelectorAll(".package-btn").forEach((btn) => {
+        btn.addEventListener("click", function (e) {
+            const variantId = this.getAttribute("data-variant-id");
+
+            document
+                .querySelectorAll(".package-btn")
+                .forEach((b) => b.classList.remove("selected"));
+            this.classList.add("selected");
+
             const url = new URL(window.location.href);
-            url.searchParams.set('variant', variantId);
-            window.history.pushState({}, '', url);
+            url.searchParams.set("variant", variantId);
+            window.history.pushState({}, "", url);
+
+            import("./utils/eventBus").then(({ EventBus }) => {
+                EventBus.dispatch("openSongModal", { variantId });
+            });
         });
     });
 </script>
@@ -182,15 +241,17 @@ function getFeatures(title: string) {
     .package-btn {
         text-align: center;
     }
-    
+
     .package-btn.selected {
         border-color: #10b981 !important;
-        box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.3), 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+        box-shadow:
+            0 0 0 4px rgba(16, 185, 129, 0.3),
+            0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
         transform: translateY(-8px) !important;
     }
-    
+
     .package-btn.selected::before {
-        content: '';
+        content: "";
         position: absolute;
         inset: -2px;
         background: linear-gradient(135deg, #10b981, #059669);
@@ -199,9 +260,9 @@ function getFeatures(title: string) {
         opacity: 0.15;
         animation: pulse 2s ease-in-out infinite;
     }
-    
+
     .package-btn.selected::after {
-        content: '✓';
+        content: "✓";
         position: absolute;
         top: 1rem;
         right: 1rem;
@@ -218,7 +279,7 @@ function getFeatures(title: string) {
         box-shadow: 0 4px 12px rgba(16, 185, 129, 0.5);
         animation: checkmark 0.3s ease-out;
     }
-    
+
     @keyframes checkmark {
         0% {
             transform: scale(0) rotate(-180deg);
@@ -230,9 +291,10 @@ function getFeatures(title: string) {
             transform: scale(1) rotate(0deg);
         }
     }
-    
+
     @keyframes pulse {
-        0%, 100% {
+        0%,
+        100% {
             opacity: 0.15;
         }
         50% {

@@ -1,13 +1,10 @@
 // src/pages/api/shopify/create-order.ts
 import type { APIRoute } from 'astro';
 import { createOrder } from '../../../lib/shopify.server';
-
-// 🔥 AGREGA ESTA LÍNEA - MUY IMPORTANTE
 export const prerender = false;
 
 export const POST: APIRoute = async ({ request }) => {
   try {
-    console.log('===== INICIO DE PETICIÓN =====');
     
     const body = await request.json(); 
     const response = await createOrder(body);

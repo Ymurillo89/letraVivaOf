@@ -6,6 +6,7 @@ const songs = [
     title: "Noticia Bendita",
     artist: "Letra Viva",
     src: "https://maquila.nyc3.cdn.digitaloceanspaces.com/Requerimiento/music/NoticiaBendita.mp3",
+    poster:"https://maquila.nyc3.cdn.digitaloceanspaces.com/Requerimiento/img/NoticiaBendita.png",
     duration: "2:59",
     description: "¡Perfecto! Anunciar de la noticia que vas a ser papá o mamá"
   },
@@ -13,6 +14,7 @@ const songs = [
     title: "Tu Historia En Canción",
     artist: "Letra Viva",
     src: "https://maquila.nyc3.cdn.digitaloceanspaces.com/Requerimiento/music/TuHistoriaHechaCancion.mp3",
+    poster: "https://maquila.nyc3.cdn.digitaloceanspaces.com/Requerimiento/img/ContigoSoy.png",
     duration: "2:58",
     description: "¡Animáte a contar tu historia, esta canción es solo para ti!"
   },
@@ -20,6 +22,7 @@ const songs = [
     title: "Madre Eterna",
     artist: "Letra Viva",
     src: "https://maquila.nyc3.cdn.digitaloceanspaces.com/Requerimiento/music/MadreEterna.mp3",
+    poster: "https://maquila.nyc3.cdn.digitaloceanspaces.com/Requerimiento/img/MadreEterna.png",
     duration: "3:19",
     description: "Hasta llorar... de emoción. No hay mejor forma de decir \"gracias mamá\""
   },
@@ -27,6 +30,7 @@ const songs = [
     title: "Contigo Soy",
     artist: "Letra Viva",
     src: "https://maquila.nyc3.cdn.digitaloceanspaces.com/Requerimiento/music/ContigoSoy.mp3",
+    poster: "https://maquila.nyc3.cdn.digitaloceanspaces.com/Requerimiento/img/ContigoSoy.png",
     duration: "2:42",
     description: "Hay personas que nos transforman. Esta canción no solo habla de amor..."
   },
@@ -34,13 +38,14 @@ const songs = [
     title: "Lo Que No Dije",
     artist: "Letra Viva",
     src: "https://maquila.nyc3.cdn.digitaloceanspaces.com/Requerimiento/music/LoQueNoTeDije.mp3",
+    poster: "https://maquila.nyc3.cdn.digitaloceanspaces.com/Requerimiento/img/LoQueNoTeDije.png",
     duration: "3:02",
     description: "¡Nunca es tarde; aveces solo una canción puede expresar lo que capaces de decirlo!"
   },
 ];
 ---
 
-<div class="py-24 bg-gradient-to-br from-[oklch(0.35_0.10_200)] to-[oklch(0.42_0.12_195)] relative overflow-hidden">
+<section class="py-24 bg-gradient-to-br from-[oklch(0.35_0.10_200)] to-[oklch(0.42_0.12_195)] relative overflow-hidden" id="melodias">
   <div class="text-center mb-16">
     <div class="inline-flex items-center gap-2 mb-4">
       <span class="text-5xl">🎧</span>
@@ -127,26 +132,7 @@ const songs = [
               <polygon points="5 4 15 12 5 20 5 4"></polygon>
               <line x1="19" x2="19" y1="5" y2="19"></line>
             </svg>
-          </button>
-
-          <!-- <button id="volume-btn" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all size-9 text-white hover:bg-white/10">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-volume2 h-6 w-6">
-              <path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"></path>
-              <path d="M16 9a5 5 0 0 1 0 6"></path>
-              <path d="M19.364 18.364a9 9 0 0 0 0-12.728"></path>
-            </svg>
-          </button> -->
-
-         <!--  <button id="toggle-playlist" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all size-9 text-white hover:bg-white/10">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-list h-6 w-6">
-              <path d="M3 12h.01"></path>
-              <path d="M3 18h.01"></path>
-              <path d="M3 6h.01"></path>
-              <path d="M8 12h13"></path>
-              <path d="M8 18h13"></path>
-              <path d="M8 6h13"></path>
-            </svg>
-          </button> -->
+          </button>        
         </div>
 
         <!-- Lista de canciones -->
@@ -178,11 +164,11 @@ const songs = [
 <script>
   // Datos de las canciones (mismo orden que en Astro)
 const songs = [
-  { title: "Contigo Soy", artist: "Letra Viva", src: "https://maquila.nyc3.cdn.digitaloceanspaces.com/Requerimiento/music/ContigoSoy.mp3", duration: "2:42", description: "Hay personas que nos transforman. Esta canción no solo habla de amor..." },
-  { title: "Lo Que No Dije", artist: "Letra Viva", src: "https://maquila.nyc3.cdn.digitaloceanspaces.com/Requerimiento/music/LoQueNoTeDije.mp3", duration: "3:02", description: "¡Nunca es tarde; aveces solo una canción puede expresar lo que capaces de decirlo!" },
-  { title: "Tu Historia En Canción", artist: "Letra Viva", src: "https://maquila.nyc3.cdn.digitaloceanspaces.com/Requerimiento/music/TuHistoriaHechaCancion.mp3", duration: "2:58", description: "¡Animáte a contar tu historia, esta canción es solo para ti!" },
-  { title: "Madre Eterna", artist: "Letra Viva", src: "https://maquila.nyc3.cdn.digitaloceanspaces.com/Requerimiento/music/MadreEterna.mp3", duration: "3:19", description: "Hasta llorar... de emoción. No hay mejor forma de decir \"gracias mamá\"" },
-  { title: "Noticia Bendita", artist: "Letra Viva", src: "https://maquila.nyc3.cdn.digitaloceanspaces.com/Requerimiento/music/NoticiaBendita.mp3", duration: "2:59", description: "¡Perfecto! Anunciar de la noticia que vas a ser papá o mamá" }
+  { title: "Noticia Bendita", artist: "Letra Viva", src: "https://maquila.nyc3.cdn.digitaloceanspaces.com/Requerimiento/music/NoticiaBendita.mp3", duration: "2:59", poster: "https://maquila.nyc3.cdn.digitaloceanspaces.com/Requerimiento/img/NoticiaBendita.png", description: "¡Perfecto! Anunciar de la noticia que vas a ser papá o mamá" },
+  { title: "Tu Historia En Canción", artist: "Letra Viva", src: "https://maquila.nyc3.cdn.digitaloceanspaces.com/Requerimiento/music/TuHistoriaHechaCancion.mp3", duration: "2:58", poster: "https://maquila.nyc3.cdn.digitaloceanspaces.com/Requerimiento/img/TuHistoriaHechaCancion.png", description: "¡Animáte a contar tu historia, esta canción es solo para ti!" },
+  { title: "Madre Eterna", artist: "Letra Viva", src: "https://maquila.nyc3.cdn.digitaloceanspaces.com/Requerimiento/music/MadreEterna.mp3", duration: "3:19", poster: "https://maquila.nyc3.cdn.digitaloceanspaces.com/Requerimiento/img/MadreEterna.png", description: "Hasta llorar... de emoción. No hay mejor forma de decir \"gracias mamá\"" },
+  { title: "Contigo Soy", artist: "Letra Viva", src: "https://maquila.nyc3.cdn.digitaloceanspaces.com/Requerimiento/music/ContigoSoy.mp3", duration: "2:42", poster: "https://maquila.nyc3.cdn.digitaloceanspaces.com/Requerimiento/img/ContigoSoy.png", description: "Hay personas que nos transforman. Esta canción no solo habla de amor..." },
+  { title: "Lo Que No Dije", artist: "Letra Viva", src: "https://maquila.nyc3.cdn.digitaloceanspaces.com/Requerimiento/music/LoQueNoTeDije.mp3", duration: "3:02", poster: "https://maquila.nyc3.cdn.digitaloceanspaces.com/Requerimiento/img/LoQueNoTeDije.png", description: "¡Nunca es tarde; aveces solo una canción puede expresar lo que capaces de decirlo!" }
 ];
 
 const audio = document.getElementById('audio-player');
@@ -220,6 +206,11 @@ function updateSongInfo() {
   totalDurationEl.textContent = song.duration;
   audio.src = song.src;
   audio.load();
+
+  const posterImg = document.querySelector('img[alt="Reproductor de vinilo"]');
+  if (posterImg) {
+    posterImg.src = song.poster;
+  }
   // Reset progress bar
   progressBar.style.width = '0%';
   currentTimeEl.textContent = '0:00';
