@@ -3,6 +3,8 @@ import SpeedInsights from "@vercel/speed-insights/astro";
 import "../styles/global.css";
 import Navbar from "../components/Navbar.astro";
 import Banner from "../components/Banner.astro";
+import logoLetraViva from "../img/logo_letra_viva.png";
+
 ---
 
 <!doctype html>
@@ -10,16 +12,16 @@ import Banner from "../components/Banner.astro";
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" type="image/svg+xml" href="/logopeque.png" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
+		<title>Letra Viva</title>
 		<link
 			rel="stylesheet"
 			href="https://fonts.googleapis.com/css2?family=Lora:wght@400&display=swap"
 		/>
 	</head>
 	<body>
-		<!-- <Navbar/> -->
+
 		<div>
 			<slot />
 		</div>
