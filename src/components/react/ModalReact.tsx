@@ -129,18 +129,55 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
 
   // Procesar variants de Shopify
   const parseVariantInfo = (title: string) => {
-    const match = title.match(/^(.*?)\s*–\s*(.*?)\s*\|/);
-    const nombre = match ? match[1].trim() : title;
-    const subtitle = match ? match[2].trim() : '';
+    const nameMatch = title.match(/^(.*?)\s*–/);
+    const nombre = nameMatch ? nameMatch[1].trim() : title;
 
-    const durationMatch = title.match(/\(([^)]+min)\)/);
-    const duracion = durationMatch ? durationMatch[1] : '';
+    const subtitleMatch = title.match(/–\s*(.*?)\s*\|/);
+    const subtitle = subtitleMatch ? subtitleMatch[1].trim() : '';
 
-    // Extraer descripción
-    const descripcionMatch = title.match(/\|\s*(.+?)\s*-\s*[\d,]+/);
-    const descripcion = descripcionMatch ? descripcionMatch[1].trim() : '';
+    const durationMatch = title.match(/\(([^)]+min[^)]*)\)/i);
+    const duracion = durationMatch ? durationMatch[1].trim() : '';
 
-    return { nombre, subtitle, duracion, descripcion };
+    return { nombre, subtitle, duracion };
+  };
+
+  const getFeatures = (title: string) => {
+    const features = [];
+    const afterDuration = title.split(/\)/)[1] || '';
+
+    if (afterDuration.includes('MP3')) {
+      const formatMatch = afterDuration.match(/MP3\s+([^+\-]+)/);
+      const format = formatMatch ? formatMatch[1].trim() : '';
+      features.push({
+        text: format ? `MP3 ${format}` : 'Canción en MP3',
+        icon: '🎧'
+      });
+    }
+
+    if (afterDuration.includes('Tarjeta Digital')) {
+      features.push({
+        text: 'Tarjeta Digital Personalizada',
+        icon: '💳'
+      });
+    }
+
+    if (afterDuration.includes('Video')) {
+      features.push({
+        text: 'Video Lyric Animado',
+        icon: '🎥'
+      });
+    }
+
+    if (afterDuration.match(/\d+\s*Foto/i)) {
+      const photoMatch = afterDuration.match(/(\d+)\s*Foto/i);
+      const count = photoMatch ? photoMatch[1] : '1';
+      features.push({
+        text: `${count} Foto${count !== '1' ? 's' : ''} Para La Portada`,
+        icon: '📷'
+      });
+    }
+
+    return features;
   };
 
   const formatPrice = (price: string) => {
@@ -150,18 +187,21 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
   // Convertir variants a formato paquetes
   const paquetes = variants.map(variant => {
     const info = parseVariantInfo(variant.title);
+    const features = getFeatures(variant.title);
     const isStandard = variant.position === 1;
 
     return {
       id: variant.id.toString(),
+      position: variant.position,
       variantId: variant.id,
-      nombre: info.nombre.replace(/🎼|🎤|🎬/g, '').trim(),
+      nombre: info.nombre.replace(/🎼|🎤|🎬|👑|🎵/g, '').trim(),
       subtitle: info.subtitle.replace(/⭐/g, '').trim(),
-      duracion: `(${info.duracion})`,
-      descripcion: info.descripcion,
+      duracion: info.duracion,
+      features: features,
       precio: `$${formatPrice(variant.price)}`,
       precioNumerico: variant.price,
       highlighted: isStandard,
+      icon: variant.position === 1 ? '🎸' : variant.position === 2 ? '🎹' : '🎺'
     };
   });
 
@@ -1656,24 +1696,225 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
               )}
 
               {/* Paso 4: Selecciona Tu Paquete */}
+              {/* Paso 4: Selecciona Tu Paquete */}
               {currentStep === 4 && (
                 <>
-                  <div className="paquetes-list ">
-                    {paquetes.map((paquete) => (
+                  <div style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '10px',
+                    maxHeight: '360px',
+                    overflowY: 'auto',
+                    paddingRight: '6px',
+                    marginBottom: '16px'
+                  }}>
+                    {paquetes.sort((a, b) => a.position - b.position).map((paquete) => (
                       <button
                         key={paquete.id}
-                        className={`paquete-card shadow-md ${formData.paquete === paquete.id ? 'selected' : ''} `}
                         onClick={() => selectPaquete(paquete.id)}
+                        style={{
+                          position: 'relative',
+                          width: '100%',
+                          padding: '14px 16px',
+                          borderRadius: '10px',
+                          border: formData.paquete === paquete.id
+                            ? '2px solid #11676a'
+                            : paquete.highlighted
+                              ? '2px solid #f89a3f'
+                              : '1px solid #e5e7eb',
+                          background: formData.paquete === paquete.id
+                            ? 'linear-gradient(135deg, #11676a 0%, #2d8c89 100%)'
+                            : 'white',
+                          color: formData.paquete === paquete.id ? 'white' : '#111827',
+                          cursor: 'pointer',
+                          transition: 'all 0.15s ease',
+                          textAlign: 'left',
+                          boxShadow: formData.paquete === paquete.id
+                            ? '0 6px 20px rgba(17, 103, 106, 0.25)'
+                            : paquete.highlighted
+                              ? '0 2px 8px rgba(248, 154, 63, 0.15)'
+                              : '0 1px 3px rgba(0, 0, 0, 0.08)',
+                          overflow: 'visible'
+                        }}
+                        onMouseEnter={(e) => {
+                          if (formData.paquete !== paquete.id) {
+                            e.currentTarget.style.borderColor = paquete.highlighted ? '#f89a3f' : '#11676a';
+                            e.currentTarget.style.boxShadow = paquete.highlighted
+                              ? '0 4px 12px rgba(248, 154, 63, 0.2)'
+                              : '0 3px 10px rgba(0, 0, 0, 0.12)';
+                          }
+                        }}
+                        onMouseLeave={(e) => {
+                          if (formData.paquete !== paquete.id) {
+                            e.currentTarget.style.borderColor = paquete.highlighted ? '#f89a3f' : '#e5e7eb';
+                            e.currentTarget.style.boxShadow = paquete.highlighted
+                              ? '0 2px 8px rgba(248, 154, 63, 0.15)'
+                              : '0 1px 3px rgba(0, 0, 0, 0.08)';
+                          }
+                        }}
                       >
-                        <div className="paquete-info">
-                          <h3>{paquete.nombre}</h3>
-                          {paquete.subtitle && <p className="duracion">{paquete.subtitle}</p>}
-                          {/*  <p className="duracion">{paquete.duracion}</p> */}
-                          <p className="descripcion">{paquete.descripcion}</p>
-                        </div>
-                        <div className="paquete-precio">
-                          <span className="precio">{paquete.precio}</span>
-                          <span className="moneda">COP</span>
+                        {/* Badge elegante */}
+                        {paquete.highlighted && formData.paquete !== paquete.id && (
+                          <div style={{
+                            position: 'absolute',
+                            top: '-1px',
+                            right: '12px',
+                            background: 'linear-gradient(135deg, #f89a3f 0%, #ff6b35 100%)',
+                            color: 'white',
+                            padding: '4px 10px',
+                            borderRadius: '0 0 8px 8px',
+                            fontSize: '9px',
+                            fontWeight: 'bold',
+                            letterSpacing: '0.5px',
+                            textTransform: 'uppercase',
+                            boxShadow: '0 2px 8px rgba(248, 154, 63, 0.3)'
+                          }}>
+                            Recomendado
+                          </div>
+                        )}
+
+                        {/* Checkmark minimalista */}
+                        {formData.paquete === paquete.id && (
+                          <div style={{
+                            position: 'absolute',
+                            top: '10px',
+                            right: '12px',
+                            width: '20px',
+                            height: '20px',
+                            background: 'white',
+                            borderRadius: '50%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            boxShadow: '0 2px 6px rgba(0, 0, 0, 0.15)'
+                          }}>
+                            <svg style={{ width: '12px', height: '12px', color: '#10b981' }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                            </svg>
+                          </div>
+                        )}
+
+                        <div style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          gap: '12px'
+                        }}>
+                          {/* Lado izquierdo */}
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            {/* Nombre y subtítulo en una línea */}
+                            <div style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '8px',
+                              marginBottom: '6px',
+                              paddingRight: formData.paquete === paquete.id ? '24px' : '0'
+                            }}>
+                              <span style={{ fontSize: '22px', lineHeight: 1 }}>{paquete.icon}</span>
+                              <div style={{ flex: 1, minWidth: 0 }}>
+                                <h3 style={{
+                                  fontSize: '15px',
+                                  fontWeight: '700',
+                                  margin: 0,
+                                  lineHeight: 1.2,
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis',
+                                  whiteSpace: 'nowrap'
+                                }}>
+                                  {paquete.nombre}
+                                </h3>
+                                {paquete.subtitle && (
+                                  <p style={{
+                                    fontSize: '11px',
+                                    fontWeight: 600,
+                                    color: formData.paquete === paquete.id ? 'rgba(255,255,255,0.85)' : '#6b7280',
+                                    margin: 0,
+                                    lineHeight: 1.2
+                                  }}>
+                                    {paquete.subtitle}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* Features ultra compactos */}
+                            <div style={{
+                              display: 'flex',
+                              flexWrap: 'wrap',
+                              gap: '4px',
+                              fontSize: '10px',
+                              lineHeight: 1
+                            }}>
+                              {paquete.duracion && (
+                                <span style={{
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '3px',
+                                  padding: '4px 7px',
+                                  borderRadius: '5px',
+                                  background: formData.paquete === paquete.id
+                                    ? 'rgba(255,255,255,0.25)'
+                                    : '#f3f4f6',
+                                  fontWeight: 600,
+                                  whiteSpace: 'nowrap'
+                                }}>
+                                  <span style={{ fontSize: '11px' }}>⏱</span>
+                                  <span>{paquete.duracion.replace(' Min. Aprox.', 'min')}</span>
+                                </span>
+                              )}
+                              {paquete.features.map((feature, idx) => (
+                                <span key={idx} style={{
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '3px',
+                                  padding: '4px 7px',
+                                  borderRadius: '5px',
+                                  background: formData.paquete === paquete.id
+                                    ? 'rgba(255,255,255,0.25)'
+                                    : '#f3f4f6',
+                                  fontWeight: 500,
+                                  whiteSpace: 'nowrap'
+                                }}>
+                                  <span style={{ fontSize: '11px' }}>{feature.icon}</span>
+                                  <span style={{
+                                    maxWidth: '80px',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis'
+                                  }}>
+                                    {feature.text.length > 15 ? feature.text.substring(0, 12) + '...' : feature.text}
+                                  </span>
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Precio lado derecho */}
+                          <div style={{
+                            textAlign: 'right',
+                            flexShrink: 0,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'flex-end',
+                            justifyContent: 'center'
+                          }}>
+                            <div style={{
+                              fontSize: '20px',
+                              fontWeight: '900',
+                              lineHeight: 1,
+                              letterSpacing: '-0.5px'
+                            }}>
+                              {paquete.precio}
+                            </div>
+                            <div style={{
+                              fontSize: '9px',
+                              fontWeight: 600,
+                              opacity: 0.7,
+                              marginTop: '2px',
+                              letterSpacing: '0.5px'
+                            }}>
+                              COP
+                            </div>
+                          </div>
                         </div>
                       </button>
                     ))}

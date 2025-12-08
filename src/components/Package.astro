@@ -3,14 +3,16 @@ import { fetchProductVariants } from "../lib/shopify.server.ts";
 
 const variants = await fetchProductVariants("8847688794261");
 
-// Función para extraer info del título
+// Función mejorada para extraer info del título
 function parseVariantInfo(title: string) {
-    const match = title.match(/^(.*?)\s*–\s*(.*?)\s*\|/);
-    const name = match ? match[1].trim() : title;
-    const subtitle = match ? match[2].trim() : "";
+    const nameMatch = title.match(/^(.*?)\s*–/);
+    const name = nameMatch ? nameMatch[1].trim() : title;
 
-    const durationMatch = title.match(/\(([^)]+min)\)/);
-    const duration = durationMatch ? durationMatch[1] : "";
+    const subtitleMatch = title.match(/–\s*(.*?)\s*\|/);
+    const subtitle = subtitleMatch ? subtitleMatch[1].trim() : "";
+
+    const durationMatch = title.match(/\(([^)]+min[^)]*)\)/i);
+    const duration = durationMatch ? durationMatch[1].trim() : "";
 
     return { name, subtitle, duration };
 }
@@ -19,17 +21,48 @@ function formatPrice(price: string) {
     return new Intl.NumberFormat("es-CO").format(parseFloat(price));
 }
 
-// Obtener features del título
+// Obtener features mejorado
 function getFeatures(title: string) {
     const features = [];
-    if (title.includes("MP3")) features.push("Canción en MP3");
-    if (title.includes("Tarjeta Digital")) features.push("Tarjeta Digital");
-    if (title.includes("Video")) features.push("Video Lyric Animado");
+    const afterDuration = title.split(/\)/)[1] || "";
+    
+    if (afterDuration.includes("MP3")) {
+        const formatMatch = afterDuration.match(/MP3\s+([^+\-]+)/);
+        const format = formatMatch ? formatMatch[1].trim() : "";
+        features.push({
+            text: format ? `MP3 ${format}` : "Canción en MP3",
+            icon: "🎵"
+        });
+    }
+    
+    if (afterDuration.includes("Tarjeta Digital")) {
+        features.push({
+            text: "Tarjeta Digital Personalizada",
+            icon: "🎴"
+        });
+    }
+    
+    if (afterDuration.includes("Video")) {
+        features.push({
+            text: "Video Lyric Animado",
+            icon: "🎬"
+        });
+    }
+    
+    if (afterDuration.match(/\d+\s*Foto/i)) {
+        const photoMatch = afterDuration.match(/(\d+)\s*Foto/i);
+        const photoCount = photoMatch ? photoMatch[1] : "1";
+        features.push({
+            text: `${photoCount} Foto Para La Portada`,
+            icon: "📸"
+        });
+    }
+    
     return features;
 }
 ---
 
-<div class="py-20 px-4"  id="paquetes">
+<div class="py-20 px-4" id="paquetes">
     <div class="max-w-7xl mx-auto">
         <!-- Header -->
         <div class="text-center mb-16">
@@ -45,7 +78,7 @@ function getFeatures(title: string) {
                 <span>Elige Tu Paquete</span>
             </div>
             <p class="text-xl text-gray-600 max-w-2xl mx-auto">
-                Estas a un paso de tener tu propia canción personalizada.
+                Estás a un paso de tener tu propia canción personalizada.
                 Selecciona tu paquete y comienza a darle vida a lo que sientes
             </p>
         </div>
@@ -59,20 +92,17 @@ function getFeatures(title: string) {
                         const info = parseVariantInfo(variant.title);
                         const features = getFeatures(variant.title);
                         const isStandard = variant.position === 1;
-                        const isPremium = variant.position === 3;
-                        const isMini = variant.position === 2;
 
                         const icons = { 1: "🎤", 2: "🎵", 3: "👑" };
-                        const icon =
-                            icons[variant.position as keyof typeof icons];
+                        const icon = icons[variant.position as keyof typeof icons];
 
                         return (
                             <div
-                                class={`relative ${isStandard ? "md:scale-105 " : ""}`}
+                                class={`relative ${isStandard ? "md:scale-105" : ""}`}
                             >
                                 {/* Popular Badge */}
                                 {isStandard && (
-                                    <div class="absolute -top-4 left-1/2 -translate-x-1/2 z-1">
+                                    <div class="absolute -top-4 left-1/2 -translate-x-1/2 z-10">
                                         <span class="bg-gradient-to-r from-[#f89a3f] via-[#ff6b35] to-[#f89a3f] text-white px-5 py-2 rounded-full text-sm font-bold shadow-xl whitespace-nowrap">
                                             ⭐ MÁS POPULAR
                                         </span>
@@ -81,7 +111,6 @@ function getFeatures(title: string) {
 
                                 {/* Card */}
                                 <button
-                                    id="abrirModalDesdeAstro"
                                     data-variant-id={variant.id}
                                     data-variant-price={variant.price}
                                     class={`package-btn w-full h-full p-8 cursor-pointer rounded-2xl bg-gradient-to-br from-white to-gray-50/80 border-2 border-gray-200 hover:border-[#11676a] transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 group relative overflow-hidden`}
@@ -103,62 +132,44 @@ function getFeatures(title: string) {
 
                                         {/* Title */}
                                         <h3 class="text-2xl font-bold text-gray-900 mb-2">
-                                            {info.name
-                                                .replace(/🎼|🎤|🎬/g, "")
-                                                .trim()}
+                                            {info.name.replace(/🎼|🎤|🎬|👑|🎵/g, "").trim()}
                                         </h3>
-                                        <p class="text-sm font-medium text-gray-600 mb-6">
-                                            {info.subtitle
-                                                .replace(/⭐/g, "")
-                                                .trim()}
+                                        <p class="text-sm font-medium text-[#f89a3f] mb-6">
+                                            {info.subtitle.replace(/⭐/g, "").trim()}
                                         </p>
 
                                         {/* Duration */}
-                                        <div class="flex items-center justify-center gap-2 mb-6 bg-white/60 backdrop-blur-sm rounded-lg py-2 px-4 border border-gray-200">
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                width="20"
-                                                height="20"
-                                                viewBox="0 0 24 24"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                stroke-width="2"
-                                                stroke-linecap="round"
-                                                stroke-linejoin="round"
-                                            >
-                                                <circle
-                                                    cx="12"
-                                                    cy="12"
-                                                    r="10"
-                                                />
-                                                <polyline points="12 6 12 12 16 14" />
-                                            </svg>
-                                            <span class="text-sm font-semibold text-gray-700">
-                                                {info.duration}
-                                            </span>
-                                        </div>
+                                        {info.duration && (
+                                            <div class="flex items-center justify-center gap-2 mb-6 bg-white/60 backdrop-blur-sm rounded-lg py-2 px-4 border border-gray-200">
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    width="20"
+                                                    height="20"
+                                                    viewBox="0 0 24 24"
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    stroke-width="2"
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                >
+                                                    <circle cx="12" cy="12" r="10" />
+                                                    <polyline points="12 6 12 12 16 14" />
+                                                </svg>
+                                                <span class="text-sm font-semibold text-gray-700">
+                                                    {info.duration}
+                                                </span>
+                                            </div>
+                                        )}
 
                                         {/* Features */}
-                                        <div class="space-y-3 mb-8">
+                                        <div class="space-y-3 mb-8 min-h-[160px]">
                                             {features.map((feature) => (
-                                                <div class="flex items-center gap-2 text-left">
-                                                    <div class="bg-gradient-to-r from-[#11676a] to-[#2d8c89] rounded-full p-1 flex-shrink-0">
-                                                        <svg
-                                                            xmlns="http://www.w3.org/2000/svg"
-                                                            width="14"
-                                                            height="14"
-                                                            viewBox="0 0 24 24"
-                                                            fill="none"
-                                                            stroke="white"
-                                                            stroke-width="3"
-                                                            stroke-linecap="round"
-                                                            stroke-linejoin="round"
-                                                        >
-                                                            <polyline points="20 6 9 17 4 12" />
-                                                        </svg>
-                                                    </div>
-                                                    <span class="text-sm text-gray-700 font-medium">
-                                                        {feature}
+                                                <div class="flex items-start gap-3 text-left">
+                                                    <span class="text-xl flex-shrink-0 mt-0.5">
+                                                        {feature.icon}
+                                                    </span>
+                                                    <span class="text-sm text-gray-700 font-medium leading-relaxed">
+                                                        {feature.text}
                                                     </span>
                                                 </div>
                                             ))}
@@ -180,10 +191,7 @@ function getFeatures(title: string) {
 
                                             {variant.compare_at_price && (
                                                 <p class="text-sm text-gray-400 line-through mt-2">
-                                                    $
-                                                    {formatPrice(
-                                                        variant.compare_at_price,
-                                                    )}
+                                                    ${formatPrice(variant.compare_at_price)}
                                                 </p>
                                             )}
                                         </div>
@@ -218,7 +226,7 @@ function getFeatures(title: string) {
     }
 
     document.querySelectorAll(".package-btn").forEach((btn) => {
-        btn.addEventListener("click", function (e) {
+        btn.addEventListener("click", function () {
             const variantId = this.getAttribute("data-variant-id");
 
             document
@@ -293,8 +301,7 @@ function getFeatures(title: string) {
     }
 
     @keyframes pulse {
-        0%,
-        100% {
+        0%, 100% {
             opacity: 0.15;
         }
         50% {
