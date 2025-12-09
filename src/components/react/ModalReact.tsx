@@ -79,52 +79,65 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
   }, []);
 
   const steps = [
-    {
-      title: "Información Básica",
-      subtitle: "Cuéntanos un poco sobre ti y tu regalo especial",
-    },
-    {
-      title: "Cuéntanos Tu Historia",
-      subtitle: "Comparte los detalles especiales que quieres en tu canción",
-    },
-    {
-      title: "Información de Contacto",
-      subtitle: "Para enviarte tu canción personalizada",
-    },
-    {
-      title: "Elige Tu Género Musical",
-      subtitle: "Selecciona el género que más te guste",
-    },
-    {
-      title: "Selecciona Tu Paquete",
-      subtitle: "Elige el paquete perfecto para ti",
-    },
-    {
-      title: "Resumen de Tu Pedido",
-      subtitle: "Revisa tu información antes de finalizar",
-    },
+    { title: "Información Básica", subtitle: "Cuéntanos sobre ti y tu regalo especial" },
+    { title: "Tu Historia", subtitle: "Comparte los detalles especiales" },
+    { title: "Contacto", subtitle: "Para enviarte tu canción" },
+    { title: "Género Musical", subtitle: "Selecciona tu estilo favorito" },
+    { title: "Tu Paquete", subtitle: "Elige el perfecto para ti" },
+    { title: "Resumen", subtitle: "Revisa tu pedido antes de finalizar" },
+  ];
+
+  const tonosEmocionales = [
+    { id: "Romántico", label: "Romántico", emoji: "💘", color: "bg-pink-500" },
+    { id: "Alegre Festivo", label: "Alegre", emoji: "🎉", color: "bg-orange-500" },
+    { id: "Nostálgico", label: "Nostálgico", emoji: "🌠", color: "bg-blue-500" },
+    { id: "Emotivo", label: "Emotivo", emoji: "❤️", color: "bg-teal-500" },
+    { id: "Bailable", label: "Bailable", emoji: "💃", color: "bg-teal-500" },
+    { id: "Inspirador", label: "Inspirador", emoji: "💡", color: "bg-teal-500" },
+    { id: "Melancólico", label: "Melancólico", emoji: "😔", color: "bg-teal-500" },
+    { id: "Espiritual", label: "Espiritual", emoji: "🔮", color: "bg-teal-500" },
+    { id: "Personal Intimo", label: "Personal Intimo", emoji: "💌", color: "bg-teal-500" },
+  ];
+
+  const paraQuienOptions = [
+    { id: "esposa/o", label: "Esposo/a", emoji: "💏" },
+    { id: "novio/a", label: "Novio/a", emoji: "💕" },
+    { id: "mejor amiga", label: "Mejor Amiga", emoji: "🤝" },
+    { id: "mamá", label: "Mamá", emoji: "👩" },
+    { id: "papá", label: "Papá", emoji: "👨" },
+    { id: "abuelo/a", label: "Abuelo/a", emoji: "🧔" },
+    { id: "hermano/a", label: "Hermano/a", emoji: "👦" },
+    { id: "hijo/a", label: "Hijo/a", emoji: "🧒" },
+    { id: "alguien importante", label: "Alguien Importante", emoji: "👱" },
+
+  ];
+
+  const ocasiones = [
+    { id: "detalle especial", label: "Detalle Especial", emoji: "🎁" },
+    { id: "aniversario", label: "Aniversario", emoji: "🎂" },
+    { id: "cumpleanos", label: "Cumpleaños", emoji: "🎉" },
+    { id: "boda", label: "Boda", emoji: "💒" },
+    { id: "propuesta matrimonio", label: "Propuesta Matrimonio", emoji: "💍" },
+    { id: "Grados", label: "Grados", emoji: "📚" },
+    { id: "dia-madre/padres", label: "Día Madre/ Padre", emoji: "👩‍👩‍👧‍👦" },
+    { id: "amor amistad", label: "Amor y Amistad", emoji: "💕" },
+    { id: "nacimiento", label: "Nacimiento", emoji: "🎀" },
+    { id: "memorial", label: "Memorial", emoji: "🎈" }
   ];
 
   const generos = [
-    { id: "pop", label: "Pop" },
-    { id: "reggaeton", label: "Reggaeton" },
-    { id: "balada", label: "Balada" },
-    { id: "rock", label: "Rock" },
-    { id: "vallenato", label: "Vallenato" },
-    { id: "salsa", label: "Salsa" },
-    { id: "Cumbia", label: "Cumbia" },
-    { id: "Merengue", label: "Merengue" },
-    { id: "Afro Beat", label: "Afro Beat" },
-    { id: "Bolero", label: "Bolero" },
-    { id: "Ranchera", label: "Ranchera" },
-    { id: "Tango", label: "Tango" },
-    { id: "Música Popular", label: "Música Popular" },
-    { id: "Trap Latino", label: "Trap Latino" },
-    { id: "R&B", label: "R&B" },
-    { id: "Jazz", label: "Jazz" },
-    { id: "Hip hop", label: "Hip hop" },
-    { id: "Indie/Alternativo", label: "Indie/Alternativo" },
-    { id: "Sorprende", label: "Sorprende" },
+    { id: "pop", label: "Pop", icon: "🎧", color: "bg-purple-500" },
+    { id: "reggaeton", label: "Reggaeton", icon: "🎶", color: "bg-red-500" },
+    { id: "balada", label: "Balada", icon: "🎻", color: "bg-yellow-500" },
+    { id: "rock", label: "Rock", icon: "🎸", color: "bg-gray-800" },
+    { id: "vallenato", label: "Vallenato", icon: "🎵", color: "bg-pink-500" },
+    { id: "salsa", label: "Salsa", icon: "🌮", color: "bg-red-600" },
+    { id: "cumbia", label: "Cumbia", icon: "🎸", color: "bg-orange-500" },
+    { id: "merengue", label: "Merengue", icon: "🎶", color: "bg-purple-600" },
+    { id: "bolero", label: "Bolero", icon: "🎻", color: "bg-red-700" },
+    { id: "ranchera", label: "Ranchera", icon: "🌽", color: "bg-orange-600" },
+    { id: "rb", label: "R&B", icon: "🎤", color: "bg-blue-600" },
+    { id: "jazz", label: "Jazz", icon: "🎺", color: "bg-blue-800" },
   ];
 
   // Procesar variants de Shopify
@@ -1447,56 +1460,58 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
 
       {/* Modal de Bienvenida */}
       {showWelcome && (
-        <div className="modal-overlay" onClick={closeWelcome}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <button className="close-btn" onClick={closeWelcome} aria-label="Cerrar">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-3xl w-full max-w-lg max-h-[90vh] overflow-y-auto relative shadow-2xl">
+            <button
+              onClick={() => setShowWelcome(false)}
+              className="absolute top-4 right-4 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg hover:bg-gray-100 transition-all hover:rotate-90 z-10"
+            >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
 
-            <div className="welcome-content">
-              <div className="text-5xl md:text-6xl mb-4 animate-bounce">🎵</div>
+            <div className="p-8 text-center">
+              <div className="w-24 h-24 bg-gradient-to-br from-teal-500 to-teal-600 rounded-3xl mx-auto mb-6 flex items-center justify-center shadow-xl">
+                <svg className="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" />
+                </svg>
+              </div>
 
-              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+              <h1 className="text-4xl font-bold text-gray-900 mb-2">Letra Viva</h1>
+              <p className="text-gray-600 mb-8">Donde tus emociones se convierten en música</p>
 
-              </h1>
-              <h2 className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#11676a] to-[#2d8c89]">
-                ¡Letra Viva!
-              </h2>
-              <p className="text-lg text-gray-600">
-                Donde tus emociones se convierten en música
-              </p>
+              <div className="bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl p-6 mb-8 border-2 border-teal-200">
+                <h3 className="text-teal-800 font-bold text-lg mb-4">• ¿CÓMO FUNCIONA? •</h3>
 
-              <div className="how-it-works">
-                <h3 className="text-xl font-bold text-gray-900 mb-3">¿Cómo funciona?</h3>
-                <p className="text-gray-700 mb-6 font-semibold">Solo 4 pasos simples:</p>
-
-                <div className="steps-list">
-                  <div className="step-item">
-                    <div className="step-number">1</div>
-                    <p>Cuéntanos tu historia especial</p>
-                  </div>
-
-                  <div className="step-item">
-                    <div className="step-number">2</div>
-                    <p>Danos tu WhatsApp para la entrega</p>
-                  </div>
-
-                  <div className="step-item">
-                    <div className="step-number">3</div>
-                    <p>Elige el género y estilo musical</p>
-                  </div>
-
-                  <div className="step-item">
-                    <div className="step-number">4</div>
-                    <p>Selecciona tu paquete y método de pago</p>
-                  </div>
+                <div className="space-y-4">
+                  {[
+                    { num: 1, text: "Cuéntanos tu historia especial" },
+                    { num: 2, text: "Danos tu contacto para la entrega" },
+                    { num: 3, text: "Elige el género musical" },
+                    { num: 4, text: "Selecciona tu paquete y método de pago" }
+                  ].map(step => (
+                    <div key={step.num} className="flex items-center gap-3 text-left">
+                      <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-pink-600 rounded-xl flex items-center justify-center text-white font-bold flex-shrink-0 shadow-md">
+                        {step.num}
+                      </div>
+                      <p className="text-teal-800 font-medium">{step.text}</p>
+                    </div>
+                  ))}
                 </div>
               </div>
 
-              <button className="btn-start" onClick={startForm}>
+              <button
+                onClick={() => {
+                  setShowWelcome(false);
+                  setShowForm(true);
+                }}
+                className="w-full bg-gradient-to-r from-teal-600 to-teal-700 text-white py-4 rounded-2xl font-bold text-lg hover:shadow-xl transition-all hover:scale-105 flex items-center justify-center gap-2"
+              >
                 Comenzar Ahora
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
               </button>
             </div>
           </div>
@@ -1514,115 +1529,159 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
             </button>
 
             {/* Progress Bar */}
-            <div className="progress-container">
-              <div className="step-circle">{currentStep + 1}</div>
-              <div className="progress-bar">
-                <div className="progress-fill" style={{ width: `${progressWidth}%` }}></div>
+            <div className="bg-gradient-to-br from-teal-50 to-white p-6 border-b-2 border-teal-100">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="text-xs font-bold text-teal-700 bg-teal-100 px-3 py-1 rounded-full">
+                  PASO {currentStep + 1} DE {steps.length}
+                </div>
+                <div className="text-xs text-gray-500">{Math.round(progressWidth)}% completado</div>
+              </div>
+
+              <div className="h-2 bg-teal-100 rounded-full overflow-hidden mb-4">
+                <div
+                  className="h-full bg-gradient-to-r from-teal-500 to-teal-600 transition-all duration-500 rounded-full"
+                  style={{ width: `${progressWidth}%` }}
+                />
+              </div>
+
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 bg-gradient-to-br from-teal-500 to-teal-600 rounded-2xl flex items-center justify-center text-white flex-shrink-0 shadow-lg">
+                  {currentStep === 0 && <span className="text-2xl">✨</span>}
+                  {currentStep === 1 && <span className="text-2xl">💬</span>}
+                  {currentStep === 2 && <span className="text-2xl">📞</span>}
+                  {currentStep === 3 && <span className="text-2xl">🎵</span>}
+                  {currentStep === 4 && <span className="text-2xl">📦</span>}
+                  {currentStep === 5 && <span className="text-2xl">✅</span>}
+                </div>
+                <div className="flex-1 min-w-0 text-left">
+                  <h2 className="text-2xl font-bold text-gray-900 truncate ">{steps[currentStep].title}</h2>
+                  <p className="text-sm text-gray-600">{steps[currentStep].subtitle}</p>
+                </div>
               </div>
             </div>
 
             {/* Contenido del paso actual */}
-            <div className="form-content">
-              <h2 className="form-title">{steps[currentStep].title}</h2>
-              <p className="form-subtitle">{steps[currentStep].subtitle}</p>
-
+            <div className="flex-1 overflow-y-auto p-6">
               {/* Paso 0: Información Básica */}
               {currentStep === 0 && (
-                <div className="form-fields">
-                  <div className="form-group">
-                    <label>Tu nombre <span className="required">*</span></label>
+                <div className="space-y-6">
+                  <div>
+                    <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                      <span className="text-teal-600">👤</span> Tu nombre
+                    </label>
                     <input
                       type="text"
                       value={formData.nombre}
                       onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
                       placeholder="Escribe tu nombre"
-                      className={errors.nombre ? 'error' : ''}
+                      className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-4 focus:ring-teal-100 transition-all ${errors.nombre ? 'border-red-400' : 'border-gray-200 focus:border-teal-500'
+                        }`}
                     />
-                    {errors.nombre && <span className="error-msg">Este campo es requerido</span>}
-                  </div>
-                  <div className="form-group">
-                    <label>Tono emocional <span className="required">*</span></label>
-                    <select
-                      value={formData.tonoEmocional}
-                      onChange={(e) => setFormData({ ...formData, tonoEmocional: e.target.value })}
-                      className={errors.tonoEmocional ? 'error' : ''}
-                    >
-                      <option value="">Selecciona una opción</option>
-                      <option value="Romántico ">Romántico</option>
-                      <option value="Alegre Festivo">Alegre y Festivo</option>
-                      <option value="Nostálgico">Nostálgico</option>
-                      <option value="Bailable">Bailable</option>
-                      <option value="Inspirador">Inspirador</option>
-                      <option value="Melancólico">Melancólico</option>
-                      <option value="Espiritual">Espiritual</option>
-                      <option value="Personal Intimo">Personal e Intimo</option>
-                    </select>
-                    {errors.tonoEmocional && <span className="error-msg">Este campo es requerido</span>}
                   </div>
 
-                  <div className="form-group">
-                    <label>¿Para quién es esta canción? <span className="required">*</span></label>
-                    <select
-                      value={formData.paraQuien}
-                      onChange={(e) => setFormData({ ...formData, paraQuien: e.target.value })}
-                      className={errors.paraQuien ? 'error' : ''}
-                    >
-                      <option value="">Selecciona una opción</option>
-                      <option value="esposa/o">Mi Esposa/o</option>
-                      <option value="novio/a">Novio/a</option>
-                      <option value="amiga">Mejor amiga</option>
-                      <option value="mama">Mamá</option>
-                      <option value="papa">Papá</option>
-                      <option value="abuelo/a">Abuelo/a</option>
-                      <option value="hermano/a">Hermano/a</option>
-                      <option value="hijo/a">Hijo/a</option>
-                      <option value="importante">Alguien importante en mi vida</option>
-                      {/*  <option value="otro">Otro</option> */}
-                    </select>
-                    {errors.paraQuien && <span className="error-msg">Este campo es requerido</span>}
+                  <div>
+                    <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-3">
+                      <span className="text-teal-600">💝</span> Tono emocional
+                    </label>
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1">
+                      {tonosEmocionales.map((tono) => (
+                        <button
+                          key={tono.id}
+                          onClick={() => setFormData({ ...formData, tonoEmocional: tono.id })}
+                          className={`p-2 rounded-xl border-2 transition-all flex items-center gap-3 cursor-pointer ${formData.tonoEmocional === tono.id
+                            ? 'border-teal-500 bg-teal-50 shadow-md scale-105'
+                            : 'border-gray-200 hover:border-teal-300 hover:shadow-sm'
+                            }`}
+                        >
+                          <div className={` h-10  flex items-center justify-center text-white `}>
+                            {tono.emoji}
+                          </div>
+                          <div className="absolute top-2 right-2 w-5 h-5 bg-teal-600 rounded-full flex items-center justify-center">
+                            <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd">
+                              </path>
+                            </svg>
+                          </div>
+                          <span className="font-semibold text-gray-800">{tono.label}</span>
+                        </button>
+                      ))}
+                    </div>
                   </div>
 
-                  <div className="form-group">
-                    <label>¿Cuál es la ocasión? <span className="required">*</span></label>
-                    <select
-                      value={formData.ocasion}
-                      onChange={(e) => setFormData({ ...formData, ocasion: e.target.value })}
-                      className={errors.ocasion ? 'error' : ''}
-                    >
-                      <option value="">Selecciona una opción</option>
-                      <option value="detalle">Detalle especial</option>
-                      <option value="aniversario">Aniversario</option>
-                      <option value="cumpleanos">Cumpleaños</option>
-                      <option value="boda">Boda</option>
-                      <option value="propuesta">Propuesta de matrimonio</option>
-                      <option value="grado">Grado</option>
-                      <option value="dia-madre-padre">Día Madre/Padre</option>
-                      <option value="amor-amistad">Amor y amistad</option>
-                      <option value="nacimiento">Nacimiento</option>
-                      <option value="memorial">Memorial</option>
-                      {/*   <option value="otro">Otro</option> */}
-                    </select>
-                    {errors.ocasion && <span className="error-msg">Este campo es requerido</span>}
+                  <div>
+                    <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-3">
+                      <span className="text-teal-600">🎁</span> ¿Para quién es?
+                    </label>
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                      {paraQuienOptions.map((option) => (
+                        <button
+                          key={option.id}
+                          onClick={() => setFormData({ ...formData, paraQuien: option.id })}
+                          className={`p-1 rounded-xl border-2 transition-all text-center ${formData.paraQuien === option.id
+                            ? 'border-teal-500 bg-teal-50 shadow-md scale-105'
+                            : 'border-gray-200 hover:border-teal-300 hover:shadow-sm'
+                            }`}
+                        >
+                          <div className="text-3xl mb-1">{option.emoji}</div>
+
+                          <div className="text-xs font-semibold text-gray-800">{option.label}</div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-3">
+                      <span className="text-teal-600">📅</span> ¿Cuál es la ocasión?
+                    </label>
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                      {ocasiones.map((ocasion) => (
+                        <button
+                          key={ocasion.id}
+                          onClick={() => setFormData({ ...formData, ocasion: ocasion.id })}
+                          className={`p-1 rounded-xl border-2 transition-all text-center ${formData.ocasion === ocasion.id
+                            ? 'border-teal-500 bg-teal-50 shadow-md scale-105'
+                            : 'border-gray-200 hover:border-teal-300 hover:shadow-sm'
+                            }`}
+                        >
+                          <div className="text-3xl mb-1">{ocasion.emoji}</div>
+                          <div className="text-xs font-semibold text-gray-800">{ocasion.label}</div>
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
               )}
 
               {/* Paso 1: Cuéntanos Tu Historia */}
               {currentStep === 1 && (
-                <div className="form-fields">
-                  <div className="form-group">
-                    <label>Tu Historia de Amor:</label>
-                    <textarea
-                      value={formData.historia}
-                      onChange={(e) => setFormData({ ...formData, historia: e.target.value })}
-                      placeholder="Cuéntanos sobre esa persona especial, momentos inolvidables, lo que sientes..."
-                      rows={8}
-                      className={errors.historia ? 'error' : ''}
-                    ></textarea>
-                    {errors.historia ? (
-                      <span className="error-msg">Escribe al menos 20 caracteres</span>
-                    ) : (
-                      <span className="help-text">Mínimo 20 caracteres</span>
+                <div>
+                  <div className="bg-gradient-to-br from-pink-50 to-purple-50 rounded-2xl px-2 py-2 mb-3 border-2 border-pink-200">
+                    <div className="flex items-start gap-3">
+                      <div className="w-10 h-10 bg-pink-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <span className="text-xl">✨</span>
+                      </div>
+                      <p className="text-sm text-pink-900 leading-relaxed text-left">
+                        Cuéntanos sobre esa persona especial, momentos inolvidables, lo que sientes... Todo esto nos ayuda a crear la canción perfecta.
+                      </p>
+                    </div>
+                  </div>
+
+                  <textarea
+                    value={formData.historia}
+                    onChange={(e) => setFormData({ ...formData, historia: e.target.value })}
+                    placeholder="Escribe tu historia aquí..."
+                    rows={10}
+                    className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-4 focus:ring-teal-100 transition-all resize-none ${errors.historia ? 'border-red-400' : 'border-gray-200 focus:border-teal-500'
+                      }`}
+                  />
+                  <div className="flex flex-col items-center justify-between  mt-2 text-sm">
+                    <span className={formData.historia.length >= 20 ? 'text-teal-600 font-semibold flex items-center gap-1' : 'text-gray-500'}>
+                      {formData.historia.length >= 20 && <span>✓</span>}
+                      Mínimo 20 caracteres · {formData.historia.length} escritos
+                    </span>
+                    {formData.historia.length >= 20 && (
+                      <span className="text-teal-600 font-semibold">¡Perfecto!</span>
                     )}
                   </div>
                 </div>
@@ -1630,409 +1689,283 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
 
               {/* Paso 2: Información de Contacto */}
               {currentStep === 2 && (
-                <div className="form-fields">
-                  <div className="form-group">
-                    <label>Número de WhatsApp: <span className="required">*</span></label>
-                    <div className={`whatsapp-input ${errors.whatsapp ? 'error' : ''}`}>
-                      <svg className="w-6 h-6 text-green-500" fill="currentColor" viewBox="0 0 24 24">
+                <div className="space-y-2">
+                  <div>
+                    <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                      <svg className="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
                       </svg>
-                      <input
-                        type="tel"
-                        value={formData.whatsapp}
-                        onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
-                        placeholder="+57 300 123 4567"
-                      />
-                    </div>
-                    {errors.whatsapp ? (
-                      <span className="error-msg">Por favor ingresa un número válido (mínimo 10 dígitos)</span>
-                    ) : (
-                      <span className="help-text">Te contactaremos por WhatsApp para coordinar la entrega</span>
-                    )}
+                      WhatsApp
+                    </label>
+                    <input
+                      type="tel"
+                      value={formData.whatsapp}
+                      onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
+                      placeholder="+57 300 123 4567"
+                      className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-4 focus:ring-teal-100 transition-all ${errors.whatsapp ? 'border-red-400' : 'border-gray-200 focus:border-teal-500'
+                        }`}
+                    />
+                    <p className="text-xs text-gray-500 mt-1 text-left">• Te contactaremos para coordinar la entrega</p>
                   </div>
 
-                  {/* ← NUEVO CAMPO DE EMAIL */}
-                  <div className="form-group">
-                    <label>Correo Electrónico: <span className="required">*</span></label>
-                    <div className="flex items-center gap-3">
-                      <svg className="w-6 h-6 text-blue-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                  <div>
+                    <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                      <svg className="w-5 h-5 text-blue-500" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
                       </svg>
-                      <input
-                        type="email"
-                        value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        placeholder="tucorreo@ejemplo.com"
-                        className={errors.email ? 'error' : ''}
-                      />
-                    </div>
-                    {errors.email ? (
-                      <span className="error-msg">Por favor ingresa un correo electrónico válido</span>
-                    ) : (
-                      <span className="help-text">Te enviaremos la confirmación de tu pedido</span>
-                    )}
+                      Email
+                    </label>
+                    <input
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      placeholder="tucorreo@ejemplo.com"
+                      className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-4 focus:ring-teal-100 transition-all ${errors.email ? 'border-red-400' : 'border-gray-200 focus:border-teal-500'
+                        }`}
+                    />
+                    <p className="text-xs text-gray-500 mt-1 text-left">• Recibirás la confirmación aquí</p>
                   </div>
                 </div>
               )}
 
               {/* Paso 3: Elige Tu Estilo Musical */}
               {currentStep === 3 && (
-                <>
-                  <div className="generos-scroll-container">
-                    <div className="generos-grid">
+                <div>
+                  <div className="max-h-96 overflow-y-auto pr-2">
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                       {generos.map((genero) => (
                         <button
                           key={genero.id}
-                          className={`genero-btn ${formData.genero === genero.id ? 'selected' : ''}`}
-                          onClick={() => selectGenero(genero.id)}
+                          onClick={() => setFormData({ ...formData, genero: genero.id })}
+                          className={`relative p-2 mx-1 rounded-xl border-2 transition-all text-center overflow-hidden ${formData.genero === genero.id
+                            ? 'border-teal-500 shadow-lg scale-105'
+                            : 'border-gray-200 hover:border-teal-300 hover:shadow-sm'
+                            }`}
                         >
-                          {genero.label}
+                          <div className={`absolute inset-0 ${genero.color} opacity-${formData.genero === genero.id ? '21' : '10'} transition-opacity`}></div>
+                          <div className="relative z-10">
+                            <div className={`text-2xl mb-2 ${formData.genero === genero.id ? 'text-white' : 'text-gray-800'}`}>
+                              {genero.icon}
+                            </div>
+                            <div className={`text-sm font-bold ${formData.genero === genero.id ? 'text-white' : 'text-gray-800'}`}>
+                              {genero.label}
+                            </div>
+                          </div>
+                          {formData.genero === genero.id && (
+                            <div className="absolute top-2 right-2 w-6 h-6 bg-white rounded-full flex items-center justify-center">
+                              <svg className="w-4 h-4 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
+                              </svg>
+                            </div>
+                          )}
                         </button>
                       ))}
                     </div>
                   </div>
-                  {errors.genero && <span className="error-msg">Por favor selecciona un género</span>}
-                </>
+                </div>
               )}
 
-              {/* Paso 4: Selecciona Tu Paquete */}
+
               {/* Paso 4: Selecciona Tu Paquete */}
               {currentStep === 4 && (
-                <>
-                  <div style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '10px',
-                    maxHeight: '360px',
-                    overflowY: 'auto',
-                    paddingRight: '6px',
-                    marginBottom: '16px'
-                  }}>
-                    {paquetes.sort((a, b) => a.position - b.position).map((paquete) => (
-                      <button
-                        key={paquete.id}
-                        onClick={() => selectPaquete(paquete.id)}
-                        style={{
-                          position: 'relative',
-                          width: '100%',
-                          padding: '14px 16px',
-                          borderRadius: '10px',
-                          border: formData.paquete === paquete.id
-                            ? '2px solid #11676a'
-                            : paquete.highlighted
-                              ? '2px solid #f89a3f'
-                              : '1px solid #e5e7eb',
-                          background: formData.paquete === paquete.id
-                            ? 'linear-gradient(135deg, #11676a 0%, #2d8c89 100%)'
-                            : 'white',
-                          color: formData.paquete === paquete.id ? 'white' : '#111827',
-                          cursor: 'pointer',
-                          transition: 'all 0.15s ease',
-                          textAlign: 'left',
-                          boxShadow: formData.paquete === paquete.id
-                            ? '0 6px 20px rgba(17, 103, 106, 0.25)'
-                            : paquete.highlighted
-                              ? '0 2px 8px rgba(248, 154, 63, 0.15)'
-                              : '0 1px 3px rgba(0, 0, 0, 0.08)',
-                          overflow: 'visible'
-                        }}
-                        onMouseEnter={(e) => {
-                          if (formData.paquete !== paquete.id) {
-                            e.currentTarget.style.borderColor = paquete.highlighted ? '#f89a3f' : '#11676a';
-                            e.currentTarget.style.boxShadow = paquete.highlighted
-                              ? '0 4px 12px rgba(248, 154, 63, 0.2)'
-                              : '0 3px 10px rgba(0, 0, 0, 0.12)';
-                          }
-                        }}
-                        onMouseLeave={(e) => {
-                          if (formData.paquete !== paquete.id) {
-                            e.currentTarget.style.borderColor = paquete.highlighted ? '#f89a3f' : '#e5e7eb';
-                            e.currentTarget.style.boxShadow = paquete.highlighted
-                              ? '0 2px 8px rgba(248, 154, 63, 0.15)'
-                              : '0 1px 3px rgba(0, 0, 0, 0.08)';
-                          }
-                        }}
-                      >
-                        {/* Badge elegante */}
-                        {paquete.highlighted && formData.paquete !== paquete.id && (
-                          <div style={{
-                            position: 'absolute',
-                            top: '-1px',
-                            right: '12px',
-                            background: 'linear-gradient(135deg, #f89a3f 0%, #ff6b35 100%)',
-                            color: 'white',
-                            padding: '4px 10px',
-                            borderRadius: '0 0 8px 8px',
-                            fontSize: '9px',
-                            fontWeight: 'bold',
-                            letterSpacing: '0.5px',
-                            textTransform: 'uppercase',
-                            boxShadow: '0 2px 8px rgba(248, 154, 63, 0.3)'
-                          }}>
-                            Recomendado
-                          </div>
-                        )}
-
-                        {/* Checkmark minimalista */}
-                        {formData.paquete === paquete.id && (
-                          <div style={{
-                            position: 'absolute',
-                            top: '10px',
-                            right: '12px',
-                            width: '20px',
-                            height: '20px',
-                            background: 'white',
-                            borderRadius: '50%',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            boxShadow: '0 2px 6px rgba(0, 0, 0, 0.15)'
-                          }}>
-                            <svg style={{ width: '12px', height: '12px', color: '#10b981' }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                            </svg>
-                          </div>
-                        )}
-
-                        <div style={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
-                          gap: '12px'
-                        }}>
-                          {/* Lado izquierdo */}
-                          <div style={{ flex: 1, minWidth: 0 }}>
-                            {/* Nombre y subtítulo en una línea */}
-                            <div style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '8px',
-                              marginBottom: '6px',
-                              paddingRight: formData.paquete === paquete.id ? '24px' : '0'
-                            }}>
-                              <span style={{ fontSize: '22px', lineHeight: 1 }}>{paquete.icon}</span>
-                              <div style={{ flex: 1, minWidth: 0 }}>
-                                <h3 style={{
-                                  fontSize: '15px',
-                                  fontWeight: '700',
-                                  margin: 0,
-                                  lineHeight: 1.2,
-                                  overflow: 'hidden',
-                                  textOverflow: 'ellipsis',
-                                  whiteSpace: 'nowrap'
-                                }}>
-                                  {paquete.nombre}
-                                </h3>
-                                {paquete.subtitle && (
-                                  <p style={{
-                                    fontSize: '11px',
-                                    fontWeight: 600,
-                                    color: formData.paquete === paquete.id ? 'rgba(255,255,255,0.85)' : '#6b7280',
-                                    margin: 0,
-                                    lineHeight: 1.2
-                                  }}>
-                                    {paquete.subtitle}
-                                  </p>
-                                )}
-                              </div>
-                            </div>
-
-                            {/* Features ultra compactos */}
-                            <div style={{
-                              display: 'flex',
-                              flexWrap: 'wrap',
-                              gap: '4px',
-                              fontSize: '10px',
-                              lineHeight: 1
-                            }}>
-                              {paquete.duracion && (
-                                <span style={{
-                                  display: 'inline-flex',
-                                  alignItems: 'center',
-                                  gap: '3px',
-                                  padding: '4px 7px',
-                                  borderRadius: '5px',
-                                  background: formData.paquete === paquete.id
-                                    ? 'rgba(255,255,255,0.25)'
-                                    : '#f3f4f6',
-                                  fontWeight: 600,
-                                  whiteSpace: 'nowrap'
-                                }}>
-                                  <span style={{ fontSize: '11px' }}>⏱</span>
-                                  <span>{paquete.duracion.replace(' Min. Aprox.', 'min')}</span>
-                                </span>
-                              )}
-                              {paquete.features.map((feature, idx) => (
-                                <span key={idx} style={{
-                                  display: 'inline-flex',
-                                  alignItems: 'center',
-                                  gap: '3px',
-                                  padding: '4px 7px',
-                                  borderRadius: '5px',
-                                  background: formData.paquete === paquete.id
-                                    ? 'rgba(255,255,255,0.25)'
-                                    : '#f3f4f6',
-                                  fontWeight: 500,
-                                  whiteSpace: 'nowrap'
-                                }}>
-                                  <span style={{ fontSize: '11px' }}>{feature.icon}</span>
-                                  <span style={{
-                                    maxWidth: '80px',
-                                    overflow: 'hidden',
-                                    textOverflow: 'ellipsis'
-                                  }}>
-                                    {feature.text.length > 15 ? feature.text.substring(0, 12) + '...' : feature.text}
-                                  </span>
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-
-                          {/* Precio lado derecho */}
-                          <div style={{
-                            textAlign: 'right',
-                            flexShrink: 0,
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'flex-end',
-                            justifyContent: 'center'
-                          }}>
-                            <div style={{
-                              fontSize: '20px',
-                              fontWeight: '900',
-                              lineHeight: 1,
-                              letterSpacing: '-0.5px'
-                            }}>
-                              {paquete.precio}
-                            </div>
-                            <div style={{
-                              fontSize: '9px',
-                              fontWeight: 600,
-                              opacity: 0.7,
-                              marginTop: '2px',
-                              letterSpacing: '0.5px'
-                            }}>
-                              COP
-                            </div>
-                          </div>
+                <div className="space-y-4">
+                  {paquetes.sort((a, b) => a.position - b.position).map((paquete) => (
+                    <button
+                      key={paquete.id}
+                      onClick={() => setFormData({ ...formData, paquete: paquete.id })}
+                      className={`relative w-full p-5 rounded-2xl border-2 transition-all text-left ${formData.paquete === paquete.id
+                        ? 'border-teal-500 bg-gradient-to-br from-teal-50 to-teal-100 shadow-xl scale-105'
+                        : paquete.highlighted
+                          ? 'border-yellow-400 bg-gradient-to-br from-yellow-50 to-orange-50'
+                          : 'border-gray-200 bg-white hover:border-teal-300 hover:shadow-md'
+                        }`}
+                    >
+                      {paquete.highlighted && formData.paquete !== paquete.id && (
+                        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-yellow-400 to-orange-400 text-white text-xs font-bold px-4 py-1 rounded-full shadow-md">
+                          ⭐ POPULAR
                         </div>
-                      </button>
-                    ))}
-                  </div>
-                  {errors.paquete && <span className="error-msg">Por favor selecciona un paquete</span>}
-                </>
+                      )}
+
+                      {formData.paquete === paquete.id && (
+                        <div className="absolute top-4 right-4 w-8 h-8 bg-teal-600 rounded-full flex items-center justify-center shadow-lg">
+                          <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
+                          </svg>
+                        </div>
+                      )}
+
+                      <div className="flex items-start justify-between gap-4 mb-3">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="text-2xl">{paquete.icon}</span>
+                            <h3 className="text-lg font-bold text-gray-900">{paquete.nombre}</h3>
+                          </div>
+                          {paquete.subtitle && (
+                            <p className="text-sm font-semibold text-teal-700">{paquete.subtitle}</p>
+                          )}
+                        </div>
+                        <div className="text-right flex-shrink-0">
+                          <div className="text-2xl font-black text-teal-600">{paquete.precio}</div>
+                          <div className="text-xs text-gray-500 font-semibold">COP</div>
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        {paquete.duracion && (
+                          <div className="flex items-center gap-2 text-sm text-gray-700">
+                            <span className="text-teal-600">⏱</span>
+                            <span className="font-medium">{paquete.duracion}</span>
+                          </div>
+                        )}
+                        {paquete.features.map((feature, idx) => (
+                          <div key={idx} className="flex items-center gap-2 text-sm text-gray-700">
+                            <span className="text-teal-600">✓</span>
+                            <span className="font-medium">{feature.text}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </button>
+                  ))}
+                </div>
               )}
 
               {/* Paso 5: Resumen */}
               {currentStep === 5 && (
-                <div className="resumen">
-                  <div className="resumen-section">
-                    <h3>Detalles del Pedido</h3>
-                    <div className="detalle-row">
-                      <span>Nombre:</span>
-                      <strong>{formData.nombre}</strong>
-                    </div>
-                    <div className="detalle-row">
-                      <span>Para:</span>
-                      <strong>{formData.paraQuien}</strong>
-                    </div>
-                    <div className="detalle-row">
-                      <span>Tono emocional:</span>
-                      <strong>{formData.tonoEmocional}</strong>
-                    </div>
-                    <div className="detalle-row">
-                      <span>Ocasión:</span>
-                      <strong>{formData.ocasion}</strong>
-                    </div>
-                    <div className="detalle-row">
-                      <span>Género:</span>
-                      <strong>{generos.find((g) => g.id === formData.genero)?.label || ''}</strong>
-                    </div>
-                    <div className="detalle-row">
-                      <span>WhatsApp:</span>
-                      <strong>{formData.whatsapp}</strong>
-                    </div>
-                    <div className="detalle-row">
-                      <span>Email:</span>
-                      <strong>{formData.email}</strong>
+                <div className="space-y-6">
+                  <div className="bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl p-6 border-2 border-teal-200">
+                    <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                      <span className="text-2xl">•</span> DETALLES
+                    </h3>
+                    <div className="space-y-3">
+                      {[
+                        { icon: "👤", label: "Nombre", value: formData.nombre },
+                        { icon: "🎁", label: "Para", value: paraQuienOptions.find(p => p.id === formData.paraQuien)?.label },
+                        { icon: "💝", label: "Tono", value: tonosEmocionales.find(t => t.id === formData.tonoEmocional)?.label },
+                        { icon: "📅", label: "Ocasión", value: ocasiones.find(o => o.id === formData.ocasion)?.label },
+                        { icon: "🎵", label: "Género", value: generos.find(g => g.id === formData.genero)?.label },
+                        { icon: "📱", label: "WhatsApp", value: formData.whatsapp },
+                        { icon: "📧", label: "Email", value: formData.email }
+                      ].map((item, idx) => (
+                        <div key={idx} className="flex items-center justify-between py-2 border-b border-teal-200 last:border-0">
+                          <div className="flex items-center gap-2">
+                            <span className="text-lg">{item.icon}</span>
+                            <span className="text-sm text-gray-600">{item.label}</span>
+                          </div>
+                          <span className="text-sm font-bold text-gray-900">{item.value}</span>
+                        </div>
+                      ))}
                     </div>
                   </div>
 
-                  <div className="resumen-section paquete-seleccionado">
-                    <h3>Paquete Seleccionado</h3>
-                    {formData.paquete && (() => {
+                  {formData.paquete && (() => {
                       const paq = paquetes.find((p) => p.id === formData.paquete);
                       return paq ? (
-                        <div className="paquete-detalle">
+                      <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border-2 border-blue-200">
+                        <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                          <span className="text-2xl">📦</span> PAQUETE SELECCIONADO
+                        </h3>
+                        <div className="flex items-start justify-between gap-4">
                           <div>
-                            <h4>{paq.nombre}</h4>
-                            <p>{paq.descripcion}</p>
+                            <h4 className="text-xl font-bold text-teal-700 mb-1">{paq.nombre}</h4>
+                             <p className="text-sm text-gray-600 mb-2">{paq.subtitle}</p>
+                            <div className="space-y-1">                            
+                              <div className="text-sm text-gray-700">⏱ {paq.duracion}</div>
+                              
+                              {paq.features.map((f, i) => (
+                                <div key={i} className="text-sm text-gray-700">✓ {f.text}</div>
+                              ))}
+                            </div>
                           </div>
-                          <div className="precio-final">
-                            <span className="precio">{paq.precio}</span>
-                            <span className="moneda">COP</span>
+                          <div className="text-right">
+                            <div className="text-3xl font-black text-teal-600">{paq.precio}</div>
+                            <div className="text-xs text-gray-500 font-semibold">COP</div>
                           </div>
                         </div>
-                      ) : null;
-                    })()}
-                  </div>
+                      </div>
+                    ): null
+                  })()}
 
-                  <div className="metodos-pago">
-                    <div className="pago-header">
-                      <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                   <div className="bg-gradient-to-br from-yellow-50 to-amber-50 rounded-2xl p-5 border-2 border-yellow-300">
+                    <div className="flex items-center gap-2 mb-4">
+                      <svg className="w-6 h-6 text-yellow-600" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" />
                       </svg>
-                      <h3>Selecciona tu Método de Pago</h3>
+                      <h3 className="text-base font-bold text-amber-900">Método de Pago</h3>
                     </div>
-
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                      <div className={`pago-opcion shadow-md border ${formData.metodoPago === 'online' ? 'selected' : ''}`} onClick={() => selectMetodoPago('online')}>
-                        <div className="pago-icon">💳</div>
-                        <div className="pago-text">
-                          <strong>Pago en Línea</strong>
-                          <p>Salta la fila, recibe tu canción en solo 24H</p>
-                        </div>
-                      </div>
-
-                      <div
-                        className={`pago-opcion shadow-md border ${formData.metodoPago === 'contraentrega' ? 'selected' : ''}`}
-                        onClick={() => selectMetodoPago('contraentrega')}
+                    <div className="space-y-3">
+                      <button
+                        onClick={() => setFormData({ ...formData, metodoPago: 'online' })}
+                        className={`w-full p-4 rounded-xl border-2 transition-all flex items-center gap-3 ${
+                          formData.metodoPago === 'online'
+                            ? 'border-teal-500 bg-teal-50 shadow-md'
+                            : 'border-gray-200 bg-white hover:border-teal-300'
+                        }`}
                       >
-                        <div className="pago-icon">💵</div>
-                        <div className="pago-text">
-                          <strong>Pago Contra Entrega</strong>
-                          <p>Escucha primero, paga después si te encanta</p>
+                        <div className="text-2xl">💳</div>
+                        <div className="flex-1 text-left">
+                          <div className="font-bold text-gray-900 text-sm">Pago en Línea</div>
+                          <div className="text-xs text-gray-600">Recibe en 24H</div>
                         </div>
-                      </div>
+                      </button>
+                      <button
+                        onClick={() => setFormData({ ...formData, metodoPago: 'contraentrega' })}
+                        className={`w-full p-4 rounded-xl border-2 transition-all flex items-center gap-3 ${
+                          formData.metodoPago === 'contraentrega'
+                            ? 'border-teal-500 bg-teal-50 shadow-md'
+                            : 'border-gray-200 bg-white hover:border-teal-300'
+                        }`}
+                      >
+                        <div className="text-2xl">💵</div>
+                        <div className="flex-1 text-left">
+                          <div className="font-bold text-gray-900 text-sm">Transferencia</div>
+                          <div className="text-xs text-gray-600">Escucha primero, paga después</div>
+                        </div>
+                      </button>
                     </div>
-
                     {errors.metodoPago && (
-                      <span className="error-msg" style={{ display: 'block', marginTop: '8px' }}>
-                        Por favor selecciona un método de pago
-                      </span>
+                      <p className="text-red-500 text-sm mt-2">Selecciona un método de pago</p>
                     )}
                   </div>
+
                 </div>
+
               )}
             </div>
 
             {/* Botones de navegación */}
-            <div className="form-footer">
-              {currentStep > 0 ? (
-                <button className="btn-secondary" onClick={prevStep}>Atrás</button>
-              ) : (
-                <div></div>
+            <div className="border-t-2 border-gray-100 p-6 bg-white flex items-center gap-4">
+              {currentStep > 0 && (
+                <button
+                  onClick={prevStep}
+                  className="px-6 py-3 rounded-xl bg-gray-100 text-gray-700 font-semibold hover:bg-gray-200 transition-all flex items-center gap-2"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+                  </svg>
+                  Atrás
+                </button>
               )}
 
               {currentStep < steps.length - 1 ? (
-                <button className="btn-primary" onClick={nextStep}>Siguiente</button>
+                <button
+                  onClick={nextStep}
+                  className="flex-1 px-6 py-3 rounded-xl bg-gradient-to-r from-teal-600 to-teal-700 text-white font-bold hover:shadow-xl transition-all flex items-center justify-center gap-2"
+                >
+                  Siguiente
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
               ) : (
                 <button
-                  className="btn-primary"
                   onClick={handleSubmit}
                   disabled={isSubmitting}
+                  className="flex-1 px-6 py-3 rounded-xl bg-gradient-to-r from-green-600 to-green-700 text-white font-bold hover:shadow-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                 >
-                  {isSubmitting ? 'Procesando...' : 'Finalizar Pedido'}
+                  {isSubmitting ? 'Procesando...' : 'Confirmar Pedido'}
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                  </svg>
                 </button>
               )}
             </div>
