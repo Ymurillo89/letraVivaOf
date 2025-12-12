@@ -3,16 +3,17 @@ export const prerender = false;
 
 import type { APIRoute } from 'astro';
 
-// src/pages/api/shopify/create-checkout.ts
-
 export const POST: APIRoute = async ({ request }) => {
   try {
+    // Leer el body de la petición
     const body = await request.text();
     const orderData = JSON.parse(body);
-    
-    // Obtener la URL de origen desde el request
+
+    // Construir origen y URL de retorno
     const origin = new URL(request.url).origin;
-    
+    const returnUrl = `${origin}/gracias`;
+
+    // Mutación GraphQL: cartCreate
     const mutation = `
       mutation cartCreate($input: CartInput!) {
         cartCreate(input: $input) {
@@ -34,24 +35,35 @@ export const POST: APIRoute = async ({ request }) => {
       }
     `;
 
+    // Construcción de variables para Shopify
     const variables = {
       input: {
         lines: orderData.line_items.map((item: any) => ({
           merchandiseId: `gid://shopify/ProductVariant/${item.variant_id}`,
           quantity: item.quantity
         })),
+
         attributes: [
           ...(orderData.note_attributes?.map((attr: any) => ({
             key: attr.name,
             value: attr.value
           })) || []),
-          // Agregar URL de retorno como atributo
+
+          // Guardar la URL de retorno
           {
-            key: '_return_url',
-            value: `${origin}/gracias`  // o la página que quieras
+            key: 'return_url',
+            value: returnUrl
+          },
+
+          // Guardar el origen del sitio
+          {
+            key: 'origin_site',
+            value: origin
           }
         ],
+
         note: orderData.note || '',
+
         buyerIdentity: {
           email: orderData.customer?.email || '1@letraviva.com',
           phone: orderData.customer?.phone || '3132948434',
@@ -60,21 +72,25 @@ export const POST: APIRoute = async ({ request }) => {
       }
     };
 
+    // Llamado a Shopify Storefront API
     const response = await fetch(
       `https://${import.meta.env.SHOPIFY_STORE_DOMAIN}/api/2025-01/graphql.json`,
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-Shopify-Storefront-Access-Token': import.meta.env.SHOPIFY_STOREFRONT_TOKEN,
+          'X-Shopify-Storefront-Access-Token':
+            import.meta.env.SHOPIFY_STOREFRONT_TOKEN
         },
         body: JSON.stringify({ query: mutation, variables })
       }
     );
 
+    // Respuesta del API
     const result = await response.json();
     const cart = result.data?.cartCreate?.cart;
 
+    // Validación de checkoutUrl
     if (!cart || !cart.checkoutUrl) {
       return new Response(
         JSON.stringify({
@@ -85,25 +101,27 @@ export const POST: APIRoute = async ({ request }) => {
       );
     }
 
-    // Agregar parámetros de retorno a la URL del checkout
-    const checkoutUrl = new URL(cart.checkoutUrl);
-    checkoutUrl.searchParams.set('return_to', `${origin}/gracias`);
-    
+    // Respuesta final
     return new Response(
       JSON.stringify({
         success: true,
-        checkoutUrl: checkoutUrl.toString(),
-        cartId: cart.id
+        checkoutUrl: cart.checkoutUrl,
+        cartId: cart.id,
+        returnUrl
       }),
       { status: 200, headers: { 'Content-Type': 'application/json' } }
     );
 
   } catch (error) {
     console.error('Error en create-checkout:', error);
+
     return new Response(
       JSON.stringify({
         success: false,
-        message: error instanceof Error ? error.message : 'Error al crear el checkout'
+        message:
+          error instanceof Error
+            ? error.message
+            : 'Error al crear el checkout'
       }),
       { status: 500, headers: { 'Content-Type': 'application/json' } }
     );

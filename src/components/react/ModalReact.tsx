@@ -1492,7 +1492,7 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
                     { num: 4, text: "Selecciona tu paquete y método de pago" }
                   ].map(step => (
                     <div key={step.num} className="flex items-center gap-3 text-left">
-                      <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-pink-600 rounded-xl flex items-center justify-center text-white font-bold flex-shrink-0 shadow-md">
+                      <div className="w-10 h-10 bg-gradient-to-r from-[#f89a3f] via-[#ff6b35] to-[#f89a3f] hover:from-[#ff6b35] hover:via-[#f89a3f] hover:to-[#ff6b35] rounded-xl flex items-center justify-center text-white font-bold flex-shrink-0 shadow-md">
                         {step.num}
                       </div>
                       <p className="text-teal-800 font-medium">{step.text}</p>
@@ -1561,7 +1561,7 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
             </div>
 
             {/* Contenido del paso actual */}
-            <div className="flex-1 overflow-y-auto p-6">
+            <div className="flex-1 overflow-y-auto p-6 h-96">
               {/* Paso 0: Información Básica */}
               {currentStep === 0 && (
                 <div className="space-y-6">
@@ -1858,8 +1858,8 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
                   </div>
 
                   {formData.paquete && (() => {
-                      const paq = paquetes.find((p) => p.id === formData.paquete);
-                      return paq ? (
+                    const paq = paquetes.find((p) => p.id === formData.paquete);
+                    return paq ? (
                       <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border-2 border-blue-200">
                         <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
                           <span className="text-2xl">📦</span> PAQUETE SELECCIONADO
@@ -1867,10 +1867,10 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
                         <div className="flex items-start justify-between gap-4">
                           <div>
                             <h4 className="text-xl font-bold text-teal-700 mb-1">{paq.nombre}</h4>
-                             <p className="text-sm text-gray-600 mb-2">{paq.subtitle}</p>
-                            <div className="space-y-1">                            
+                            <p className="text-sm text-gray-600 mb-2">{paq.subtitle}</p>
+                            <div className="space-y-1">
                               <div className="text-sm text-gray-700">⏱ {paq.duracion}</div>
-                              
+
                               {paq.features.map((f, i) => (
                                 <div key={i} className="text-sm text-gray-700">✓ {f.text}</div>
                               ))}
@@ -1882,42 +1882,40 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
                           </div>
                         </div>
                       </div>
-                    ): null
+                    ) : null
                   })()}
 
-                   <div className="bg-gradient-to-br from-yellow-50 to-amber-50 rounded-2xl p-5 border-2 border-yellow-300">
+                  <div className="bg-gradient-to-br from-yellow-50 to-amber-50 rounded-2xl p-5 border-2 border-yellow-300">
                     <div className="flex items-center gap-2 mb-4">
                       <svg className="w-6 h-6 text-yellow-600" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" />
                       </svg>
-                      <h3 className="text-base font-bold text-amber-900">Método de Pago</h3>
+                      <h3 className="text-base font-bold text-amber-900">Métodos de Pago</h3>
                     </div>
                     <div className="space-y-3">
                       <button
                         onClick={() => setFormData({ ...formData, metodoPago: 'online' })}
-                        className={`w-full p-4 rounded-xl border-2 transition-all flex items-center gap-3 ${
-                          formData.metodoPago === 'online'
-                            ? 'border-teal-500 bg-teal-50 shadow-md'
-                            : 'border-gray-200 bg-white hover:border-teal-300'
-                        }`}
+                        className={`w-full p-4 rounded-xl border-2 transition-all flex items-center gap-3 ${formData.metodoPago === 'online'
+                          ? 'border-teal-500 bg-teal-50 shadow-md'
+                          : 'border-gray-200 bg-white hover:border-teal-300'
+                          }`}
                       >
                         <div className="text-2xl">💳</div>
                         <div className="flex-1 text-left">
                           <div className="font-bold text-gray-900 text-sm">Pago en Línea</div>
-                          <div className="text-xs text-gray-600">Recibe en 24H</div>
+                          <div className="text-xs text-gray-600">Salta la fila y recibe tu canción en solo 24 Horas</div>
                         </div>
                       </button>
                       <button
                         onClick={() => setFormData({ ...formData, metodoPago: 'contraentrega' })}
-                        className={`w-full p-4 rounded-xl border-2 transition-all flex items-center gap-3 ${
-                          formData.metodoPago === 'contraentrega'
-                            ? 'border-teal-500 bg-teal-50 shadow-md'
-                            : 'border-gray-200 bg-white hover:border-teal-300'
-                        }`}
+                        className={`w-full p-4 rounded-xl border-2 transition-all flex items-center gap-3 ${formData.metodoPago === 'contraentrega'
+                          ? 'border-teal-500 bg-teal-50 shadow-md'
+                          : 'border-gray-200 bg-white hover:border-teal-300'
+                          }`}
                       >
                         <div className="text-2xl">💵</div>
                         <div className="flex-1 text-left">
-                          <div className="font-bold text-gray-900 text-sm">Transferencia</div>
+                          <div className="font-bold text-gray-900 text-sm">Desbloqueo al final</div>
                           <div className="text-xs text-gray-600">Escucha primero, paga después</div>
                         </div>
                       </button>
@@ -1985,91 +1983,115 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
 
             <div className="welcome-content">
               {/* Icono de éxito animado */}
-              <div className="success-icon">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                </svg>
+              <div className="flex justify-center">
+                <div className="w-20 h-20 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full flex items-center justify-center shadow-xl animate-bounce-in">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-check w-10 h-10 text-white stroke-[3]">
+                    <path d="M20 6 9 17l-5-5"></path>
+                  </svg>
+                </div>
               </div>
 
-              <h1 className="success-title">¡Pedido Creado!</h1>
+              <h2 className="success-title">¡Pedido Creado!</h2>
               <p className="success-subtitle">Tu canción personalizada está en camino</p>
 
-              {/* Detalles del pedido */}
-              <div className="order-details">
-                <div className="order-number">
-                  <p className="order-number-label">Número de Pedido</p>
-                  <h2 className="order-number-value">{orderSuccess.orderNumber}</h2>
+              <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-200 rounded-2xl p-6 space-y-4">
+                <div className="text-center pb-3 border-b border-blue-200">
+                  <p className="text-sm text-gray-600 mb-1">Número de Pedido</p>
+                  <p className="text-3xl font-bold text-blue-600">{orderSuccess.orderNumber}</p>
                 </div>
-
-                <div className="detail-grid">
-                  <div className="detail-item">
-                    <div className="detail-icon">👤</div>
-                    <div className="detail-content">
-                      <p className="detail-label">Cliente</p>
-                      <p className="detail-value">{orderSuccess.nombre}</p>
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-user w-5 h-5 text-purple-600">
+                        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-600 text-left">Cliente</p>
+                      <p className="font-semibold text-gray-900 text-left">{orderSuccess.nombre}</p>
                     </div>
                   </div>
-
-                  <div className="detail-item">
-                    <div className="detail-icon">🎵</div>
-                    <div className="detail-content">
-                      <p className="detail-label">Paquete Seleccionado</p>
-                      <p className="detail-value">{orderSuccess.paquete}</p>
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-music w-5 h-5 text-purple-600">
+                        <path d="M9 18V5l12-2v13"></path>
+                        <circle cx="6" cy="18" r="3"></circle>
+                        <circle cx="18" cy="16" r="3"></circle>
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-600 text-left">Paquete Seleccionado</p>
+                      <p className="font-semibold text-gray-900 text-left">{orderSuccess.paquete}</p>
                     </div>
                   </div>
-
-                  <div className="detail-item">
-                    <div className="detail-icon">💰</div>
-                    <div className="detail-content">
-                      <p className="detail-label">Total a Pagar</p>
-                      <p className="detail-value">{orderSuccess.precio} COP</p>
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-flame w-5 h-5 text-orange-500">
+                        <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path>
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-600 text-left">Total a Pagar</p>
+                      <p className="font-semibold text-gray-900 text-left">{orderSuccess.precio}</p>
                     </div>
                   </div>
-
-                  <div className="detail-item">
-                    <div className="detail-icon">📱</div>
-                    <div className="detail-content">
-                      <p className="detail-label">WhatsApp</p>
-                      <p className="detail-value">{orderSuccess.whatsapp}</p>
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-phone w-5 h-5 text-purple-600">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
+                        </path>
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-600 text-left">WhatsApp</p>
+                      <p className="font-semibold text-gray-900 text-left">{orderSuccess.whatsapp}</p>
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* Próximos pasos */}
-              <div className="next-steps">
-                <div className="next-steps-title">
-                  <span style={{ fontSize: '20px' }}>⏰</span>
-                  <h3>¿Qué sigue ahora?</h3>
+              <div className="bg-gradient-to-br from-amber-50 to-yellow-50 border-2 border-amber-200 rounded-2xl p-6 space-y-4 mt-2">
+                <div className="flex items-center gap-2 text-amber-800">
+                  <div className="w-8 h-8 bg-amber-200 rounded-full flex items-center justify-center">
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path>
+                    </svg>
+                  </div>
+                  <h3 className="font-bold text-lg">¿Qué sigue ahora?</h3>
                 </div>
-
-                <div className="steps-timeline">
-                  <div className="timeline-step">
-                    <div className="timeline-dot">1</div>
-                    <div className="timeline-content">
-                      <strong>Contacto en 24 horas:</strong> Nuestro equipo se comunicará contigo por WhatsApp para confirmar todos los detalles de tu canción.
+                <div className="space-y-4">
+                  <div className="flex gap-3">
+                    <div className="w-7 h-7 bg-amber-500 text-white rounded-full flex items-center justify-center flex-shrink-0 font-bold text-sm">1</div>
+                    <div>
+                      <p className="font-semibold text-gray-700 text-left">Contacto en 24 horas:</p>
+                      <p className="text-sm text-gray-700 text-left">Nuestro equipo se comunicará contigo por WhatsApp para confirmar todos los detalles de tu canción.</p>
                     </div>
                   </div>
-
-                  <div className="timeline-step">
-                    <div className="timeline-dot">2</div>
-                    <div className="timeline-content">
-                      <strong>Creación:</strong> Comenzaremos a trabajar en tu canción personalizada con todo el amor y dedicación que mereces.
+                  <div className="flex gap-3">
+                    <div className="w-7 h-7 bg-amber-500 text-white rounded-full flex items-center justify-center flex-shrink-0 font-bold text-sm">2</div>
+                    <div>
+                      <p className="font-semibold text-gray-700 text-left">Creación:</p>
+                      <p className="text-sm text-gray-700 text-left">Comenzaremos a trabajar en tu canción personalizada con todo el amor y dedicación que mereces.</p>
                     </div>
                   </div>
-
-                  <div className="timeline-step">
-                    <div className="timeline-dot">3</div>
-                    <div className="timeline-content">
-                      <strong>Entrega:</strong> Te enviaremos un adelanto para que escuches tu canción antes de pagar.
+                  <div className="flex gap-3">
+                    <div className="w-7 h-7 bg-amber-500 text-white rounded-full flex items-center justify-center flex-shrink-0 font-bold text-sm">3</div>
+                    <div>
+                      <p className="font-semibold text-gray-700 text-left">Entrega:</p>
+                      <p className="text-sm text-gray-700 text-left">Te enviaremos un adelanto para que escuches tu canción antes de pagar.</p>
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* Recordatorio de pago */}
-              <div className="payment-reminder">
-                <p>💵 Pagarás cuando recibas y escuches tu canción personalizada</p>
+              <div className="bg-gradient-to-br from-teal-50 to-emerald-50 border-2 border-teal-200 rounded-2xl p-5 text-center my-2">
+                <p className="text-teal-900 font-semibold flex items-center justify-center gap-2">
+                  <span className="text-2xl">💵</span>
+                  <span>Pagarás cuando recibas y escuches tu canción personalizada</span>
+                </p>
               </div>
 
               {/* Botón de cierre */}

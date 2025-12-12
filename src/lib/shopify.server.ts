@@ -1,3 +1,4 @@
+import { debug } from "node_modules/astro/dist/core/logger/core";
 import type { ShopifyVariantResponse, ShopifyVariant } from "../types/shopify";
 
 const SHOP_DOMAIN = import.meta.env.SHOPIFY_STORE_DOMAIN;
@@ -9,6 +10,7 @@ if (!SHOP_DOMAIN || !ADMIN_TOKEN) {
 }
 
 export async function fetchProductVariants(productId: string): Promise<ShopifyVariant[]> {
+  
   const url = `https://${SHOP_DOMAIN}/admin/api/${API_VERSION}/products/${productId}/variants.json`;
 
   const res = await fetch(url, {
