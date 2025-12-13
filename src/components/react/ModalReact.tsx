@@ -339,7 +339,7 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
   // Ocultar navbar cuando se abra cualquier modal
   useEffect(() => {
     const nav = document.querySelector('nav');
-    if (showWelcome || showForm || showSuccess) {
+    if (showWelcome || showForm || showSuccess || showErrorModal) {
       nav?.classList.add('hidden');
       // Prevenir scroll en el body
       document.body.style.overflow = 'hidden';
@@ -1175,9 +1175,9 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
 
       {/* Modal de Error (¡Ups! Algo salió mal) */}
       {showErrorModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div className="modal-overlay">
           {/* 💡 CAMBIOS AQUÍ: max-w-md, max-h-[90vh], overflow-y-auto */}
-          <div className="bg-white rounded-3xl w-full max-w-lg max-h-[90vh] overflow-y-auto relative shadow-2xl">
+          <div className="modal-content modal-form-content">
             {/* Icono de Cerrar Rojo */}
             <button
               onClick={closeErrorModal}
