@@ -1270,7 +1270,7 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
               </div>
 
               {/* Botón de cierre */}
-              <button className="btn-success" onClick={closeSuccess}>
+              <button className="w-full px-6 py-3 rounded-xl bg-gradient-to-r from-teal-600 to-teal-700 text-white font-bold hover:shadow-xl transition-all flex items-center justify-center gap-2" onClick={closeSuccess}>
                 ¡Perfecto! Entendido
               </button>
 
