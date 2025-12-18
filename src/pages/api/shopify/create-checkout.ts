@@ -11,7 +11,7 @@ export const POST: APIRoute = async ({ request }) => {
 
     // Construir origen y URL de retorno
     const origin = new URL(request.url).origin;
-    const returnUrl = `${origin}/gracias`;
+    const returnUrl = `${origin}/?venta=true`;
 
     // Mutación GraphQL: cartCreate
     const mutation = `
