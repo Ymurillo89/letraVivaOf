@@ -32,6 +32,8 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
 
   const [formData, setFormData] = useState({
     nombre: "",
+    personaSorprender: "",
+    menciona: "",
     paraQuien: "",
     ocasion: "",
     tonoEmocional: "",
@@ -41,10 +43,13 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
     genero: "",
     paquete: "",
     metodoPago: "",
+    otroGenero: ""
   });
 
   const [errors, setErrors] = useState({
     nombre: false,
+    personaSorprender: false,
+    menciona: false,
     paraQuien: false,
     ocasion: false,
     tonoEmocional: false,
@@ -54,6 +59,7 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
     genero: false,
     paquete: false,
     metodoPago: false,
+    
   });
 
   // Leer variant ID del query param cuando se abre el formulario
@@ -108,7 +114,7 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
     { id: "Bailable", label: "Bailable", emoji: "💃", color: "bg-teal-500" },
     { id: "Inspirador", label: "Inspirador", emoji: "💡", color: "bg-teal-500" },
     { id: "Melancólico", label: "Melancólico", emoji: "😔", color: "bg-teal-500" },
-    { id: "Espiritual", label: "Espiritual", emoji: "🔮", color: "bg-teal-500" },
+    { id: "Espiritual", label: "Espiritual", emoji: "🙏", color: "bg-teal-500" },
     { id: "Personal Intimo", label: "Personal Intimo", emoji: "💌", color: "bg-teal-500" },
   ];
 
@@ -122,7 +128,6 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
     { id: "hermano/a", label: "Hermano/a", emoji: "👦" },
     { id: "hijo/a", label: "Hijo/a", emoji: "🧒" },
     { id: "alguien importante", label: "Alguien Importante", emoji: "👱" },
-
   ];
 
   const ocasiones = [
@@ -151,6 +156,9 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
     { id: "ranchera", label: "Ranchera", icon: "🌽", color: "bg-orange-600" },
     { id: "rb", label: "R&B", icon: "🎤", color: "bg-blue-600" },
     { id: "jazz", label: "Jazz", icon: "🎺", color: "bg-blue-800" },
+    { id: "bachata", label: "Bachata", icon: "🎶", color: "bg-blue-800" },
+    { id: "afrobeat", label: "Afrobeat", icon: "🎸", color: "bg-blue-800" },
+    { id: "otro", label: "Otro", icon: "🎭", color: "bg-blue-800" },
   ];
 
   // NUEVA FUNCIÓN para abrir y cerrar el modal de error
@@ -274,7 +282,7 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
     setOrderSuccess(null);
   };
 
-  const closePaymentSuccess = ()=>{
+  const closePaymentSuccess = () => {
     setShowPaymentSuccess(false);
   }
 
@@ -286,9 +294,11 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
       case 0:
         newErrors.nombre = !formData.nombre.trim();
         newErrors.paraQuien = !formData.paraQuien;
+        newErrors.personaSorprender = !formData.personaSorprender;
+        newErrors.menciona = !formData.menciona;
         newErrors.ocasion = !formData.ocasion;
         newErrors.tonoEmocional = !formData.tonoEmocional;
-        isValid = !newErrors.nombre && !newErrors.paraQuien && !newErrors.ocasion && !newErrors.tonoEmocional;
+        isValid = !newErrors.nombre && !newErrors.paraQuien && !newErrors.ocasion && !newErrors.tonoEmocional && !newErrors.personaSorprender && !newErrors.menciona;
         break;
       case 1:
         newErrors.historia = formData.historia.trim().length < 20;
@@ -428,6 +438,8 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
         },
         note_attributes: [
           { name: "Nombre", value: formData.nombre },
+          { name: "Persona a sorprender", value: formData.personaSorprender },
+          { name: "Menciona cancion", value: formData.menciona },
           { name: "Para quien", value: formData.paraQuien },
           { name: "Ocasion", value: formData.ocasion },
           { name: "Tono Emocional", value: formData.tonoEmocional },
@@ -435,6 +447,7 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
           { name: "Genero musical", value: selectedGenero?.label || "" },
           { name: "WhatsApp", value: formData.whatsapp },
           { name: "Email", value: formData.email },
+          { name: "Otro Genero", value: formData.otroGenero },
           { name: "Metodo de Pago", value: formData.metodoPago === "online" ? "Pago en Linea" : "Contra Entrega" }
         ],
         note: `Historia: ${formData.historia}\n\nPara: ${formData.paraQuien}\nOcasion: ${formData.ocasion}\nTono: ${formData.tonoEmocional}\nGenero: ${selectedGenero?.label || ""}`
@@ -487,6 +500,8 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
         // Resetear formulario
         setFormData({
           nombre: "",
+          personaSorprender: "",
+          menciona: "",
           paraQuien: "",
           ocasion: "",
           tonoEmocional: "",
@@ -496,6 +511,7 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
           genero: "",
           paquete: "",
           metodoPago: "",
+          otroGenero: ""
         });
         setCurrentStep(0);
       }
@@ -754,6 +770,38 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
                     />
                   </div>
 
+                  <div className='flex flex-col md:flex-row gap-4'>
+                    <div className='flex-1'>
+                      <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                        <span className="text-teal-600">😲</span> Persona a sorprender
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.personaSorprender}
+                        onChange={(e) => setFormData({ ...formData, personaSorprender: e.target.value })}
+                        placeholder="Persona a sorprender"
+                        className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-4 focus:ring-teal-100 transition-all ${errors.personaSorprender ? 'border-red-400' : 'border-gray-200 focus:border-teal-500'
+                          }`}
+                      />
+                    </div>
+                    <div className=''>
+
+                      <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                        <span className="text-teal-600">🔔</span> Se menciona en la canción
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.menciona}
+                        onChange={(e) => setFormData({ ...formData, menciona: e.target.value })}
+                        placeholder="Si/No"
+                        className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-4 focus:ring-teal-100 transition-all ${errors.menciona ? 'border-red-400' : 'border-gray-200 focus:border-teal-500'
+                          }`}
+                      />
+
+
+                    </div>
+                  </div>
+
                   <div>
                     <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-3">
                       <span className="text-teal-600">💝</span> Tono emocional
@@ -895,8 +943,7 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       placeholder="tucorreo@ejemplo.com"
-                      className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-4 focus:ring-teal-100 transition-all ${errors.email ? 'border-red-400' : 'border-gray-200 focus:border-teal-500'
-                        }`}
+                      className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-4 focus:ring-teal-100 transition-all ${errors.email ? 'border-red-400' : 'border-gray-200 focus:border-teal-500'}`}
                     />
                     <p className="text-xs text-gray-500 mt-1 text-left">• Recibirás la confirmación aquí</p>
                   </div>
@@ -936,6 +983,27 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
                         </button>
                       ))}
                     </div>
+
+                    {formData.genero === "otro" && (
+                      <div className='my-3'>
+                        <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                          <span className="text-teal-600">🎭</span> Escribe el género musical
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.otroGenero}
+                          onChange={(e) => setFormData({ ...formData, otroGenero: e.target.value })}
+                          autoFocus
+                          placeholder=""
+                          className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-4 focus:ring-teal-100 transition-all ${errors.email ? 'border-red-400' : 'border-gray-200 focus:border-teal-500'}`}
+                        />
+                      </div>
+                    )
+
+
+
+
+                    }
                   </div>
                 </div>
               )}
@@ -1381,7 +1449,7 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
                   📞 WhatsApp: <span className="text-blue-600">+57 324 379 83 34</span>
                 </p>
                 <p className="text-sm text-gray-700 font-semibold flex items-center gap-2">
-                  📧 Email: <span className="text-blue-600">soporte@letraviva.com</span>
+                  📧 Email: <span className="text-blue-600">contactoletraviva@gmail.com</span>
                 </p>
               </div>
 
