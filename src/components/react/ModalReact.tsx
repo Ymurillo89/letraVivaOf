@@ -847,7 +847,7 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
                         <button
                           key={option.id}
                           onClick={() => setFormData({ ...formData, paraQuien: option.id })}
-                          className={`p-1 rounded-xl border-2 transition-all text-center ${formData.paraQuien === option.id
+                          className={`p-1 rounded-xl border-2 transition-all text-center cursor-pointer ${formData.paraQuien === option.id
                             ? 'border-teal-500 bg-teal-50 shadow-md scale-105'
                             : 'border-gray-200 hover:border-teal-300 hover:shadow-sm'
                             }`}
@@ -869,7 +869,7 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
                         <button
                           key={ocasion.id}
                           onClick={() => setFormData({ ...formData, ocasion: ocasion.id })}
-                          className={`p-1 rounded-xl border-2 transition-all text-center ${formData.ocasion === ocasion.id
+                          className={`p-1 rounded-xl border-2 transition-all text-center cursor-pointer ${formData.ocasion === ocasion.id
                             ? 'border-teal-500 bg-teal-50 shadow-md scale-105'
                             : 'border-gray-200 hover:border-teal-300 hover:shadow-sm'
                             }`}
@@ -1170,7 +1170,7 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
                           <div className="text-xs text-gray-600">Salta la fila y recibe tu canción en solo 24 Horas</div>
                         </div>
                       </button>
-                      <button
+                   {/*    <button
                         onClick={() => setFormData({ ...formData, metodoPago: 'contraentrega' })}
                         className={`w-full p-4 rounded-xl border-2 transition-all flex items-center gap-3 ${formData.metodoPago === 'contraentrega'
                           ? 'border-teal-500 bg-teal-50 shadow-md'
@@ -1182,7 +1182,7 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
                           <div className="font-bold text-gray-900 text-sm">Desbloqueo al final</div>
                           <div className="text-xs text-gray-600">Escucha primero, paga después</div>
                         </div>
-                      </button>
+                      </button> */}
                     </div>
                     {errors.metodoPago && (
                       <p className="text-red-500 text-sm mt-2">Selecciona un método de pago</p>
