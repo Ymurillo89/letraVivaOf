@@ -43,7 +43,8 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
     genero: "",
     paquete: "",
     metodoPago: "",
-    otroGenero: ""
+    otroGenero: "",
+    voz: ""
   });
 
   const [errors, setErrors] = useState({
@@ -59,7 +60,8 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
     genero: false,
     paquete: false,
     metodoPago: false,
-    
+    otroGenero:false,
+    voz: false
   });
 
   // Leer variant ID del query param cuando se abre el formulario
@@ -315,7 +317,10 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
         break;
       case 3:
         newErrors.genero = !formData.genero;
-        isValid = !newErrors.genero;
+        newErrors.voz = !formData.voz;
+        newErrors.otroGenero = (formData.genero === "otro" && !formData.otroGenero)
+        formData.genero === "otro"
+        isValid = !newErrors.genero && !newErrors.voz && !newErrors.otroGenero ;
         break;
       case 4:
         newErrors.paquete = !formData.paquete;
@@ -448,6 +453,7 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
           { name: "WhatsApp", value: formData.whatsapp },
           { name: "Email", value: formData.email },
           { name: "Otro Genero", value: formData.otroGenero },
+          { name: "Voz", value: formData.voz },
           { name: "Metodo de Pago", value: formData.metodoPago === "online" ? "Pago en Linea" : "Contra Entrega" }
         ],
         note: `Historia: ${formData.historia}\n\nPara: ${formData.paraQuien}\nOcasion: ${formData.ocasion}\nTono: ${formData.tonoEmocional}\nGenero: ${selectedGenero?.label || ""}`
@@ -511,7 +517,8 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
           genero: "",
           paquete: "",
           metodoPago: "",
-          otroGenero: ""
+          otroGenero: "",
+          voz: ""
         });
         setCurrentStep(0);
       }
@@ -954,12 +961,28 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
               {currentStep === 3 && (
                 <div>
                   <div className="max-h-96 pr-2">
+
+                    <div className='mb-3'>
+                      <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                        <span className="text-teal-600">🔊</span> Voz
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.voz}
+                        onChange={(e) => setFormData({ ...formData, voz: e.target.value })}                  
+                        placeholder="Femenina..."
+                        className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-4 focus:ring-teal-100 transition-all ${errors.voz ? 'border-red-400' : 'border-gray-200 focus:border-teal-500'}`}
+                      />
+                    </div>
+
+
+
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                       {generos.map((genero) => (
                         <button
                           key={genero.id}
                           onClick={() => setFormData({ ...formData, genero: genero.id })}
-                          className={`relative p-2 mx-1 rounded-xl border-2 transition-all text-center overflow-hidden ${formData.genero === genero.id
+                          className={`relative p-2 mx-1 rounded-xl border-2 transition-all text-center overflow-hidden cursor-pointer ${formData.genero === genero.id
                             ? 'border-teal-500 shadow-lg scale-105'
                             : 'border-gray-200 hover:border-teal-300 hover:shadow-sm'
                             }`}
@@ -995,14 +1018,10 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
                           onChange={(e) => setFormData({ ...formData, otroGenero: e.target.value })}
                           autoFocus
                           placeholder=""
-                          className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-4 focus:ring-teal-100 transition-all ${errors.email ? 'border-red-400' : 'border-gray-200 focus:border-teal-500'}`}
+                          className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-4 focus:ring-teal-100 transition-all ${errors.otroGenero ? 'border-red-400' : 'border-gray-200 focus:border-teal-500'}`}
                         />
                       </div>
                     )
-
-
-
-
                     }
                   </div>
                 </div>
@@ -1012,11 +1031,12 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
               {/* Paso 4: Selecciona Tu Paquete */}
               {currentStep === 4 && (
                 <div className="space-y-4">
+
                   {paquetes.sort((a, b) => a.position - b.position).map((paquete) => (
                     <button
                       key={paquete.id}
                       onClick={() => setFormData({ ...formData, paquete: paquete.id })}
-                      className={`relative w-full p-5 rounded-2xl border-2 transition-all text-left ${formData.paquete === paquete.id
+                      className={`relative w-full p-5 rounded-2xl border-2 transition-all text-left cursor-pointer ${formData.paquete === paquete.id
                         ? 'border-teal-500 bg-gradient-to-br from-teal-50 to-teal-100 shadow-xl scale-105'
                         : paquete.highlighted
                           ? 'border-yellow-400 bg-gradient-to-br from-yellow-50 to-orange-50'
@@ -1077,15 +1097,16 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
                 <div className="space-y-6">
                   <div className="bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl p-6 border-2 border-teal-200">
                     <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                      <span className="text-2xl">•</span> DETALLES
+                       DETALLES
                     </h3>
                     <div className="space-y-3">
                       {[
                         { icon: "👤", label: "Nombre", value: formData.nombre },
+                        { icon: "👥", label: "Persona a Soprender", value: formData.personaSorprender },
                         { icon: "🎁", label: "Para", value: paraQuienOptions.find(p => p.id === formData.paraQuien)?.label },
                         { icon: "💝", label: "Tono", value: tonosEmocionales.find(t => t.id === formData.tonoEmocional)?.label },
                         { icon: "📅", label: "Ocasión", value: ocasiones.find(o => o.id === formData.ocasion)?.label },
-                        { icon: "🎵", label: "Género", value: generos.find(g => g.id === formData.genero)?.label },
+                        { icon: "🎵", label: "Género", value: generos.find(g => g.id === formData.genero)?.label === "Otro" ? formData.otroGenero: generos.find(g => g.id === formData.genero)?.label},
                         { icon: "📱", label: "WhatsApp", value: formData.whatsapp },
                         { icon: "📧", label: "Email", value: formData.email }
                       ].map((item, idx) => (
@@ -1133,7 +1154,7 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
                       <svg className="w-6 h-6 text-yellow-600" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" />
                       </svg>
-                      <h3 className="text-base font-bold text-amber-900">Métodos de Pago</h3>
+                      <h3 className="text-base font-bold text-amber-900">Selecciona el Métodos de Pago</h3>
                     </div>
                     <div className="space-y-3">
                       <button
@@ -1178,7 +1199,7 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
               {currentStep > 0 && (
                 <button
                   onClick={prevStep}
-                  className="px-6 py-3 rounded-xl bg-gray-100 text-gray-700 font-semibold hover:bg-gray-200 transition-all flex items-center gap-2"
+                  className="px-6 py-3 rounded-xl bg-gray-100 text-gray-700 font-semibold hover:bg-gray-200 transition-all flex items-center gap-2 cursor-pointer"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
@@ -1190,7 +1211,7 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
               {currentStep < steps.length - 1 ? (
                 <button
                   onClick={nextStep}
-                  className="flex-1 px-6 py-3 rounded-xl bg-gradient-to-r from-teal-600 to-teal-700 text-white font-bold hover:shadow-xl transition-all flex items-center justify-center gap-2"
+                  className="flex-1 px-6 py-3 rounded-xl bg-gradient-to-r from-teal-600 to-teal-700 text-white font-bold hover:shadow-xl transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
                   Siguiente
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1201,7 +1222,7 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
                 <button
                   onClick={handleSubmit}
                   disabled={isSubmitting}
-                  className="flex-1 px-6 py-3 rounded-xl bg-gradient-to-r from-green-600 to-green-700 text-white font-bold hover:shadow-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="flex-1 px-6 py-3 rounded-xl bg-gradient-to-r from-green-600 to-green-700 text-white font-bold hover:shadow-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
                 >
                   {isSubmitting ? 'Procesando...' : 'Confirmar '}
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1473,8 +1494,7 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
         </div>
       )}
 
-      <style>{`
-       
+      <style>{`       
 
         @keyframes fadeIn {
           from { opacity: 0; }
