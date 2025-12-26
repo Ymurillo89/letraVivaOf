@@ -60,7 +60,7 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
     genero: false,
     paquete: false,
     metodoPago: false,
-    otroGenero:false,
+    otroGenero: false,
     voz: false
   });
 
@@ -144,6 +144,11 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
     { id: "nacimiento", label: "Nacimiento", emoji: "🎀" },
     { id: "memorial", label: "Memorial", emoji: "🎈" }
   ];
+
+  const voz = [
+    { id: "masculina", label: "Masculina", emoji: "👨" },
+    { id: "femenina", label: "Femenina", emoji: "👩" },
+  ]
 
   const generos = [
     { id: "pop", label: "Pop", icon: "🎧", color: "bg-purple-500" },
@@ -320,7 +325,7 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
         newErrors.voz = !formData.voz;
         newErrors.otroGenero = (formData.genero === "otro" && !formData.otroGenero)
         formData.genero === "otro"
-        isValid = !newErrors.genero && !newErrors.voz && !newErrors.otroGenero ;
+        isValid = !newErrors.genero && !newErrors.voz && !newErrors.otroGenero;
         break;
       case 4:
         newErrors.paquete = !formData.paquete;
@@ -964,15 +969,24 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
 
                     <div className='mb-3'>
                       <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
-                        <span className="text-teal-600">🔊</span> Voz
+                        <span className="text-teal-600">🔊</span> Tipo de voz para la canción
                       </label>
-                      <input
-                        type="text"
-                        value={formData.voz}
-                        onChange={(e) => setFormData({ ...formData, voz: e.target.value })}                  
-                        placeholder="Femenina..."
-                        className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-4 focus:ring-teal-100 transition-all ${errors.voz ? 'border-red-400' : 'border-gray-200 focus:border-teal-500'}`}
-                      />
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        {voz.map((voz) => (
+                          <button
+                            key={voz.id}
+                            onClick={() => setFormData({ ...formData, voz: voz.id })}
+                            className={`p-1 rounded-xl border-2 transition-all text-center cursor-pointer ${formData.voz === voz.id
+                              ? 'border-teal-500 bg-teal-50 shadow-md scale-105'
+                              : errors.voz ? 'border-red-400' : 'border-gray-200 focus:border-teal-500'
+                              }`}
+                          >
+                            <div className="text-3xl mb-1">{voz.emoji}</div>
+                            <div className="text-xs font-semibold text-gray-800">{voz.label}</div>
+                          </button>
+                        ))}
+                      </div>
                     </div>
 
 
@@ -1097,7 +1111,7 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
                 <div className="space-y-6">
                   <div className="bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl p-6 border-2 border-teal-200">
                     <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                       DETALLES
+                      DETALLES
                     </h3>
                     <div className="space-y-3">
                       {[
@@ -1106,7 +1120,7 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
                         { icon: "🎁", label: "Para", value: paraQuienOptions.find(p => p.id === formData.paraQuien)?.label },
                         { icon: "💝", label: "Tono", value: tonosEmocionales.find(t => t.id === formData.tonoEmocional)?.label },
                         { icon: "📅", label: "Ocasión", value: ocasiones.find(o => o.id === formData.ocasion)?.label },
-                        { icon: "🎵", label: "Género", value: generos.find(g => g.id === formData.genero)?.label === "Otro" ? formData.otroGenero: generos.find(g => g.id === formData.genero)?.label},
+                        { icon: "🎵", label: "Género", value: generos.find(g => g.id === formData.genero)?.label === "Otro" ? formData.otroGenero : generos.find(g => g.id === formData.genero)?.label },
                         { icon: "📱", label: "WhatsApp", value: formData.whatsapp },
                         { icon: "📧", label: "Email", value: formData.email }
                       ].map((item, idx) => (
@@ -1149,17 +1163,59 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
                     ) : null
                   })()}
 
+                  <div>
+                    <div className="flex items-start gap-3 p-4 bg-teal-50 rounded-lg border border-teal-200">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-message-circle h-5 w-5 text-amber-600 shrink-0 mt-0.5">
+                        <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path>
+                      </svg>
+                      <p className="text-sm text-gray-700">
+                        <span className="font-semibold ">Más de 2.000 clientes felices</span> ya han confiado en Letra Viva
+                      </p>
+                    </div>
+
+                    <div className="p-4 bg-blue-50 rounded-lg border border-blue-200 mt-3 flex items-start justify-start">
+                      <div className="flex items-start gap-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-lock h-5 w-5 text-green-600 shrink-0 mt-0.5">
+                          <rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect>
+                          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                        <p className="text-sm font-semibold text-gray-700">Paga seguro con</p>
+                      </div>
+                      <div className="flex flex-wrap items-center gap-3 ml-8">
+                        <img src="https://cdn.shopify.com/shopifycloud/admin-ui-foundations/payment-icons/1626b.svg" alt="Nequi" className="payment-icon border-base size-base"></img>
+                        <img src="https://cdn.shopify.com/shopifycloud/admin-ui-foundations/payment-icons/15a9f.svg" alt="DaviPlata" className="payment-icon border-base size-base"></img>
+                        <img src="https://cdn.shopify.com/shopifycloud/admin-ui-foundations/payment-icons/0c7fe.svg" alt="Bancolombia" className="payment-icon border-base size-base"></img>
+                        <img src="https://cdn.shopify.com/shopifycloud/admin-ui-foundations/payment-icons/d3e3d.svg" alt="Pagos Electrónicos Seguros (PSE)" className="payment-icon border-base size-base"></img>
+                        <span className="text-xs text-gray-500 font-medium">+ Más</span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-3 p-4 bg-amber-50 rounded-lg border border-amber-200 mt-3">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-handshake h-5 w-5 text-amber-600 shrink-0 mt-0.5">
+                        <path d="m11 17 2 2a1 1 0 1 0 3-3"></path>
+                        <path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4"></path>
+                        <path d="m21 3 1 11h-2"></path>
+                        <path d="M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3"></path>
+                        <path d="M3 4h8"></path>
+                      </svg>
+                      <p className="text-sm text-gray-700">
+                        <span className="font-semibold text-amber-600">Recuerda</span> que puedes hacer hasta <span className="font-semibold">3 modificaciones a la canción</span> si algo no te gusta👌🏼
+                      </p>
+                    </div>
+
+                  </div>
+
                   <div className="bg-gradient-to-br from-yellow-50 to-amber-50 rounded-2xl p-5 border-2 border-yellow-300">
                     <div className="flex items-center gap-2 mb-4">
                       <svg className="w-6 h-6 text-yellow-600" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" />
                       </svg>
-                      <h3 className="text-base font-bold text-amber-900">Selecciona el Métodos de Pago</h3>
+                      <h3 className="text-base font-bold text-amber-900">Selecciona el Método de Pago</h3>
                     </div>
                     <div className="space-y-3">
                       <button
                         onClick={() => setFormData({ ...formData, metodoPago: 'online' })}
-                        className={`w-full p-4 rounded-xl border-2 transition-all flex items-center gap-3 ${formData.metodoPago === 'online'
+                        className={`w-full p-4 rounded-xl border-2 transition-all flex items-center gap-3 cursor-pointer ${formData.metodoPago === 'online'
                           ? 'border-teal-500 bg-teal-50 shadow-md'
                           : 'border-gray-200 bg-white hover:border-teal-300'
                           }`}
@@ -1170,7 +1226,7 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
                           <div className="text-xs text-gray-600">Salta la fila y recibe tu canción en solo 24 Horas</div>
                         </div>
                       </button>
-                   {/*    <button
+                      {/*    <button
                         onClick={() => setFormData({ ...formData, metodoPago: 'contraentrega' })}
                         className={`w-full p-4 rounded-xl border-2 transition-all flex items-center gap-3 ${formData.metodoPago === 'contraentrega'
                           ? 'border-teal-500 bg-teal-50 shadow-md'
