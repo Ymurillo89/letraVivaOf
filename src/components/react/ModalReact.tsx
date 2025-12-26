@@ -1173,7 +1173,7 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
                       </p>
                     </div>
 
-                    <div className="p-4 bg-blue-50 rounded-lg border border-blue-200 mt-3 flex items-start justify-start">
+                    <div className="p-4 bg-blue-50 rounded-lg border border-blue-200 mt-3 md:flex md:items-start md:justify-start">
                       <div className="flex items-start gap-3">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-lock h-5 w-5 text-green-600 shrink-0 mt-0.5">
                           <rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect>
@@ -1181,7 +1181,7 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
                         </svg>
                         <p className="text-sm font-semibold text-gray-700">Paga seguro con</p>
                       </div>
-                      <div className="flex flex-wrap items-center gap-3 ml-8">
+                      <div className="flex flex-wrap items-center gap-1 md:gap-3 ml-8 mt-2 md:mt-0">
                         <img src="https://cdn.shopify.com/shopifycloud/admin-ui-foundations/payment-icons/1626b.svg" alt="Nequi" className="payment-icon border-base size-base"></img>
                         <img src="https://cdn.shopify.com/shopifycloud/admin-ui-foundations/payment-icons/15a9f.svg" alt="DaviPlata" className="payment-icon border-base size-base"></img>
                         <img src="https://cdn.shopify.com/shopifycloud/admin-ui-foundations/payment-icons/0c7fe.svg" alt="Bancolombia" className="payment-icon border-base size-base"></img>
