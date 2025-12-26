@@ -4,6 +4,7 @@ import "../styles/global.css";
 import Navbar from "../components/Navbar.astro";
 import Banner from "../components/Banner.astro";
 import logoLetraViva from "../img/logo_letra_viva.png";
+import Footer from "@/components/footer.astro";
 
 ---
 
@@ -21,12 +22,13 @@ import logoLetraViva from "../img/logo_letra_viva.png";
 		/>
 	</head>
 	<body>
-
+		<Navbar/>
 		<div>
 			<slot />
 		</div>
 		<SpeedInsights />
-	</body>
+		<Footer/>
+		</body>
 </html>
 
 <style>
