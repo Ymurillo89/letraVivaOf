@@ -268,6 +268,23 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
 
   const openWelcome = () => {
     setShowWelcome(true);
+
+    const eventId = crypto.randomUUID();
+
+    fetch("/api/meta-conversion", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        event_name: "Lead",
+        event_id: eventId,
+        event_source_url: window.location.href,
+        user_agent: navigator.userAgent,
+        custom_data: {
+          content_name: "Modal canción personalizada R",
+          variant_id:0,
+        },
+      }),
+    });
   };
 
   const closeWelcome = () => {
