@@ -37,6 +37,7 @@ export const POST: APIRoute = async ({ request }) => {
           custom_data: body.custom_data || {},
         },
       ],
+      test_event_code: "TEST36797",
     };
 
     const response = await fetch(
