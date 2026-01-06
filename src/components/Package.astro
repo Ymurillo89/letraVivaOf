@@ -25,39 +25,39 @@ function formatPrice(price: string) {
 function getFeatures(title: string) {
     const features = [];
     const afterDuration = title.split(/\)/)[1] || "";
-    
+
     if (afterDuration.includes("MP3")) {
         const formatMatch = afterDuration.match(/MP3\s+([^+\-]+)/);
         const format = formatMatch ? formatMatch[1].trim() : "";
         features.push({
             text: format ? `MP3 ${format}` : "Canción en MP3",
-            icon: "🎵"
+            icon: "🎵",
         });
     }
-    
+
     if (afterDuration.includes("Tarjeta Digital")) {
         features.push({
             text: "Tarjeta Digital Personalizada",
-            icon: "🎴"
+            icon: "🎴",
         });
     }
-    
+
     if (afterDuration.includes("Video")) {
         features.push({
             text: "Video Lyric Animado",
-            icon: "🎬"
+            icon: "🎬",
         });
     }
-    
+
     if (afterDuration.match(/\d+\s*Foto/i)) {
         const photoMatch = afterDuration.match(/(\d+)\s*Foto/i);
         const photoCount = photoMatch ? photoMatch[1] : "1";
         features.push({
             text: `${photoCount} Foto Para La Portada`,
-            icon: "📸"
+            icon: "📸",
         });
     }
-    
+
     return features;
 }
 ---
@@ -94,7 +94,8 @@ function getFeatures(title: string) {
                         const isStandard = variant.position === 1;
 
                         const icons = { 1: "🎤", 2: "🎵", 3: "👑" };
-                        const icon = icons[variant.position as keyof typeof icons];
+                        const icon =
+                            icons[variant.position as keyof typeof icons];
 
                         return (
                             <div
@@ -132,10 +133,14 @@ function getFeatures(title: string) {
 
                                         {/* Title */}
                                         <h3 class="text-2xl font-bold text-gray-900 mb-2">
-                                            {info.name.replace(/🎼|🎤|🎬|👑|🎵/g, "").trim()}
+                                            {info.name
+                                                .replace(/🎼|🎤|🎬|👑|🎵/g, "")
+                                                .trim()}
                                         </h3>
                                         <p class="text-sm font-medium text-[#f89a3f] mb-6">
-                                            {info.subtitle.replace(/⭐/g, "").trim()}
+                                            {info.subtitle
+                                                .replace(/⭐/g, "")
+                                                .trim()}
                                         </p>
 
                                         {/* Duration */}
@@ -152,7 +157,11 @@ function getFeatures(title: string) {
                                                     stroke-linecap="round"
                                                     stroke-linejoin="round"
                                                 >
-                                                    <circle cx="12" cy="12" r="10" />
+                                                    <circle
+                                                        cx="12"
+                                                        cy="12"
+                                                        r="10"
+                                                    />
                                                     <polyline points="12 6 12 12 16 14" />
                                                 </svg>
                                                 <span class="text-sm font-semibold text-gray-700">
@@ -191,7 +200,10 @@ function getFeatures(title: string) {
 
                                             {variant.compare_at_price && (
                                                 <p class="text-sm text-gray-400 line-through mt-2">
-                                                    ${formatPrice(variant.compare_at_price)}
+                                                    $
+                                                    {formatPrice(
+                                                        variant.compare_at_price,
+                                                    )}
                                                 </p>
                                             )}
                                         </div>
@@ -237,6 +249,23 @@ function getFeatures(title: string) {
             const url = new URL(window.location.href);
             url.searchParams.set("variant", variantId);
             window.history.pushState({}, "", url);
+
+            const eventId = crypto.randomUUID();
+
+            fetch("/api/meta-conversion", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    event_name: "Lead",
+                    event_id: eventId,
+                    event_source_url: window.location.href,
+                    user_agent: navigator.userAgent,
+                    custom_data: {
+                        content_name: "Modal canción personalizada",
+                        variant_id: variantId,
+                    },
+                }),
+            });
 
             import("./utils/eventBus").then(({ EventBus }) => {
                 EventBus.dispatch("openSongModal", { variantId });
@@ -301,7 +330,8 @@ function getFeatures(title: string) {
     }
 
     @keyframes pulse {
-        0%, 100% {
+        0%,
+        100% {
             opacity: 0.15;
         }
         50% {
