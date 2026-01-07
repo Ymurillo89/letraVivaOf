@@ -3,102 +3,190 @@
 // Esto mantiene el HTML limpio y permite ajustar la cantidad fácilmente.
 const noteCount = 25; // Cantidad de notas
 const notes = Array.from({ length: noteCount }).map((_, i) => ({
-  id: i,
-  char: Math.random() > 0.5 ? "♪" : "♫", 
-  left: Math.floor(Math.random() * 100) + "%", 
-  delay: Math.random() * 15 + "s", 
-  duration: Math.floor(Math.random() * 8 + 12) + "s", // Entre 12s y 20s
-  size: Math.floor(Math.random() * 25 + 20) + "px", // Tamaño legible
-  opacity: Math.random() * 0.6 + 0.2, // Un poco más visibles que antes 
-  blur: Math.random() > 0.8 ? "1px" : "0px", 
+	id: i,
+	char: Math.random() > 0.5 ? "♪" : "♫",
+	left: Math.floor(Math.random() * 100) + "%",
+	delay: Math.random() * 15 + "s",
+	duration: Math.floor(Math.random() * 8 + 12) + "s", // Entre 12s y 20s
+	size: Math.floor(Math.random() * 25 + 20) + "px", // Tamaño legible
+	opacity: Math.random() * 0.6 + 0.2, // Un poco más visibles que antes
+	blur: Math.random() > 0.8 ? "1px" : "0px",
 }));
 ---
 
-<section class="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-[oklch(0.35_0.10_200)] via-[#00343d] to-[#00343d]">
-	
-	<div class="absolute inset-0 overflow-hidden pointer-events-none select-none">
-		{notes.map((note) => (
-			<div
-				class="absolute animate-float text-white/80"
-				style={{
-					left: note.left,
-					animationDelay: note.delay,
-					animationDuration: note.duration,
-					fontSize: note.size,
-					opacity: note.opacity,
-					filter: `blur(${note.blur})`,
-                    bottom: '-50px', // Empiezan fuera de pantalla
-				}}
-			>
-               <span class="block animate-sway">
-                    {note.char}
-                </span>
-			</div>
-		))}
+<section
+	class="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-[oklch(0.35_0.10_200)] via-[#00343d] to-[#00343d]"
+>
+	<div
+		class="absolute inset-0 overflow-hidden pointer-events-none select-none"
+	>
+		{
+			notes.map((note) => (
+				<div
+					class="absolute animate-float text-white/80"
+					style={{
+						left: note.left,
+						animationDelay: note.delay,
+						animationDuration: note.duration,
+						fontSize: note.size,
+						opacity: note.opacity,
+						filter: `blur(${note.blur})`,
+						bottom: "-50px", // Empiezan fuera de pantalla
+					}}
+				>
+					<span class="block animate-sway">{note.char}</span>
+				</div>
+			))
+		}
 	</div>
 
-	<div class="absolute inset-0 ">
+	<div class="absolute inset-0">
 		<img
 			alt="Pareja feliz en auto"
 			class="w-full h-full object-cover opacity-20"
 			src="https://maquila.nyc3.cdn.digitaloceanspaces.com/Requerimiento/img/IMAGEN%20DE%20INICIO%20CENTRAL.png"
-            loading="eager"
+			loading="eager"
 		/>
-		<div class="absolute inset-0 bg-gradient-to-t from-[oklch(0.35_0.10_200)] via-[oklch(0.35_0.10_200)]/80 to-transparent"></div>
+		<div
+			class="absolute inset-0 bg-gradient-to-t from-[oklch(0.35_0.10_200)] via-[oklch(0.35_0.10_200)]/80 to-transparent"
+		>
+		</div>
 	</div>
-	
-	<div class="relative  container mx-auto px-4 py-32 text-center">
-		<div class="max-w-4xl mx-auto space-y-8 animate-fade-in-up"> <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full text-white/90 text-sm border border-white/10 shadow-lg">
-				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 text-[#f89a3f]">
-                    <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"></path>
-                    <path d="M20 3v4"></path><path d="M22 5h-4"></path><path d="M4 17v2"></path><path d="M5 18H3"></path>
-                </svg>
-                <span class="font-medium tracking-wide">Canciones Personalizadas Profesionales</span>
+
+	<div class="relative container mx-auto px-4 py-32 text-center">
+		<div class="max-w-4xl mx-auto space-y-8 animate-fade-in-up">
+			<div
+				class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full text-white/90 text-sm border border-white/10 shadow-lg"
+			>
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					width="24"
+					height="24"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					class="h-4 w-4 text-[#f89a3f]"
+				>
+					<path
+						d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"
+					></path>
+					<path d="M20 3v4"></path><path d="M22 5h-4"></path><path
+						d="M4 17v2"></path><path d="M5 18H3"></path>
+				</svg>
+				<span class="font-medium tracking-wide"
+					>Canciones Personalizadas Profesionales</span
+				>
 			</div>
 
-			<h1 class="text-5xl md:text-7xl font-bold text-white leading-tight text-balance drop-shadow-xl">
-				Haz Eterno <br/><span class="text-transparent bg-clip-text bg-gradient-to-r from-[#f89a3f] to-[#ff6b35]">Ese Momento</span>
+			<h1
+				class="text-5xl md:text-7xl font-bold text-white leading-tight text-balance drop-shadow-xl"
+			>
+				Haz Eterno <br /><span
+					class="text-transparent bg-clip-text bg-gradient-to-r from-[#f89a3f] to-[#ff6b35]"
+					>Ese Momento</span
+				>
 			</h1>
-			
-			<div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6">
-				<button id="abrirModalDesdeAstro" class="group cursor-pointer inline-flex items-center justify-center gap-2 font-bold transition-all hover:scale-105 active:scale-95 rounded-full bg-gradient-to-r from-[#f89a3f] via-[#ff6b35] to-[#f89a3f] bg-[length:200%_auto] hover:bg-right text-white text-lg px-8 py-4 shadow-[0_0_20px_rgba(248,154,63,0.4)]">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-music mr-2 h-5 w-5 group-hover:rotate-12 transition-transform"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
-                    Pide Tu Canción Aquí
-                </button>
-				<a href="#melodias" class="group cursor-pointer inline-flex items-center justify-center gap-2 font-medium border-2 rounded-full border-white/20 hover:border-white/40 text-white hover:bg-white/10 backdrop-blur-sm transition-all text-lg px-8 py-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-play-circle mr-2 h-5 w-5"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16"/></svg>
-                    Escucha Ejemplos
-                </a>
+
+			<div
+				class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6"
+			>
+				<button
+					id="abrirModalDesdeAstro"
+					class="group cursor-pointer inline-flex items-center justify-center gap-2 font-bold transition-all hover:scale-105 active:scale-95 rounded-full bg-gradient-to-r from-[#f89a3f] via-[#ff6b35] to-[#f89a3f] bg-[length:200%_auto] hover:bg-right text-white text-lg px-8 py-4 shadow-[0_0_20px_rgba(248,154,63,0.4)]"
+				>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="24"
+						height="24"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						class="lucide lucide-music mr-2 h-5 w-5 group-hover:rotate-12 transition-transform"
+						><path d="M9 18V5l12-2v13"></path><circle
+							cx="6"
+							cy="18"
+							r="3"></circle><circle cx="18" cy="16" r="3"
+						></circle></svg
+					>
+					Pide Tu Canción Aquí
+				</button>
+				<a
+					href="#melodias"
+					class="group cursor-pointer inline-flex items-center justify-center gap-2 font-medium border-2 rounded-full border-white/20 hover:border-white/40 text-white hover:bg-white/10 backdrop-blur-sm transition-all text-lg px-8 py-4"
+				>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="24"
+						height="24"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						class="lucide lucide-play-circle mr-2 h-5 w-5"
+						><circle cx="12" cy="12" r="10"></circle><polygon
+							points="10 8 16 12 10 16"></polygon></svg
+					>
+					Escucha Ejemplos
+				</a>
 			</div>
 
-			<div class="pt-12 flex items-center justify-center gap-2 md:gap-12 text-white/60">
+			<div
+				class="pt-12 flex items-center justify-center gap-2 md:gap-12 text-white/60"
+			>
 				<div class="text-center">
-					<div class="text-2xl md:text-3xl font-bold text-white mb-1">2K+</div>
-					<div class="text-xs uppercase tracking-wider font-semibold">Clientes</div>
+					<div class="text-2xl md:text-3xl font-bold text-white mb-1">
+						2K+
+					</div>
+					<div class="text-xs uppercase tracking-wider font-semibold">
+						Clientes
+					</div>
 				</div>
 				<div class="h-8 w-px bg-white/10"></div>
 				<div class="text-center">
-					<div class="text-2xl md:text-3xl font-bold text-white mb-1">4.9★</div>
-					<div class="text-xs uppercase tracking-wider font-semibold">Calificación</div>
+					<div class="text-2xl md:text-3xl font-bold text-white mb-1">
+						4.9★
+					</div>
+					<div class="text-xs uppercase tracking-wider font-semibold">
+						Calificación
+					</div>
 				</div>
 				<div class="h-8 w-px bg-white/10"></div>
 				<div class="text-center">
-					<div class="text-2xl md:text-3xl font-bold text-white mb-1">24h - 48h</div>
-					<div class="text-xs uppercase tracking-wider font-semibold">Entrega Rápida</div>
+					<div class="text-2xl md:text-3xl font-bold text-white mb-1">
+						24h - 48h
+					</div>
+					<div class="text-xs uppercase tracking-wider font-semibold">
+						Entrega Rápida
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-	
-    <div class="absolute bottom-0 left-0 right-0 pointer-events-none">
-		<svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-auto text-[oklch(0.98_0.01_180)] fill-current">
-            <path d="M0 120L60 105C120 90 240 60 360 45C480 30 600 30 720 37.5C840 45 960 60 1080 67.5C1200 75 1320 75 1380 75L1440 75V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0Z"/>
-        </svg>
+
+	<div class="absolute bottom-0 left-0 right-0 pointer-events-none">
+		<svg
+			viewBox="0 0 1440 120"
+			fill="none"
+			xmlns="http://www.w3.org/2000/svg"
+			class="w-full h-auto text-[oklch(0.98_0.01_180)] fill-current"
+		>
+			<path
+				d="M0 120L60 105C120 90 240 60 360 45C480 30 600 30 720 37.5C840 45 960 60 1080 67.5C1200 75 1320 75 1380 75L1440 75V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0Z"
+			></path>
+		</svg>
 	</div>
 </section>
 
 <style>
-    /* Animación principal de subida */
+	/* Animación principal de subida */
 	@keyframes floatUp {
 		0% {
 			transform: translateY(0) rotate(0deg);
@@ -116,41 +204,69 @@ const notes = Array.from({ length: noteCount }).map((_, i) => ({
 		}
 	}
 
-    /* Animación secundaria de balanceo (izquierda/derecha) */
-    @keyframes sway {
-        0%, 100% { transform: translateX(-15px); }
-        50% { transform: translateX(15px); }
-    }
-
-    /* Clase para subir */
-	.animate-float {
-		animation: floatUp linear infinite;
-        /* will-change ayuda al rendimiento en móviles */
-        will-change: transform, opacity; 
+	/* Animación secundaria de balanceo (izquierda/derecha) */
+	@keyframes sway {
+		0%,
+		100% {
+			transform: translateX(-15px);
+		}
+		50% {
+			transform: translateX(15px);
+		}
 	}
 
-    /* Clase para balancear el SVG interno independientemente de la subida */
-    .animate-sway {
-        animation: sway 3s ease-in-out infinite alternate;
-    }
+	/* Clase para subir */
+	.animate-float {
+		animation: floatUp linear infinite;
+		/* will-change ayuda al rendimiento en móviles */
+		will-change: transform, opacity;
+	}
 
-    /* Animación suave de entrada del texto principal */
-    .animate-fade-in-up {
-        animation: fadeInUp 1s ease-out forwards;
-        opacity: 0;
-    }
+	/* Clase para balancear el SVG interno independientemente de la subida */
+	.animate-sway {
+		animation: sway 3s ease-in-out infinite alternate;
+	}
 
-    @keyframes fadeInUp {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
+	/* Animación suave de entrada del texto principal */
+	.animate-fade-in-up {
+		animation: fadeInUp 1s ease-out forwards;
+		opacity: 0;
+	}
+
+	@keyframes fadeInUp {
+		from {
+			opacity: 0;
+			transform: translateY(20px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
 </style>
 
 <script>
-  import { EventBus } from './utils/eventBus';
-  
-  const boton = document.getElementById('abrirModalDesdeAstro');
-  boton?.addEventListener('click', () => {
-    EventBus.dispatch('openSongModal');
-  });
+	import { EventBus } from "./utils/eventBus";
+
+	const boton = document.getElementById("abrirModalDesdeAstro");
+	boton?.addEventListener("click", () => {
+		EventBus.dispatch("openSongModal");
+
+		const eventId = crypto.randomUUID();
+
+		fetch("/api/meta-conversion", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({
+				event_name: "Lead",
+				event_id: eventId,
+				event_source_url: window.location.href,
+				user_agent: navigator.userAgent,
+				custom_data: {
+					content_name: "Modal canción personalizada Welcome",
+					variant_id: 0,
+				},
+			}),
+		});
+	});
 </script>

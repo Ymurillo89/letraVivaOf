@@ -281,7 +281,7 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
         user_agent: navigator.userAgent,
         custom_data: {
           content_name: "Modal canción personalizada R",
-          variant_id:0,
+          variant_id: 0,
         },
       }),
     });
@@ -408,6 +408,35 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
     };
   }, [showWelcome, showForm, showSuccess, showErrorModal, showPaymentSuccess]);
 
+  const sendMetaInitiateCheckout = async ({
+    value,
+    packageName,
+  }: {
+    value: number;
+    packageName: string;
+  }) => {
+    try {
+      await fetch("/api/meta-conversion", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          event_name: "InitiateCheckout",
+          event_source_url: window.location.href,
+          event_id: crypto.randomUUID(),
+          user_agent: navigator.userAgent,
+          custom_data: {
+            currency: "COP",
+            value,
+            payment_method: "online",
+            package_name: packageName,
+          },
+        }),
+      });
+    } catch {
+      // ❌ No rompemos el flujo si falla Meta
+    }
+  };
+
   const handleSubmit = async () => {
     if (!validateCurrentStep()) return;
 
@@ -512,6 +541,10 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
       closeForm();
 
       if (formData.metodoPago === "online") {
+        await sendMetaInitiateCheckout({
+          value: Number(selectedPaquete?.precio || 0),
+          packageName: selectedPaquete?.nombre || "",
+        });
         // Redirigir al checkout de Shopify
         window.location.href = data.checkoutUrl;
       } else {
