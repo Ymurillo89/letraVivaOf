@@ -1219,7 +1219,7 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
                         <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path>
                       </svg>
                       <p className="text-sm text-gray-700">
-                        <span className="font-semibold ">Más de 2.000 clientes felices</span> ya han confiado en Letra Viva
+                        <span className="font-semibold ">Más de 10.000 clientes felices</span> ya han confiado en Letra Viva
                       </p>
                     </div>
 
