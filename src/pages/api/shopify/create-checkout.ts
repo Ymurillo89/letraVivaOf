@@ -47,19 +47,7 @@ export const POST: APIRoute = async ({ request }) => {
           ...(orderData.note_attributes?.map((attr: any) => ({
             key: attr.name,
             value: attr.value
-          })) || []),
-
-          // Guardar la URL de retorno
-          {
-            key: 'return_url',
-            value: returnUrl
-          },
-
-          // Guardar el origen del sitio
-          {
-            key: 'origin_site',
-            value: origin
-          }
+          })) || [])
         ],
 
         note: orderData.note || '',
