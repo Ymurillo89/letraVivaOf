@@ -1,0 +1,402 @@
+---
+// DigitalCard.astro
+export interface Props {
+  planLevel: 'basico' | 'premium' | 'deluxe';
+  isPaid: boolean;
+  recipientName: string;
+  senderName: string;
+  occasion: string;
+  story: string;
+  songTitle: string;
+  songUrl?: string;
+  songPreviewUrl?: string;
+  videoUrl?: string;
+  imageUrl?: string;
+  lyrics?: string;
+}
+
+const {
+  planLevel = 'basico',
+  isPaid = false,
+  recipientName,
+  senderName,
+  occasion,
+  story,
+  songTitle,
+  songUrl = '/audio/sample-song.mp3',
+  songPreviewUrl = '/audio/sample-preview.mp3',
+  videoUrl,
+  imageUrl = '/romantic-couple-sunset.png',
+  lyrics,
+} = Astro.props;
+
+const planFeatures = {
+  basico: {
+    name: 'Básico',
+    hasVideo: false,
+    hasLyrics: false,
+  },
+  premium: {
+    name: 'Premium',
+    hasVideo: true,
+    hasLyrics: false,
+  },
+  deluxe: {
+    name: 'Deluxe',
+    hasVideo: true,
+    hasLyrics: true,
+  },
+};
+
+const plan = planFeatures[planLevel];
+---
+
+<div class="min-h-screen bg-gradient-to-br from-[#0d4a4a] via-[#0f5555] to-[#0d4a4a] py-8 px-4">
+  <!-- Header -->
+  <div class="max-w-4xl mx-auto mb-8">
+    <div class="flex items-center justify-center gap-3 mb-2">
+      <svg class="w-8 h-8 text-[#f5a623]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>
+      </svg>
+      <h1 class="text-3xl md:text-4xl font-serif font-bold text-white tracking-tight">
+        Letra<span class="text-[#f5a623]">Viva</span>
+      </h1>
+    </div>
+    <p class="text-center text-white/70 font-sans text-sm">Canciones personalizadas que cuentan tu historia</p>
+  </div>
+
+  <!-- Plan Badge -->
+  <div class="max-w-4xl mx-auto mb-6">
+    <div class="flex justify-center">
+      <span class={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-white font-semibold text-sm shadow-lg ${
+        planLevel === 'basico' ? 'bg-[#0f5555]' : 
+        planLevel === 'premium' ? 'bg-[#f5a623]' : 
+        'bg-gradient-to-r from-[#f5a623] to-[#ffc107]'
+      }`}>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          {planLevel === 'basico' && <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>}
+          {planLevel === 'premium' && <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>}
+          {planLevel === 'deluxe' && <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>}
+        </svg>
+        Plan {plan.name}
+      </span>
+    </div>
+  </div>
+
+  <!-- Main Card -->
+  <div class="max-w-4xl mx-auto overflow-hidden shadow-2xl rounded-lg bg-white/95 backdrop-blur">
+    <!-- Cover Image -->
+    <div class="relative h-64 md:h-80 overflow-hidden">
+      <img src={imageUrl} alt="Imagen personalizada" class="w-full h-full object-cover" />
+      <div class="absolute inset-0 bg-gradient-to-t from-[#0d4a4a]/90 via-[#0d4a4a]/40 to-transparent"></div>
+
+      <!-- Occasion Badge -->
+      <div class="absolute top-4 left-4">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#f5a623] text-white text-xs font-semibold shadow-lg">
+          <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
+          </svg>
+          {occasion}
+        </span>
+      </div>
+
+      <!-- Title Overlay -->
+      <div class="absolute bottom-0 left-0 right-0 p-6 md:p-8">
+        <p class="text-[#f5a623] font-sans text-sm font-medium mb-1">Para {recipientName}</p>
+        <h2 class="text-2xl md:text-4xl font-serif font-bold text-white mb-2">{songTitle}</h2>
+        <p class="text-white/80 font-sans text-sm">De {senderName} con amor</p>
+      </div>
+    </div>
+
+    <div class="p-6 md:p-8 space-y-8">
+      <!-- Story Section -->
+      <section>
+        <div class="flex items-center gap-2 mb-4">
+          <div class="w-10 h-10 rounded-full bg-[#0d4a4a]/10 flex items-center justify-center">
+            <svg class="w-5 h-5 text-[#0d4a4a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+          </div>
+          <h3 class="text-xl font-serif font-semibold text-[#0d4a4a]">La Historia</h3>
+        </div>
+        <div class="bg-gradient-to-br from-[#f5f9f9] to-white rounded-xl p-5 border border-[#0d4a4a]/10">
+          <p class="text-[#0d4a4a]/80 font-sans leading-relaxed text-base">"{story}"</p>
+        </div>
+      </section>
+
+      <!-- Audio Player -->
+      <section>
+        <div class="flex items-center gap-2 mb-4">
+          <div class="w-10 h-10 rounded-full bg-[#f5a623]/10 flex items-center justify-center">
+            <svg class="w-5 h-5 text-[#f5a623]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>
+            </svg>
+          </div>
+          <div class="flex-1">
+            <h3 class="text-xl font-serif font-semibold text-[#0d4a4a]">Tu Canción</h3>
+            {!isPaid && (
+              <span class="text-xs text-[#f5a623] font-sans flex items-center gap-1">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                Vista previa: 30 segundos
+              </span>
+            )}
+          </div>
+        </div>
+
+        <div class="bg-gradient-to-br from-[#0d4a4a] to-[#0f5555] rounded-xl p-5 shadow-lg" id="audio-player">
+          <audio id="audio-element" src={isPaid ? songUrl : songPreviewUrl}></audio>
+
+          <div class="flex items-center gap-4 mb-4">
+            <button
+              id="play-button"
+              class="w-14 h-14 rounded-full bg-[#f5a623] hover:bg-[#e69516] transition-colors flex items-center justify-center shadow-lg"
+            >
+              <svg id="play-icon" class="w-6 h-6 text-white ml-1" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"></path>
+              </svg>
+              <svg id="pause-icon" class="w-6 h-6 text-white hidden" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+              </svg>
+            </button>
+            <div class="flex-1">
+              <p class="text-white font-serif font-semibold text-lg">{songTitle}</p>
+              <p class="text-white/60 font-sans text-sm">Letra Viva Studios</p>
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <div class="h-2 bg-white/20 rounded-full overflow-hidden">
+              <div id="progress-bar" class="h-full bg-[#f5a623] transition-all duration-100" style="width: 0%"></div>
+            </div>
+            <div class="flex justify-between text-xs text-white/60 font-sans">
+              <span id="current-time">0:00</span>
+              <span id="duration-time">0:00</span>
+            </div>
+          </div>
+
+          {!isPaid && (
+            <div class="mt-4 p-3 bg-white/10 rounded-lg border border-white/20">
+              <div class="flex items-center gap-2 text-white/90 text-sm font-sans">
+                <svg class="w-4 h-4 text-[#f5a623]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                </svg>
+                <span>Realiza tu pago para escuchar la canción completa</span>
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+
+      <!-- Video Section - Premium & Deluxe only -->
+      {plan.hasVideo && (
+        <section>
+          <div class="flex items-center gap-2 mb-4">
+            <div class="w-10 h-10 rounded-full bg-[#f5a623]/10 flex items-center justify-center">
+              <svg class="w-5 h-5 text-[#f5a623]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+              </svg>
+            </div>
+            <h3 class="text-xl font-serif font-semibold text-[#0d4a4a]">Video Emotivo</h3>
+            {!isPaid && (
+              <svg class="w-4 h-4 text-[#f5a623]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+              </svg>
+            )}
+          </div>
+
+          {isPaid ? (
+            <div class="relative aspect-video rounded-xl overflow-hidden shadow-lg">
+              {videoUrl ? (
+                <video src={videoUrl} controls class="w-full h-full object-cover" poster={imageUrl}></video>
+              ) : (
+                <div class="w-full h-full bg-[#0d4a4a] flex items-center justify-center relative">
+                  <img src={imageUrl} alt="Video thumbnail" class="w-full h-full object-cover opacity-50" />
+                  <div class="absolute inset-0 flex items-center justify-center">
+                    <div class="w-20 h-20 rounded-full bg-[#f5a623] flex items-center justify-center shadow-lg">
+                      <svg class="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"></path>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div class="relative aspect-video rounded-xl overflow-hidden bg-[#0d4a4a]/10 border-2 border-dashed border-[#0d4a4a]/20">
+              <div class="absolute inset-0 flex flex-col items-center justify-center text-center p-6">
+                <div class="w-16 h-16 rounded-full bg-[#0d4a4a]/10 flex items-center justify-center mb-4">
+                  <svg class="w-8 h-8 text-[#0d4a4a]/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                  </svg>
+                </div>
+                <p class="text-[#0d4a4a]/70 font-sans font-medium">Video bloqueado</p>
+                <p class="text-[#0d4a4a]/50 font-sans text-sm mt-1">Completa tu pago para desbloquear</p>
+              </div>
+            </div>
+          )}
+        </section>
+      )}
+
+      <!-- Lyrics Section - Deluxe only -->
+      {plan.hasLyrics && (
+        <section>
+          <div class="flex items-center gap-2 mb-4">
+            <div class="w-10 h-10 rounded-full bg-[#0d4a4a]/10 flex items-center justify-center">
+              <svg class="w-5 h-5 text-[#0d4a4a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+            </div>
+            <h3 class="text-xl font-serif font-semibold text-[#0d4a4a]">Letra de tu Canción</h3>
+            {!isPaid && (
+              <svg class="w-4 h-4 text-[#f5a623]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+              </svg>
+            )}
+          </div>
+
+          {isPaid ? (
+            <div class="bg-gradient-to-br from-[#f5f9f9] to-white rounded-xl p-6 border border-[#0d4a4a]/10 shadow-inner">
+              <p class="text-[#0d4a4a]/80 font-sans leading-loose whitespace-pre-line text-center italic">
+                {lyrics || 'La letra de tu canción aparecerá aquí...'}
+              </p>
+            </div>
+          ) : (
+            <div class="relative rounded-xl overflow-hidden bg-[#0d4a4a]/5 border-2 border-dashed border-[#0d4a4a]/20 p-8">
+              <div class="flex flex-col items-center justify-center text-center">
+                <div class="w-12 h-12 rounded-full bg-[#0d4a4a]/10 flex items-center justify-center mb-3">
+                  <svg class="w-6 h-6 text-[#0d4a4a]/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                  </svg>
+                </div>
+                <p class="text-[#0d4a4a]/70 font-sans font-medium">Letra bloqueada</p>
+                <p class="text-[#0d4a4a]/50 font-sans text-sm mt-1">Completa tu pago para ver la letra completa</p>
+              </div>
+            </div>
+          )}
+        </section>
+      )}
+
+      <!-- Payment CTA - Show only if not paid -->
+      {!isPaid && (
+        <section class="pt-4">
+          <div class="bg-gradient-to-r from-[#f5a623] to-[#ffc107] rounded-xl p-6 text-center shadow-lg">
+            <div class="w-14 h-14 rounded-full bg-white/20 flex items-center justify-center mx-auto mb-4">
+              <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+              </svg>
+            </div>
+            <h3 class="text-xl font-serif font-bold text-white mb-2">¡Desbloquea tu Experiencia Completa!</h3>
+            <p class="text-white/90 font-sans text-sm mb-5 max-w-md mx-auto">
+              Realiza tu pago para acceder a la canción completa
+              {plan.hasVideo && ', el video emotivo'}
+              {plan.hasLyrics && ' y la letra de tu canción'}
+            </p>
+            <button
+              class="bg-white text-[#f5a623] hover:bg-white/90 font-semibold px-8 py-3 text-base shadow-lg rounded-md transition-colors"
+              id="payment-button"
+            >
+              Completar Pago
+            </button>
+          </div>
+        </section>
+      )}
+
+      <!-- Action Buttons - Show only if paid -->
+      {isPaid && (
+        <section class="pt-4 border-t border-[#0d4a4a]/10">
+          <div class="flex flex-wrap justify-center gap-3">
+            <button class="border border-[#0d4a4a]/20 text-[#0d4a4a] hover:bg-[#0d4a4a]/5 font-sans bg-transparent px-4 py-2 rounded-md flex items-center gap-2 transition-colors">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path>
+              </svg>
+              Compartir
+            </button>
+            <button class="bg-[#f5a623] hover:bg-[#e69516] text-white font-sans px-4 py-2 rounded-md flex items-center gap-2 transition-colors">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+              </svg>
+              Descargar
+            </button>
+          </div>
+        </section>
+      )}
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="max-w-4xl mx-auto mt-8 text-center">
+    <p class="text-white/50 font-sans text-xs">© 2026 Letra Viva. Hecho con ❤️ para ti.</p>
+  </div>
+</div>
+
+<script define:vars={{ isPaid }}>
+  const audio = document.getElementById('audio-element');
+  const playButton = document.getElementById('play-button');
+  const playIcon = document.getElementById('play-icon');
+  const pauseIcon = document.getElementById('pause-icon');
+  const progressBar = document.getElementById('progress-bar');
+  const currentTimeEl = document.getElementById('current-time');
+  const durationTimeEl = document.getElementById('duration-time');
+  const paymentButton = document.getElementById('payment-button');
+
+  let isPlaying = false;
+  const previewLimit = 30;
+
+  function formatTime(time) {
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  }
+
+  function togglePlay() {
+    if (isPlaying) {
+      audio.pause();
+      playIcon.classList.remove('hidden');
+      pauseIcon.classList.add('hidden');
+    } else {
+      audio.play();
+      playIcon.classList.add('hidden');
+      pauseIcon.classList.remove('hidden');
+    }
+    isPlaying = !isPlaying;
+  }
+
+  playButton.addEventListener('click', togglePlay);
+
+  audio.addEventListener('timeupdate', () => {
+    const progress = (audio.currentTime / audio.duration) * 100;
+    progressBar.style.width = `${progress}%`;
+    currentTimeEl.textContent = formatTime(audio.currentTime);
+
+    // Preview limit check
+    if (!isPaid && audio.currentTime >= previewLimit) {
+      audio.pause();
+      audio.currentTime = 0;
+      isPlaying = false;
+      playIcon.classList.remove('hidden');
+      pauseIcon.classList.add('hidden');
+      progressBar.style.width = '0%';
+    }
+  });
+
+  audio.addEventListener('loadedmetadata', () => {
+    durationTimeEl.textContent = formatTime(isPaid ? audio.duration : Math.min(audio.duration, previewLimit));
+  });
+
+  audio.addEventListener('ended', () => {
+    isPlaying = false;
+    playIcon.classList.remove('hidden');
+    pauseIcon.classList.add('hidden');
+    progressBar.style.width = '0%';
+    audio.currentTime = 0;
+  });
+
+  if (paymentButton) {
+    paymentButton.addEventListener('click', () => {
+      alert('Redirigiendo a la página de pago...');
+      // Aquí puedes agregar la lógica de pago
+    });
+  }
+</script>

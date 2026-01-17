@@ -127,8 +127,6 @@ export const POST: APIRoute = async ({ request }) => {
     const body = await request.text();
     const orderData = JSON.parse(body);
 
-    console.log('📦 Datos recibidos:', JSON.stringify(orderData, null, 2));
-
     // Construir URL de retorno
     const origin = new URL(request.url).origin;
     const returnUrl = `${origin}/?venta=true`;
@@ -204,9 +202,6 @@ export const POST: APIRoute = async ({ request }) => {
       }
     };
 
-    console.log('🚀 Enviando a Shopify Admin API...');
-    console.log('Variables:', JSON.stringify(variables, null, 2));
-
     // Llamada a Shopify Admin API
     const response = await fetch(
       `https://${import.meta.env.SHOPIFY_STORE_DOMAIN}/admin/api/2025-01/graphql.json`,
@@ -221,11 +216,11 @@ export const POST: APIRoute = async ({ request }) => {
     );
 
     const result = await response.json();
-    console.log('📥 Respuesta de Shopify:', JSON.stringify(result, null, 2));
-
+   /*  console.log('📥 Respuesta de Shopify:', JSON.stringify(result, null, 2));
+ */
     // Verificar errores generales de GraphQL
     if (result.errors) {
-      console.error('❌ Errores de GraphQL:', result.errors);
+      /* console.error('❌ Errores de GraphQL:', result.errors); */
       throw new Error(`Error de GraphQL: ${JSON.stringify(result.errors)}`);
     }
 
@@ -234,7 +229,6 @@ export const POST: APIRoute = async ({ request }) => {
 
     // Verificar errores de validación
     if (userErrors && userErrors.length > 0) {
-      console.error('❌ Errores de validación:', userErrors);
       throw new Error(userErrors.map((e: any) => `${e.field}: ${e.message}`).join(', '));
     }
 
@@ -250,10 +244,10 @@ export const POST: APIRoute = async ({ request }) => {
 
     // Agregar return_url al invoiceUrl
     const invoiceUrlWithReturn = `${draftOrder.invoiceUrl}?return_url=${encodeURIComponent(returnUrl)}`;
-
+/* 
     console.log('✅ DraftOrder creado:', draftOrder.name);
     console.log('🔗 Invoice URL:', invoiceUrlWithReturn);
-
+ */
     // Respuesta exitosa
     return new Response(
       JSON.stringify({
@@ -272,7 +266,7 @@ export const POST: APIRoute = async ({ request }) => {
     );
 
   } catch (error) {
-    console.error('❌ Error en create-checkout:', error);
+    /* console.error('❌ Error en create-checkout:', error); */
 
     return new Response(
       JSON.stringify({
