@@ -35,6 +35,8 @@ export default function MainContent() {
     const handleOrderId = async () => {
 
         const orderId = new URLSearchParams(window.location.search).get("orderId");
+        console.log(orderId);
+        
         const dataMetafieldsKeyValue = await fetch(`/api/order/${orderId}`)
             .then(res => res.json())
             .then(data => {

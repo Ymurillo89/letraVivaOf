@@ -1,6 +1,8 @@
 import type { APIRoute } from "astro";
 
 export const GET: APIRoute = async ({ params }) => {
+  console.log(params);
+  
   const orderId = params.orderId;
   const token = import.meta.env.SHOPIFY_ADMIN_TOKEN;
   const shop = "shop.letravivaoficial.com";
