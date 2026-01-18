@@ -38,6 +38,7 @@ export default function MainContent() {
         const dataMetafieldsKeyValue = await fetch(`/api/order/${orderId}`)
             .then(res => res.json())
             .then(data => {
+                console.log(data);
                 return data;
             });
         setDataMetafieldsKeyValue(dataMetafieldsKeyValue);
