@@ -5,9 +5,11 @@ type Props = {
     title: string;
     short_song_url: string;
     long_song_url: string;
+    digital_card_url: string;
+    chance: string; 
     paid: string;
 }
-export default function YourSong({ short_song_url, long_song_url, paid, title }: Props) {
+export default function YourSong({ short_song_url, long_song_url, paid, title, digital_card_url, chance }: Props) {
     return (
         <div className="relative bg-gradient-to-br from-[#0d4a4a] via-[#0f5555] to-[#0d4a4a] rounded-2xl p-6 md:p-8 shadow-2xl overflow-hidden">
             <div className="absolute top-0 right-0 w-40 h-40 bg-[#f5a623]/10 rounded-full blur-3xl"></div>
@@ -70,16 +72,16 @@ export default function YourSong({ short_song_url, long_song_url, paid, title }:
                         <div className="absolute -inset-1 bg-gradient-to-br from-[#f5a623] to-[#ffc107] rounded-2xl blur opacity-30"></div>
                         <div className="relative bg-white p-2 rounded-xl shadow-xl">
                             <div className="relative overflow-hidden rounded-lg">
-                                <img alt="Foto de Laura Rodríguez" className="w-44 h-44 md:w-52 md:h-52 object-cover" src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/attachments/gen-images/public/romantic-proposal-sunset-beach-engagement-ring-Gg80ecDQKkjwnpILF8zp4P3e6OMEqU.jpg" />
+                                <img alt="Foto de Laura Rodríguez" className="w-44 h-44 md:w-52 md:h-52 object-cover" src={digital_card_url} />
                                 <div className="absolute inset-0 shadow-[inset_0_0_30px_rgba(0,0,0,0.15)] rounded-lg"></div>
                             </div>
                             <div className="mt-2 text-center pb-1">
-                                <p className="text-[#0d4a4a] font-serif text-sm font-semibold truncate px-2">Laura Rodríguez</p>
+                                {/* <p className="text-[#0d4a4a] font-serif text-sm font-semibold truncate px-2">Laura Rodríguez</p> */}
                                 <div className="flex items-center justify-center gap-1 mt-0.5">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-heart w-3 h-3 text-[#f5a623] fill-[#f5a623]">
                                         <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
                                     </svg>
-                                    <span className="text-[#0d4a4a]/60 text-xs font-sans">Pedida de Mano</span>
+                                    <span className="text-[#0d4a4a]/60 text-xs font-sans">{chance}</span>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-heart w-3 h-3 text-[#f5a623] fill-[#f5a623]">
                                         <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
                                     </svg>

@@ -78,7 +78,7 @@ export default function MainContent() {
                 <div className="px-6 md:px-8 space-y-8">
                     <SpecialDedication dedicatoria_especial={dataMetafieldsKeyValue?.metafields.dedicatoria_especial ?? ''} />
 
-                    <YourSong title={dataMetafieldsKeyValue?.metafields.titulo_cancion ?? ''} paid={dataMetafieldsKeyValue?.paid ?? ''} short_song_url={dataMetafieldsKeyValue?.metafields.short_song_url ?? ''} long_song_url={dataMetafieldsKeyValue?.metafields.long_song_url ?? ''} />
+                    <YourSong title={dataMetafieldsKeyValue?.metafields.titulo_cancion ?? ''} paid={dataMetafieldsKeyValue?.paid ?? ''} short_song_url={dataMetafieldsKeyValue?.metafields.short_song_url ?? ''} long_song_url={dataMetafieldsKeyValue?.metafields.long_song_url ?? ''} digital_card_url={dataMetafieldsKeyValue?.metafields.targeta_digital_url ?? ''} chance={dataMetafieldsKeyValue?.metafields.ocasion ?? ''}/>
 
                     <LyricsSong paid={dataMetafieldsKeyValue?.paid ?? ''} letra_cancion={dataMetafieldsKeyValue?.metafields.letra_cancion ?? ''} />
 
