@@ -12,6 +12,8 @@ export default function YourVideo({ paid, video_url }: Props) {
     const [showControls, setShowControls] = useState(false);
     const [isDownloading, setIsDownloading] = useState(false);
     const [isFullscreen, setIsFullscreen] = useState(false);
+    const [controlsVisible, setControlsVisible] = useState(false);
+    const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     const isPaid = paid === "paid";
 
@@ -26,6 +28,35 @@ export default function YourVideo({ paid, video_url }: Props) {
             video.play();
             setIsPlaying(true);
             setShowControls(true);
+        }
+        
+        // Mostrar controles temporalmente en móvil
+        showControlsTemporarily();
+    };
+
+    const showControlsTemporarily = () => {
+        setControlsVisible(true);
+        
+        // Limpiar timeout anterior
+        if (controlsTimeoutRef.current) {
+            clearTimeout(controlsTimeoutRef.current);
+        }
+        
+        // Ocultar controles después de 3 segundos
+        controlsTimeoutRef.current = setTimeout(() => {
+            if (isPlaying) {
+                setControlsVisible(false);
+            }
+        }, 3000);
+    };
+
+    const handleVideoClick = () => {
+        if (isPlaying) {
+            // Si está reproduciendo, mostrar/ocultar controles
+            showControlsTemporarily();
+        } else {
+            // Si está pausado, reproducir
+            togglePlayPause();
         }
     };
 
@@ -164,7 +195,7 @@ export default function YourVideo({ paid, video_url }: Props) {
                             className="w-full h-full object-contain"
                             src={video_url}
                             onEnded={handleVideoEnded}
-                            onClick={togglePlayPause}
+                            onClick={handleVideoClick}
                             playsInline
                             preload="metadata"
                         />
@@ -185,11 +216,20 @@ export default function YourVideo({ paid, video_url }: Props) {
 
                         {/* Controles de video personalizados */}
                         {showControls && (
-                            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <div className="flex items-center justify-between">
+                            <div 
+                                className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent p-4 transition-opacity duration-300 ${
+                                    controlsVisible || !isPlaying ? 'opacity-100' : 'opacity-0 md:group-hover:opacity-100'
+                                }`}
+                                onMouseEnter={() => setControlsVisible(true)}
+                                onMouseLeave={() => isPlaying && setControlsVisible(false)}
+                            >
+                                <div className="flex items-center justify-between gap-4">
                                     <button
-                                        onClick={togglePlayPause}
-                                        className="text-white hover:text-[#f5a623] transition-colors"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            togglePlayPause();
+                                        }}
+                                        className="text-white hover:text-[#f5a623] transition-colors p-2"
                                     >
                                         {isPlaying ? (
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
@@ -204,8 +244,11 @@ export default function YourVideo({ paid, video_url }: Props) {
                                     </button>
 
                                     <button
-                                        onClick={toggleFullscreen}
-                                        className="text-white hover:text-[#f5a623] transition-colors"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            toggleFullscreen();
+                                        }}
+                                        className="text-white hover:text-[#f5a623] transition-colors p-2"
                                         title={isFullscreen ? "Salir de pantalla completa" : "Pantalla completa"}
                                     >
                                         {isFullscreen ? (
