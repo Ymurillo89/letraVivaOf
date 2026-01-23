@@ -86,18 +86,38 @@ export const GET: APIRoute = async ({ params }) => {
           )
         : {};
 
-    // 7️⃣ Respuesta exitosa
+    // 7️⃣ Extraer el nombre del paquete del variant_title
+    const variantTitle = orderData.order.line_items?.[0]?.variant_title ?? "";
+    
+    let packageName = "standard"; // valor por defecto
+    
+    if (variantTitle) {
+      const lowerTitle = variantTitle.toLowerCase();
+      
+      if (lowerTitle.includes("premium")) {
+        packageName = "premium";
+      } else if (lowerTitle.includes("mini")) {
+        packageName = "mini";
+      } else if (lowerTitle.includes("estándar") || lowerTitle.includes("estandar") || lowerTitle.includes("standard")) {
+        packageName = "standard";
+      }
+    }
+
+    console.log("packageName", packageName);
+    console.log("metafields", metafields);
+    // 8️⃣ Respuesta exitosa
     return new Response(
       JSON.stringify({
         paid: orderData.order.financial_status ?? null,
-        package: orderData.order.line_items?.[0]?.variant_title ?? null,
+        packageName: packageName,
+        packageFullName: variantTitle || null,
         metafields,
       }),
       { status: 200 }
     );
 
   } catch (error: any) {
-    // 8️⃣ Catch global
+    // 9️⃣ Catch global
     console.error("Error en GET /order:", error);
 
     return new Response(
