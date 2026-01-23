@@ -39,9 +39,9 @@ export default function MainContent() {
     try {
       setIsLoading(true);
       setError(null);
-      const orderId = new URLSearchParams(window.location.search).get(
-        "orderId",
-      );
+       const pathParts = window.location.pathname.split('/');
+    const orderId = pathParts[pathParts.length - 1]; // Obtiene el último segmento
+    
 
       if (!orderId) {
         setError("No se proporcionó un ID de orden válido");
@@ -417,7 +417,7 @@ export default function MainContent() {
               <p className="text-white/90 font-sans text-sm mb-5 max-w-md mx-auto">
                 Realiza tu pago para acceder a la canción completa
               </p>
-              <button className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive h-9 has-[>svg]:px-3 bg-white text-[#f5a623] hover:bg-white/90 font-semibold px-8 py-3 text-base shadow-lg">
+              <button className="cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive h-9 has-[>svg]:px-3 bg-white text-[#f5a623] hover:bg-white/90 font-semibold px-8 py-3 text-base shadow-lg">
                 Completar Pago
               </button>
             </div>

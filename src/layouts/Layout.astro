@@ -3,22 +3,65 @@ import SpeedInsights from "@vercel/speed-insights/astro";
 import "../styles/global.css";
 import Navbar from "../components/Navbar.astro";
 import Footer from "@/components/Footer.astro";
+
+interface Props {
+	title?: string;
+	description?: string;
+	image?: string;
+	url?: string;
+}
+
+const { 
+	title = "Letra Viva - Canciones Personalizadas",
+	description = "Canciones personalizadas que cuentan tu historia. Crea momentos inolvidables con música hecha especialmente para ti.",
+	image = "/og-image.jpg",
+	url = Astro.url.href
+} = Astro.props;
+
+// Asegurar que la imagen tenga URL completa
+const fullImageUrl = image.startsWith('http') ? image : new URL(image, Astro.url.origin).href;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="es">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/logopeque.png" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Letra Viva</title>
+		
+		<!-- Title and Description -->
+		<title>{title}</title>
+		<meta name="description" content={description} />
+		
+		<!-- Open Graph / Facebook -->
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content={url} />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:image" content={fullImageUrl} />
+		<meta property="og:image:width" content="1200" />
+		<meta property="og:image:height" content="630" />
+		<meta property="og:site_name" content="Letra Viva" />
+		<meta property="og:locale" content="es_CO" />
+		
+		<!-- Twitter -->
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:url" content={url} />
+		<meta name="twitter:title" content={title} />
+		<meta name="twitter:description" content={description} />
+		<meta name="twitter:image" content={fullImageUrl} />
+		
+		<!-- WhatsApp Preview -->
+		<meta property="og:image:alt" content={title} />
+		
 		<link
 			rel="stylesheet"
 			href="https://fonts.googleapis.com/css2?family=Lora:wght@400&display=swap"
 		/>
+		
 		<!-- Meta Pixel Code -->
-		<script>
+		<script is:inline>
 			!(function (f, b, e, v, n, t, s) {
 				if (f.fbq) return;
 				n = f.fbq = function () {
@@ -61,7 +104,6 @@ import Footer from "@/components/Footer.astro";
 			<slot />
 		</div>
 		<SpeedInsights />
-		
 	</body>
 </html>
 
