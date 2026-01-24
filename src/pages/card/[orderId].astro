@@ -19,7 +19,7 @@ try {
     metaTags = {
       title: `${orderData.metafields.titulo_cancion} - Letra Viva`,
       description: `Canción personalizada para ${orderData.metafields.para_quien_es} de parte de ${orderData.metafields.de_quien_es}`,
-      image: orderData.metafields.imagen_generica || orderData.metafields.targeta_digital_url || "/og-image.jpg"
+      image: orderData.metafields.targeta_digital_url || "/og-image.jpg"
     };
   }
 } catch (error) {
