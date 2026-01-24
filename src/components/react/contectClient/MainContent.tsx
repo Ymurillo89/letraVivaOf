@@ -139,7 +139,7 @@ export default function MainContent() {
                 verifica tu conexión a internet o intenta más tarde.
               </p>
             </div>
-            <div className="flex justify-center mb-8">
+           {/*  <div className="flex justify-center mb-8">
               <button
                 data-slot="button"
                 className="inline-flex items-center justify-center gap-2 whitespace-nowrap disabled:pointer-events-none disabled:opacity-50 focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive h-9 bg-[#f5a623] hover:bg-[#e69516] text-white font-semibold px-8 py-6 rounded-full shadow-lg shadow-[#f5a623]/30 transition-all hover:scale-105 text-base"
@@ -163,7 +163,7 @@ export default function MainContent() {
                 </svg>
                 Intentar de nuevo
               </button>
-            </div>
+            </div> */}
             <div className="flex items-center gap-4 mb-8">
               <div className="flex-1 h-px bg-white/20"></div>
               <svg
@@ -192,7 +192,7 @@ export default function MainContent() {
             </div>
             <div className="grid grid-cols-3 gap-3 mb-6">
               <a
-                href="https://wa.me/573001234567?text=Hola,%20necesito%20ayuda%20con%20mi%20tarjeta%20digital%20de%20LetraViva"
+                href="https://wa.me/573243798334?text=Hola,%20necesito%20ayuda%20con%20mi%20tarjeta%20digital%20de%20LetraViva"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group flex flex-col items-center p-4 rounded-2xl bg-white/5 hover:bg-[#25D366]/20 border border-white/10 hover:border-[#25D366]/40 transition-all"
@@ -216,7 +216,7 @@ export default function MainContent() {
                 <span className="text-white text-xs font-medium">WhatsApp</span>
               </a>
               <a
-                href="mailto:soporte@letraviva.com?subject=Ayuda con mi tarjeta digital LetraViva"
+                href="mailto:contactoletraviva@gmail.com?subject=Ayuda con mi tarjeta digital LetraViva"
                 className="group flex flex-col items-center p-4 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all"
               >
                 <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
@@ -239,7 +239,7 @@ export default function MainContent() {
                 <span className="text-white text-xs font-medium">Email</span>
               </a>
               <a
-                href="tel:+573001234567"
+                href="tel:+573243798334"
                 className="group flex flex-col items-center p-4 rounded-2xl bg-white/5 hover:bg-[#f5a623]/20 border border-white/10 hover:border-[#f5a623]/40 transition-all"
               >
                 <div className="w-12 h-12 rounded-full bg-[#f5a623] flex items-center justify-center mb-2 group-hover:scale-110 transition-transform shadow-lg">
@@ -262,7 +262,7 @@ export default function MainContent() {
               </a>
             </div>
             <a
-              href="https://wa.me/573001234567?text=Hola,%20necesito%20ayuda%20con%20mi%20tarjeta%20digital%20de%20LetraViva"
+              href="https://wa.me/573243798334?text=Hola,%20necesito%20ayuda%20con%20mi%20tarjeta%20digital%20de%20LetraViva"
               target="_blank"
               rel="noopener noreferrer"
               className="block w-full p-4 rounded-2xl bg-[#25D366]/10 border border-[#25D366]/30 hover:bg-[#25D366]/20 transition-all group"
@@ -287,7 +287,7 @@ export default function MainContent() {
                     <p className="text-white font-medium text-sm">
                       Respuesta inmediata
                     </p>
-                    <p className="text-white/60 text-xs">+57 300 123 4567</p>
+                    <p className="text-white/60 text-xs">+57 324 379 8334</p>
                   </div>
                 </div>
                 <span className="text-[#25D366] text-xs font-semibold bg-[#25D366]/20 px-3 py-1 rounded-full">
