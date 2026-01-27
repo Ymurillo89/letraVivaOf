@@ -524,7 +524,6 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
       });
 
       const responseText = await response.text();
-      console.log('Respuesta del servidor:', responseText);
 
       let data;
       try {

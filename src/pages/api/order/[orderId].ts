@@ -1,93 +1,98 @@
-import type { APIRoute } from "astro";
+import type { APIRoute } from 'astro';
+
+const SHOP_API_VERSION = '2025-01';
+const SHOP_DOMAIN = 'vjvdwh-gf.myshopify.com';
 
 export const GET: APIRoute = async ({ params }) => {
+  const { orderId } = params;
+  const adminToken = import.meta.env.SHOPIFY_ADMIN_TOKEN;
+
+  if (!orderId || !adminToken) {
+    return new Response(JSON.stringify({ error: 'Faltan datos' }), { status: 400 });
+  }
+
   try {
-    // 1️⃣ Validar orderId
-    const orderId = params.orderId;
-    if (!orderId) {
-      return new Response(
-        JSON.stringify({ message: "orderId es requerido" }),
-        { status: 400 }
-      );
-    }
+    // =================================================================
+    // PASO 1: INTENTO DE REDIRECCIÓN (BUSCAR POR ETIQUETA)
+    // =================================================================
+    debugger
+    try {
+      const graphQLUrl = `https://${SHOP_DOMAIN}/admin/api/${SHOP_API_VERSION}/graphql.json`;
+      const query = `
+        {
+          orders(first: 5, sortKey: CREATED_AT, reverse: true, query: "tag:'OldID:${orderId}' AND status:open") {
+            edges {
+              node {
+                legacyResourceId
+                cancelledAt
+              }
+            }
+          }
+        }
+      `;
 
-    // 2️⃣ Validar variables de entorno
-    const token = import.meta.env.SHOPIFY_ADMIN_TOKEN;
-    const shop = "shop.letravivaoficial.com";
+      const graphqlResponse = await fetch(graphQLUrl, {
+        method: 'POST', headers: shopifyHeaders(adminToken), body: JSON.stringify({ query })
+      });
+      const graphqlJson = await graphqlResponse.json();
+      const candidates = graphqlJson.data?.orders?.edges || [];
 
-    if (!token) {
-      return new Response(
-        JSON.stringify({ message: "SHOPIFY_ADMIN_TOKEN no configurado" }),
-        { status: 500 }
-      );
-    }
+      const validSuccessor = candidates.find((edge: any) => {
+        const node = edge.node;
+        if (node.legacyResourceId === orderId) return false;
+        if (node.cancelledAt) return false;
+        return true;
+      });
 
-    // 3️⃣ Obtener pedido
-    const orderRes = await fetch(
-      `https://${shop}/admin/api/2024-01/orders/${orderId}.json?fields=financial_status,line_items`,
-      {
-        headers: {
-          "X-Shopify-Access-Token": token,
-        },
+      if (validSuccessor) {
+        return new Response(JSON.stringify({
+          redirect_to_new_order_id: validSuccessor.node.legacyResourceId
+        }), { 
+          status: 200, headers: { 'Content-Type': 'application/json' }
+        });
       }
-    );
+    } catch (e) { console.log("⚠️ Error no crítico en redirección:", e); }
 
-    if (!orderRes.ok) {
-      const text = await orderRes.text();
-      return new Response(
-        JSON.stringify({
-          message: "Error obteniendo el pedido desde Shopify",
-          status: orderRes.status,
-          detail: text,
-        }),
-        { status: orderRes.status }
+    // =================================================================
+    // PASO 2: CARGA NORMAL (EL ARREGLO ESTÁ AQUÍ)
+    // =================================================================
+    
+    // A) Cargar la Orden
+    const orderUrl = `https://${SHOP_DOMAIN}/admin/api/${SHOP_API_VERSION}/orders/${orderId}.json`;
+    const orderRes = await fetch(orderUrl, { headers: shopifyHeaders(adminToken) });   
+
+    if (!orderRes.ok) return new Response(JSON.stringify({ error: 'Pedido no encontrado' }), { status: 404 });
+    const { order } = await orderRes.json();
+
+    // B) 🔥 RECUPERAR METACAMPOS NATIVOS (ESTO FALTABA)
+    // Es vital para pedidos viejos que no tienen atributos de respaldo
+    let rawMetafields: any[] = [];
+    try {
+      const metaRes = await fetch(`https://${SHOP_DOMAIN}/admin/api/${SHOP_API_VERSION}/orders/${orderId}/metafields.json`, {
+        headers: shopifyHeaders(adminToken)
+      });
+      const metaJson = await metaRes.json();
+      rawMetafields = metaJson.metafields || [];
+     
+    } catch (e) { console.log("No se pudieron cargar metacampos nativos"); }
+
+
+    // C) FUNCIÓN DE BÚSQUEDA HÍBRIDA (Busca en los 2 lados)
+    const getAttr = (key: string) => {
+      // 1. Intentar buscar en Atributos de Nota (Respaldo nuevo)
+      const attr = order.note_attributes?.find((a: any) => 
+        a.name === `meta_${key}` || a.name === key
       );
-    }
+      if (attr && attr.value) return attr.value;
 
-    const orderData = await orderRes.json();
+      // 2. Si falla, buscar en Metacampos Nativos (Sistema viejo/original)
+      const meta = rawMetafields.find((m: any) => m.key === key);
+      if (meta && meta.value) return meta.value;
 
-    // 4️⃣ Validar estructura del pedido
-    if (!orderData?.order) {
-      return new Response(
-        JSON.stringify({ message: "Pedido no encontrado" }),
-        { status: 404 }
-      );
-    }
+      return ""; // No se encontró en ningún lado
+    };
 
-    // 5️⃣ Obtener metafields
-    const metaRes = await fetch(
-      `https://${shop}/admin/api/2024-01/orders/${orderId}/metafields.json`,
-      {
-        headers: {
-          "X-Shopify-Access-Token": token,
-        },
-      }
-    );
-
-    if (!metaRes.ok) {
-      const text = await metaRes.text();
-      return new Response(
-        JSON.stringify({
-          message: "Error obteniendo metafields",
-          status: metaRes.status,
-          detail: text,
-        }),
-        { status: metaRes.status }
-      );
-    }
-
-    const metaData = await metaRes.json();
-
-    // 6️⃣ Procesar metafields de forma segura
-    const metafields =
-      Array.isArray(metaData?.metafields)
-        ? Object.fromEntries(
-            metaData.metafields.map((m: any) => [m.key, m.value])
-          )
-        : {};
-
-    // 7️⃣ Extraer el nombre del paquete del variant_title
-    const variantTitle = orderData.order.line_items?.[0]?.variant_title ?? "";
+     const variantTitle = order.line_items?.[0]?.variant_title ?? "";
     
     let packageName = "standard"; // valor por defecto
     
@@ -103,29 +108,37 @@ export const GET: APIRoute = async ({ params }) => {
       }
     }
 
-    console.log("packageName", packageName);
-    console.log("metafields", metafields);
-    // 8️⃣ Respuesta exitosa
-    return new Response(
-      JSON.stringify({
-        paid: orderData.order.financial_status ?? null,
-        packageName: packageName,
-        packageFullName: variantTitle || null,
-        metafields,
-      }),
-      { status: 200 }
-    );
+
+    const responseData = {
+      paid: order.financial_status === 'paid' ? 'paid' : 'pending',
+      packageName: packageName,
+      
+      metafields: {
+        para_quien_es: getAttr('para_quien_es'),
+        titulo_cancion: getAttr('titulo_cancion'),
+        de_quien_es: getAttr('de_quien_es'),
+        dedicatoria_especial: getAttr('dedicatoria_especial'),
+        ocasion: getAttr('ocasion'),
+        imagen_generica: getAttr('imagen_generica'),
+        short_song_url: getAttr('short_song_url') || getAttr('cancion_corta_url'),
+        long_song_url: getAttr('long_song_url') || getAttr('cancion_completa_url'),
+        targeta_digital_url: getAttr('targeta_digital_url') || getAttr('tarjeta_digital_url'),
+        video_url: getAttr('video_url'),
+        letra_cancion: getAttr('letra_cancion')
+      }
+    };
+
+    console.log(order.line_items);
+
+    return new Response(JSON.stringify(responseData), {
+      status: 200, headers: { 'Content-Type': 'application/json' }
+    });
 
   } catch (error: any) {
-    // 9️⃣ Catch global
-    console.error("Error en GET /order:", error);
-
-    return new Response(
-      JSON.stringify({
-        message: "Error interno del servidor",
-        error: error?.message ?? "Unknown error",
-      }),
-      { status: 500 }
-    );
+    return new Response(JSON.stringify({ error: error.message }), { status: 500 });
   }
 };
+
+function shopifyHeaders(token: string) {
+  return { 'X-Shopify-Access-Token': token, 'Content-Type': 'application/json' };
+}

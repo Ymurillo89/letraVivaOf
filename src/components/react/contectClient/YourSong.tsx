@@ -5,12 +5,13 @@ type Props = {
     short_song_url: string;
     long_song_url: string;
     digital_card_url: string;
+    generic_image: string;
     chance: string;
     paid: string;
     packageName: string;
 }
 
-export default function YourSong({ short_song_url, long_song_url, paid, title, digital_card_url, chance, packageName }: Props) {
+export default function YourSong({ short_song_url, long_song_url, paid, title, digital_card_url, generic_image, chance, packageName }: Props) {
     const audioRef = useRef<HTMLAudioElement>(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentTime, setCurrentTime] = useState(0);
@@ -59,24 +60,83 @@ export default function YourSong({ short_song_url, long_song_url, paid, title, d
         const clickPosition = e.nativeEvent.offsetX;
         const progressBarWidth = progressBar.offsetWidth;
         const newTime = (clickPosition / progressBarWidth) * duration;
-        
+
         audio.currentTime = newTime;
         setCurrentTime(newTime);
     };
 
-    const handleDownload = () => {
-    if (!isPaid) return;
-    
-    setIsDownloading(true);
+    const handleDownload = async () => {
+        if (!isPaid) return;
 
-    // Crear links de descarga directa
-    window.open(long_song_url, '_blank');
-    
-    setTimeout(() => {
-        window.open(digital_card_url, '_blank');
-        setIsDownloading(false);
-    }, 1000);
-};
+        setIsDownloading(true);
+
+        try {
+            // Descargar canción
+            const response1 = await fetch(long_song_url, {
+                method: 'GET',
+                mode: 'cors', // Esto es vital
+                headers: {
+                    'Origin': window.location.origin
+                }
+            });
+            const blob1 = await response1.blob();
+            const url1 = URL.createObjectURL(blob1);
+
+            const a1 = document.createElement('a');
+            a1.href = url1;
+            a1.download = 'mi-cancion.wav';
+            document.body.appendChild(a1);
+            a1.click();
+            document.body.removeChild(a1);
+            URL.revokeObjectURL(url1);
+
+            // Esperar y descargar carátula
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            const response2 = await fetch(digital_card_url, { mode: 'cors' });
+            const blob2 = await response2.blob();
+            const url2 = URL.createObjectURL(blob2);
+
+            const a2 = document.createElement('a');
+            a2.href = url2;
+            a2.download = 'caratula.jpg';
+            document.body.appendChild(a2);
+            a2.click();
+            document.body.removeChild(a2);
+            URL.revokeObjectURL(url2);
+
+            setIsDownloading(false);
+        } catch (error) {
+            console.error('Error:', error);
+            setIsDownloading(false);
+            alert('Error al descargar. Por favor intenta de nuevo.');
+        }
+    };
+
+    const downloadFile = async (url: string, fileName: string) => {
+        try {
+            const response = await fetch(url);
+            const blob = await response.blob();
+            const blobUrl = window.URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = blobUrl;
+            a.download = fileName;
+            a.style.display = 'none';
+
+            document.body.appendChild(a);
+            a.click();
+
+            // Limpiar
+            setTimeout(() => {
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(blobUrl);
+            }, 100);
+        } catch (error) {
+            console.error(`Error descargando ${fileName}:`, error);
+            throw error;
+        }
+    };
 
     const formatTime = (time: number) => {
         if (isNaN(time)) return "0:00";
@@ -105,7 +165,7 @@ export default function YourSong({ short_song_url, long_song_url, paid, title, d
                     <circle cx="18" cy="16" r="3"></circle>
                 </svg>
             </div>
-            
+
             <div className="relative flex flex-col md:flex-row gap-6 items-center">
                 {paid === "pending" && (
                     <div className="relative flex-shrink-0">
@@ -149,7 +209,7 @@ export default function YourSong({ short_song_url, long_song_url, paid, title, d
                         <div className="absolute -inset-1 bg-gradient-to-br from-[#f5a623] to-[#ffc107] rounded-2xl blur opacity-30"></div>
                         <div className="relative bg-white p-1 rounded-xl shadow-xl">
                             <div className="relative overflow-hidden rounded-lg">
-                                <img alt="Foto personalizada" className="w-56 h-56 md:w-56 md:h-56 object-cover" src={digital_card_url} />
+                                <img alt="Foto personalizada" className="w-56 h-56 md:w-56 md:h-56 object-cover" src={packageName === 'premium' || packageName === 'standard' ? digital_card_url : generic_image} />
                                 <div className="absolute inset-0 shadow-[inset_0_0_30px_rgba(0,0,0,0.15)] rounded-lg"></div>
                             </div>
                             <div className="mt-2 text-center pb-1">
@@ -191,9 +251,9 @@ export default function YourSong({ short_song_url, long_song_url, paid, title, d
                     <audio ref={audioRef} src={audioSrc} preload="metadata" />
 
                     <div className="flex items-center gap-4">
-                        <button 
+                        <button
                             onClick={togglePlayPause}
-                            className="w-16 h-16 rounded-full bg-[#f5a623] hover:bg-[#e69516] transition-all hover:scale-105 flex items-center justify-center shadow-lg shadow-[#f5a623]/30"
+                            className="cursor-pointer w-16 h-16 rounded-full bg-[#f5a623] hover:bg-[#e69516] transition-all hover:scale-105 flex items-center justify-center shadow-lg shadow-[#f5a623]/30"
                         >
                             {isPlaying ? (
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-pause w-7 h-7 text-white">
@@ -207,12 +267,12 @@ export default function YourSong({ short_song_url, long_song_url, paid, title, d
                             )}
                         </button>
                         <div className="flex-1 space-y-2">
-                            <div 
+                            <div
                                 onClick={handleProgressClick}
                                 className="relative w-full overflow-hidden rounded-full h-2 bg-white/20 cursor-pointer group"
                             >
-                                <div 
-                                    className="bg-[#f5a623] h-full transition-all group-hover:bg-[#ffc107]" 
+                                <div
+                                    className="bg-[#f5a623] h-full transition-all group-hover:bg-[#ffc107]"
                                     style={{ width: `${progress}%` }}
                                 ></div>
                             </div>

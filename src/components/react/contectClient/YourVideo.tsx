@@ -29,19 +29,19 @@ export default function YourVideo({ paid, video_url }: Props) {
             setIsPlaying(true);
             setShowControls(true);
         }
-        
+
         // Mostrar controles temporalmente en móvil
         showControlsTemporarily();
     };
 
     const showControlsTemporarily = () => {
         setControlsVisible(true);
-        
+
         // Limpiar timeout anterior
         if (controlsTimeoutRef.current) {
             clearTimeout(controlsTimeoutRef.current);
         }
-        
+
         // Ocultar controles después de 3 segundos
         controlsTimeoutRef.current = setTimeout(() => {
             if (isPlaying) {
@@ -113,7 +113,7 @@ export default function YourVideo({ paid, video_url }: Props) {
     useState(() => {
         const handleFullscreenChange = () => {
             const isCurrentlyFullscreen = !!(
-                document.fullscreenElement || 
+                document.fullscreenElement ||
                 (document as any).webkitFullscreenElement ||
                 (document as any).mozFullScreenElement ||
                 (document as any).msFullscreenElement
@@ -125,7 +125,7 @@ export default function YourVideo({ paid, video_url }: Props) {
         document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
         document.addEventListener('mozfullscreenchange', handleFullscreenChange);
         document.addEventListener('MSFullscreenChange', handleFullscreenChange);
-        
+
         return () => {
             document.removeEventListener('fullscreenchange', handleFullscreenChange);
             document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
@@ -136,23 +136,38 @@ export default function YourVideo({ paid, video_url }: Props) {
 
     const handleDownloadVideo = async () => {
         if (!isPaid || !video_url) return;
-        
+
         try {
             setIsDownloading(true);
 
+            // Agregamos un timestamp para evitar problemas de caché del CDN
+            const urlWithCacheBust = `${video_url}${video_url.includes('?') ? '&' : '?'}t=${Date.now()}`;
+
+            const response = await fetch(urlWithCacheBust, {
+                method: 'GET',
+                mode: 'cors',
+            });
+
+            if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
+
+            const blob = await response.blob();
+            const blobUrl = window.URL.createObjectURL(blob);
+
             const link = document.createElement('a');
-            link.href = video_url;
+            link.href = blobUrl;
             link.download = 'Video_LetraViva.mp4';
-            link.target = '_blank';
             document.body.appendChild(link);
             link.click();
+
+            // Limpieza de memoria
             document.body.removeChild(link);
+            window.URL.revokeObjectURL(blobUrl);
 
             setIsDownloading(false);
 
         } catch (error) {
             console.error('Error al descargar el video:', error);
-            alert('Hubo un error al descargar el video. Por favor intenta de nuevo.');
+            alert('Hubo un error al descargar el video. Asegúrate de que el CDN haya sido purgado en DigitalOcean.');
             setIsDownloading(false);
         }
     };
@@ -186,7 +201,7 @@ export default function YourVideo({ paid, video_url }: Props) {
 
             {paid === "paid" && (
                 <div className="space-y-4">
-                    <div 
+                    <div
                         ref={containerRef}
                         className="relative aspect-video rounded-xl overflow-hidden shadow-lg group bg-black"
                     >
@@ -199,10 +214,10 @@ export default function YourVideo({ paid, video_url }: Props) {
                             playsInline
                             preload="metadata"
                         />
-                        
+
                         {/* Overlay con botón de play cuando no está reproduciendo */}
                         {!isPlaying && (
-                            <div 
+                            <div
                                 className="absolute inset-0 bg-black/30 flex items-center justify-center cursor-pointer transition-opacity hover:bg-black/40"
                                 onClick={togglePlayPause}
                             >
@@ -216,10 +231,9 @@ export default function YourVideo({ paid, video_url }: Props) {
 
                         {/* Controles de video personalizados */}
                         {showControls && (
-                            <div 
-                                className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent p-4 transition-opacity duration-300 ${
-                                    controlsVisible || !isPlaying ? 'opacity-100' : 'opacity-0 md:group-hover:opacity-100'
-                                }`}
+                            <div
+                                className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent p-4 transition-opacity duration-300 ${controlsVisible || !isPlaying ? 'opacity-100' : 'opacity-0 md:group-hover:opacity-100'
+                                    }`}
                                 onMouseEnter={() => setControlsVisible(true)}
                                 onMouseLeave={() => isPlaying && setControlsVisible(false)}
                             >
