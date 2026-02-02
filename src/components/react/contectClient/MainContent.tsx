@@ -207,6 +207,7 @@ export default function MainContent() {
 
           {dataMetafieldsKeyValue?.packageName === "premium" && (
             <YourVideo
+              title={dataMetafieldsKeyValue?.metafields.titulo_cancion ?? ""}
               paid={dataMetafieldsKeyValue?.paid ?? ""}
               video_url={dataMetafieldsKeyValue?.metafields.video_url ?? ""}
             />

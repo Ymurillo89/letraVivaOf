@@ -90,12 +90,7 @@ export default function SpecialDedication({ dedicatoria_especial, paid, orderId 
       </div>
 
       <div className="bg-gradient-to-br from-[#f5f9f9] to-white rounded-xl p-5 border border-[#0d4a4a]/10 relative overflow-hidden">
-        <div className="cursor-not-allowed"
-          onCopy={(e) => !isPaid && e.preventDefault()}
-          onCut={(e) => !isPaid && e.preventDefault()}
-          onContextMenu={(e) => !isPaid && e.preventDefault()}
-       
-        >
+        <div className={!isPaid ? "cursor-not-allowed" : ""} >
           <p className="text-[#0d4a4a]/80 font-sans leading-relaxed text-base select-none">
             {getDisplayText()}
           </p>

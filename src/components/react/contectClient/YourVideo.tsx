@@ -2,10 +2,11 @@ import { useState, useRef } from "react";
 
 type Props = {
     paid: string;
+    title:string;
     video_url: string;
 }
 
-export default function YourVideo({ paid, video_url }: Props) {
+export default function YourVideo({ paid,title, video_url }: Props) {
     const videoRef = useRef<HTMLVideoElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
     const [isPlaying, setIsPlaying] = useState(false);
@@ -155,7 +156,7 @@ export default function YourVideo({ paid, video_url }: Props) {
 
             const link = document.createElement('a');
             link.href = blobUrl;
-            link.download = 'Video_LetraViva.mp4';
+            link.download = `${title}-LetraViva.mp4`;
             document.body.appendChild(link);
             link.click();
 
@@ -181,7 +182,7 @@ export default function YourVideo({ paid, video_url }: Props) {
                         <rect x="2" y="6" width="14" height="12" rx="2"></rect>
                     </svg>
                 </div>
-                <h3 className="text-xl font-serif font-semibold text-[#0d4a4a]">Video Emotivo</h3>
+                <h3 className="text-xl font-serif font-semibold text-[#0d4a4a]">Video Premium Letra Viva</h3>
             </div>
 
             {paid === "pending" && (
