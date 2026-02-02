@@ -81,17 +81,20 @@ export default function YourSong({ short_song_url, long_song_url, paid, title, d
             });
             const blob1 = await response1.blob();
             const url1 = URL.createObjectURL(blob1);
+            const nameSong = title
+                .replace(/\u00A0/g, ' ')
+                .trim();
 
             const a1 = document.createElement('a');
             a1.href = url1;
-            a1.download = 'mi-cancion.wav';
+            a1.download = `${nameSong}-LetraViva.mp3`;
             document.body.appendChild(a1);
             a1.click();
             document.body.removeChild(a1);
             URL.revokeObjectURL(url1);
 
             // Esperar y descargar carátula
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            /* await new Promise(resolve => setTimeout(resolve, 1000));
 
             const response2 = await fetch(digital_card_url, { mode: 'cors' });
             const blob2 = await response2.blob();
@@ -103,7 +106,7 @@ export default function YourSong({ short_song_url, long_song_url, paid, title, d
             document.body.appendChild(a2);
             a2.click();
             document.body.removeChild(a2);
-            URL.revokeObjectURL(url2);
+            URL.revokeObjectURL(url2); */
 
             setIsDownloading(false);
         } catch (error) {
@@ -306,7 +309,7 @@ export default function YourSong({ short_song_url, long_song_url, paid, title, d
                                             <polyline points="7 10 12 15 17 10"></polyline>
                                             <line x1="12" x2="12" y1="15" y2="3"></line>
                                         </svg>
-                                        <span>Descargar Canción y Carátula</span>
+                                        <span>Descargar Canción</span>
                                     </>
                                 )}
                             </button>
