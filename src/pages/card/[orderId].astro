@@ -18,7 +18,7 @@ try {
     
     metaTags = {
       title: `${orderData.metafields.titulo_cancion} - Letra Viva`,
-      description: `Canción Personalizada ${orderData.metafields.para_quien_es} De ${orderData.metafields.de_quien_es}`,
+      description: `Canción Personalizada ${orderData.metafields.para_quien_es} ${orderData.metafields.de_quien_es}`,
       image: orderData.metafields.targeta_digital_url || "/og-image.jpg"
     };
   }
