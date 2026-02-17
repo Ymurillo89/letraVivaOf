@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { EventBus } from '../utils/eventBus';
 
 interface ShopifyVariant {
@@ -14,6 +14,20 @@ interface ModalCancionPersonalizadaProps {
   variants: ShopifyVariant[];
 }
 
+// ─── Country code data ───────────────────────────────────────────────────────
+const COUNTRIES = [
+  { code: '+57', flag: 'https://flagcdn.com/w20/co.png', name: 'Colombia', iso: 'CO' },
+  { code: '+52', flag: 'https://flagcdn.com/w20/mx.png', name: 'México', iso: 'MX' },
+  { code: '+56', flag: 'https://flagcdn.com/w20/cl.png', name: 'Chile', iso: 'CL' },
+  { code: '+34', flag: 'https://flagcdn.com/w20/es.png', name: 'España', iso: 'ES' },
+  { code: '+51', flag: 'https://flagcdn.com/w20/pe.png', name: 'Perú', iso: 'PE' },
+  { code: '+502', flag: 'https://flagcdn.com/w20/gt.png', name: 'Guatemala', iso: 'GT' },
+  { code: '+1', flag: 'https://flagcdn.com/w20/us.png', name: 'USA', iso: 'US' },
+  { code: '+598', flag: 'https://flagcdn.com/w20/uy.png', name: 'Uruguay', iso: 'UY' },
+  { code: '+593', flag: 'https://flagcdn.com/w20/ec.png', name: 'Ecuador', iso: 'EC' },
+  { code: '+595', flag: 'https://flagcdn.com/w20/py.png', name: 'Paraguay', iso: 'PY' },
+];
+
 const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ variants }) => {
   const [showWelcome, setShowWelcome] = useState(false);
   const [showForm, setShowForm] = useState(false);
@@ -27,8 +41,24 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
   } | null>(null);
   const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showErrorModal, setShowErrorModal] = useState(false); // NUEVO ESTADO para el modal de error
+  const [showErrorModal, setShowErrorModal] = useState(false);
   const [showPaymentSuccess, setShowPaymentSuccess] = useState(false);
+
+  // ─── Country selector state ────────────────────────────────────────────────
+  const [selectedCountry, setSelectedCountry] = useState(COUNTRIES[0]); // Colombia default
+  const [countryDropdownOpen, setCountryDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setCountryDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const [formData, setFormData] = useState({
     nombre: "",
@@ -69,7 +99,6 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
     if (showForm) {
       const urlParams = new URLSearchParams(window.location.search);
       const variantId = urlParams.get('variant');
-
       if (variantId && variants.some(v => v.id.toString() === variantId)) {
         setFormData(prev => ({ ...prev, paquete: variantId }));
       }
@@ -79,24 +108,16 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const ventaExitosa = urlParams.get('venta');
-
     if (ventaExitosa === 'true') {
       setShowPaymentSuccess(true);
-      // Limpiar el parámetro de la URL sin recargar la página
       window.history.replaceState({}, '', window.location.pathname);
     }
   }, []);
 
   useEffect(() => {
-    const handleOpenModal = () => {
-      openWelcome();
-    };
-
+    const handleOpenModal = () => { openWelcome(); };
     EventBus.on('openSongModal', handleOpenModal);
-
-    return () => {
-      EventBus.remove('openSongModal', handleOpenModal);
-    };
+    return () => { EventBus.remove('openSongModal', handleOpenModal); };
   }, []);
 
   const steps = [
@@ -148,7 +169,7 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
   const voz = [
     { id: "masculina", label: "Masculina", emoji: "👨" },
     { id: "femenina", label: "Femenina", emoji: "👩" },
-  ]
+  ];
 
   const generos = [
     { id: "pop", label: "Pop", icon: "🎧", color: "bg-purple-500" },
@@ -168,11 +189,10 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
     { id: "otro", label: "Otro", icon: "🎭", color: "bg-blue-800" },
   ];
 
-  // NUEVA FUNCIÓN para abrir y cerrar el modal de error
   const openErrorModal = () => {
-    setShowForm(false); // Cerrar formulario si está abierto
-    setShowWelcome(false); // Cerrar bienvenida
-    setShowSuccess(false); // Cerrar éxito
+    setShowForm(false);
+    setShowWelcome(false);
+    setShowSuccess(false);
     setShowErrorModal(true);
   };
 
@@ -182,62 +202,40 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
   };
 
   const handleRetry = () => {
-    // Cierra el modal de error y reabre el formulario en el último paso (Resumen)
     closeErrorModal();
     setShowForm(true);
-    setCurrentStep(steps.length - 1); // Vuelve al paso de Resumen para reintentar
+    setCurrentStep(steps.length - 1);
   };
 
-  // Procesar variants de Shopify
   const parseVariantInfo = (title: string) => {
     const nameMatch = title.match(/^(.*?)\s*–/);
     const nombre = nameMatch ? nameMatch[1].trim() : title;
-
     const subtitleMatch = title.match(/–\s*(.*?)\s*\|/);
     const subtitle = subtitleMatch ? subtitleMatch[1].trim() : '';
-
     const durationMatch = title.match(/\(([^)]+min[^)]*)\)/i);
     const duracion = durationMatch ? durationMatch[1].trim() : '';
-
     return { nombre, subtitle, duracion };
   };
 
   const getFeatures = (title: string) => {
     const features = [];
     const afterDuration = title.split(/\)/)[1] || '';
-
     if (afterDuration.includes('MP3')) {
       const formatMatch = afterDuration.match(/MP3\s+([^+\-]+)/);
       const format = formatMatch ? formatMatch[1].trim() : '';
-      features.push({
-        text: format ? `MP3 ${format}` : 'Canción en MP3',
-        icon: '🎧'
-      });
+      features.push({ text: format ? `MP3 ${format}` : 'Canción en MP3', icon: '🎧' });
     }
-
     if (afterDuration.includes('Tarjeta Digital')) {
-      features.push({
-        text: 'Tarjeta Digital Personalizada',
-        icon: '💳'
-      });
+      features.push({ text: 'Tarjeta Digital Personalizada', icon: '💳' });
     }
-
     if (afterDuration.includes('Video')) {
-      features.push({
-        text: 'Video Lyric Animado',
-        icon: '🎥'
-      });
+      features.push({ text: 'Video Lyric Animado', icon: '🎥' });
     }
-
     if (afterDuration.match(/\d+\s*Foto/i)) {
       const photoMatch = afterDuration.match(/(\d+)\s*Foto/i);
       const count = photoMatch ? photoMatch[1] : '1';
-      features.push({
-        text: `${count} Foto${count !== '1' ? 's' : ''} Para La Portada`,
-        icon: '📷'
-      });
+      features.push({ text: `${count} Foto${count !== '1' ? 's' : ''} Para La Portada`, icon: '📷' });
     }
-
     return features;
   };
 
@@ -245,12 +243,10 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
     return new Intl.NumberFormat('es-CO').format(parseFloat(price));
   };
 
-  // Convertir variants a formato paquetes
   const paquetes = variants.map(variant => {
     const info = parseVariantInfo(variant.title);
     const features = getFeatures(variant.title);
     const isStandard = variant.position === 1;
-
     return {
       id: variant.id.toString(),
       position: variant.position,
@@ -268,9 +264,7 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
 
   const openWelcome = () => {
     setShowWelcome(true);
-
     const eventId = crypto.randomUUID();
-
     fetch("/api/meta-conversion", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -279,41 +273,18 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
         event_id: eventId,
         event_source_url: window.location.href,
         user_agent: navigator.userAgent,
-        custom_data: {
-          content_name: "Modal canción personalizada R",
-          variant_id: 0,
-        },
+        custom_data: { content_name: "Modal canción personalizada R", variant_id: 0 },
       }),
     });
   };
 
-  const closeWelcome = () => {
-    setShowWelcome(false);
-  };
-
-  const startForm = () => {
-    setShowWelcome(false);
-    setShowForm(true);
-    setCurrentStep(0);
-  };
-
-  const closeForm = () => {
-    setShowForm(false);
-  };
-
-  const closeSuccess = () => {
-    setShowSuccess(false);
-    setOrderSuccess(null);
-  };
-
-  const closePaymentSuccess = () => {
-    setShowPaymentSuccess(false);
-  }
+  const closeForm = () => { setShowForm(false); };
+  const closeSuccess = () => { setShowSuccess(false); setOrderSuccess(null); };
+  const closePaymentSuccess = () => { setShowPaymentSuccess(false); };
 
   const validateCurrentStep = () => {
     let isValid = true;
     const newErrors = { ...errors };
-
     switch (currentStep) {
       case 0:
         newErrors.nombre = !formData.nombre.trim();
@@ -329,19 +300,15 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
         isValid = !newErrors.historia;
         break;
       case 2:
-        newErrors.whatsapp = formData.whatsapp.trim().length < 10;
-        isValid = !newErrors.whatsapp;
-
+        newErrors.whatsapp = formData.whatsapp.trim().length < 6;
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         newErrors.email = !formData.email.trim() || !emailRegex.test(formData.email);
-
         isValid = !newErrors.whatsapp && !newErrors.email;
         break;
       case 3:
         newErrors.genero = !formData.genero;
         newErrors.voz = !formData.voz;
-        newErrors.otroGenero = (formData.genero === "otro" && !formData.otroGenero)
-        formData.genero === "otro"
+        newErrors.otroGenero = (formData.genero === "otro" && !formData.otroGenero);
         isValid = !newErrors.genero && !newErrors.voz && !newErrors.otroGenero;
         break;
       case 4:
@@ -353,68 +320,36 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
         isValid = !newErrors.metodoPago;
         break;
     }
-
     setErrors(newErrors);
     return isValid;
   };
 
   const nextStep = () => {
     if (validateCurrentStep()) {
-      if (currentStep < steps.length - 1) {
-        setCurrentStep(currentStep + 1);
-      }
+      if (currentStep < steps.length - 1) setCurrentStep(currentStep + 1);
     }
   };
 
   const prevStep = () => {
-    if (currentStep > 0) {
-      setCurrentStep(currentStep - 1);
-    }
+    if (currentStep > 0) setCurrentStep(currentStep - 1);
   };
 
-  const selectGenero = (generoId: string) => {
-    setFormData({ ...formData, genero: generoId });
-    setErrors({ ...errors, genero: false });
-  };
-
-  const selectPaquete = (paqueteId: string) => {
-    setFormData({ ...formData, paquete: paqueteId });
-    setErrors({ ...errors, paquete: false });
-  };
-
-  const selectMetodoPago = (metodo: string) => {
-    setFormData({ ...formData, metodoPago: metodo });
-    setErrors({ ...errors, metodoPago: false });
-  };
-
-  // Agrega estos useEffect en tu componente ModalCancionPersonalizada
-
-  // Ocultar navbar cuando se abra cualquier modal
   useEffect(() => {
     const nav = document.querySelector('nav');
     if (showWelcome || showForm || showSuccess || showErrorModal || showPaymentSuccess) {
       nav?.classList.add('hidden');
-      // Prevenir scroll en el body
       document.body.style.overflow = 'hidden';
     } else {
       nav?.classList.remove('hidden');
       document.body.style.overflow = '';
     }
-
-    // Cleanup al desmontar el componente
     return () => {
       nav?.classList.remove('hidden');
       document.body.style.overflow = '';
     };
   }, [showWelcome, showForm, showSuccess, showErrorModal, showPaymentSuccess]);
 
-  const sendMetaInitiateCheckout = async ({
-    value,
-    packageName,
-  }: {
-    value: number;
-    packageName: string;
-  }) => {
+  const sendMetaInitiateCheckout = async ({ value, packageName }: { value: number; packageName: string }) => {
     try {
       await fetch("/api/meta-conversion", {
         method: "POST",
@@ -424,73 +359,39 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
           event_source_url: window.location.href,
           event_id: crypto.randomUUID(),
           user_agent: navigator.userAgent,
-          custom_data: {
-            currency: "COP",
-            value,
-            payment_method: "online",
-            package_name: packageName,
-          },
+          custom_data: { currency: "COP", value, payment_method: "online", package_name: packageName },
         }),
       });
-    } catch {
-      // ❌ No rompemos el flujo si falla Meta
-    }
+    } catch { }
   };
+
+  // Build the full WhatsApp number with country prefix
+  const getFullWhatsapp = () => `${selectedCountry.code}${formData.whatsapp.replace(/^0+/, '')}`;
 
   const handleSubmit = async () => {
     if (!validateCurrentStep()) return;
-
     setIsSubmitting(true);
-
     try {
       const selectedPaquete = paquetes.find(p => p.id === formData.paquete);
       const selectedGenero = generos.find(g => g.id === formData.genero);
-
-      // Extraer nombre y apellido
       const nombreCompleto = formData.nombre.trim().split(' ');
       const firstName = nombreCompleto[0] || 'Cliente';
       const lastName = nombreCompleto.slice(1).join(' ') || 'Letra Viva';
+      const fullPhone = getFullWhatsapp();
+      const phoneClean = fullPhone.replace(/[^\d+]/g, '');
 
-      // Limpiar el número de WhatsApp
-      const phoneClean = formData.whatsapp.replace(/[^\d+]/g, '');
-
-      // Preparar datos del pedido - ESTRUCTURA CORREGIDA
       const orderData = {
-        line_items: [
-          {
-            variant_id: selectedPaquete?.variantId || 0,
-            quantity: 1
-          }
-        ],
-        customer: {
-          first_name: firstName,
-          last_name: lastName,
-          phone: phoneClean,
-          email: formData.email, // Email temporal basado en teléfono
-        },
-        // BILLING ADDRESS - estructura correcta como objeto plano
+        line_items: [{ variant_id: selectedPaquete?.variantId || 0, quantity: 1 }],
+        customer: { first_name: firstName, last_name: lastName, phone: phoneClean, email: formData.email },
         billing_address: {
-          first_name: firstName,
-          last_name: lastName,
-          address1: 'Dirección no especificada', // DEBE ser string
-          address2: '',
-          city: 'Medellín',
-          province: 'Antioquia',
-          country: 'Colombia',
-          zip: '050001',
-          phone: phoneClean
+          first_name: firstName, last_name: lastName,
+          address1: 'Dirección no especificada', address2: '',
+          city: 'Medellín', province: 'Antioquia', country: 'Colombia', zip: '050001', phone: phoneClean
         },
-        // SHIPPING ADDRESS - estructura correcta como objeto plano
         shipping_address: {
-          first_name: firstName,
-          last_name: lastName,
-          address1: 'Dirección no especificada', // DEBE ser string
-          address2: '',
-          city: 'Medellín',
-          province: 'Antioquia',
-          country: 'Colombia',
-          zip: '050001',
-          phone: phoneClean
+          first_name: firstName, last_name: lastName,
+          address1: 'Dirección no especificada', address2: '',
+          city: 'Medellín', province: 'Antioquia', country: 'Colombia', zip: '050001', phone: phoneClean
         },
         note_attributes: [
           { name: "Nombre", value: formData.nombre },
@@ -501,21 +402,19 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
           { name: "Tono Emocional", value: formData.tonoEmocional },
           { name: "Historia", value: formData.historia },
           { name: "Genero musical", value: selectedGenero?.label || "" },
-          { name: "WhatsApp", value: formData.whatsapp },
+          { name: "WhatsApp", value: fullPhone },
           { name: "Email", value: formData.email },
           { name: "Otro Genero", value: formData.otroGenero },
           { name: "Voz", value: formData.voz },
+          { name: "Prefijo", value: selectedCountry.code },
           { name: "Metodo de Pago", value: formData.metodoPago === "online" ? "Pago en Linea" : "Contra Entrega" }
         ],
         note: `Historia: ${formData.historia}\n\nPara: ${formData.paraQuien}\nOcasion: ${formData.ocasion}\nTono: ${formData.tonoEmocional}\nGenero: ${selectedGenero?.label || ""}`
       };
 
-      // Usar endpoint diferente según método de pago
       const endpoint = formData.metodoPago === "online"
-        ? '/api/shopify/create-checkout'  // Storefront API
-        : '/api/shopify/create-order';     // Admin API
-
-      console.log('Enviando pedido:', JSON.stringify(orderData, null, 2));
+        ? '/api/shopify/create-checkout'
+        : '/api/shopify/create-order';
 
       const response = await fetch(endpoint, {
         method: 'POST',
@@ -524,18 +423,12 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
       });
 
       const responseText = await response.text();
-
       let data;
-      try {
-        data = JSON.parse(responseText);
-      } catch (e) {
-        console.error('Error parseando JSON:', e);
+      try { data = JSON.parse(responseText); } catch (e) {
         throw new Error(`Respuesta inválida del servidor: ${responseText}`);
       }
 
-      if (!data.success) {
-        throw new Error(data.message || 'Error al procesar el pedido');
-      }
+      if (!data.success) throw new Error(data.message || 'Error al procesar el pedido');
 
       closeForm();
 
@@ -544,43 +437,26 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
           value: Number(selectedPaquete?.precio || 0),
           packageName: selectedPaquete?.nombre || "",
         });
-        // Redirigir al checkout de Shopify
         window.location.href = data.checkoutUrl;
       } else {
-        // Mostrar modal de éxito
         setOrderSuccess({
           orderNumber: data.orderNumber,
           nombre: formData.nombre,
           paquete: selectedPaquete?.nombre || '',
           precio: selectedPaquete?.precio || '',
-          whatsapp: formData.whatsapp
+          whatsapp: fullPhone
         });
         setShowSuccess(true);
-
-        // Resetear formulario
         setFormData({
-          nombre: "",
-          personaSorprender: "",
-          menciona: "",
-          paraQuien: "",
-          ocasion: "",
-          tonoEmocional: "",
-          historia: "",
-          whatsapp: "",
-          email: "",
-          genero: "",
-          paquete: "",
-          metodoPago: "",
-          otroGenero: "",
-          voz: ""
+          nombre: "", personaSorprender: "", menciona: "", paraQuien: "",
+          ocasion: "", tonoEmocional: "", historia: "", whatsapp: "",
+          email: "", genero: "", paquete: "", metodoPago: "", otroGenero: "", voz: ""
         });
         setCurrentStep(0);
       }
-
     } catch (error) {
       console.error('Error al crear pedido:', error);
       openErrorModal();
-      /* alert(error instanceof Error ? error.message : 'Hubo un error al procesar tu pedido. Por favor intenta nuevamente.'); */
     } finally {
       setIsSubmitting(false);
     }
@@ -601,19 +477,14 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
             <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"></path>
           </svg>
           <span>¡Toca aquí para crear tu canción personalizada!</span>
-          <svg
-            className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
+          <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
           </svg>
         </span>
         <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12"></div>
       </button>
 
-      {/* NUEVO: Modal de Pago Exitoso */}
+      {/* Modal de Pago Exitoso */}
       {showPaymentSuccess && (
         <div className="modal-overlay" onClick={closePaymentSuccess}>
           <div className="modal-content success-modal md:px-6 md:py-1" onClick={(e) => e.stopPropagation()}>
@@ -622,9 +493,7 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
-
             <div className="welcome-content">
-              {/* Icono de éxito animado */}
               <div className="flex justify-center">
                 <div className="w-24 h-24 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full flex items-center justify-center shadow-xl animate-bounce-in">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-10 h-10 text-white stroke-[3]">
@@ -632,10 +501,8 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
                   </svg>
                 </div>
               </div>
-
               <h2 className="text-2xl font-semibold">¡Pago Exitoso!</h2>
               <p className="my-1">Tu pedido ha sido procesado correctamente</p>
-
               <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-200 rounded-2xl p-6 space-y-4 mb-2">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
@@ -648,11 +515,8 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
                     <p className="text-xs text-gray-500">Revisa tu correo electrónico</p>
                   </div>
                 </div>
-                <p className="text-sm text-gray-700 text-left">
-                  Hemos enviado toda la información de tu pedido a tu correo electrónico. Si no lo encuentras, revisa tu carpeta de spam.
-                </p>
+                <p className="text-sm text-gray-700 text-left">Hemos enviado toda la información de tu pedido a tu correo electrónico. Si no lo encuentras, revisa tu carpeta de spam.</p>
               </div>
-
               <div className="bg-gradient-to-br from-amber-50 to-yellow-50 border-2 border-amber-200 rounded-2xl p-6 space-y-4 mb-2">
                 <div className="flex items-center gap-2 text-amber-800">
                   <div className="w-8 h-8 bg-amber-200 rounded-full flex items-center justify-center">
@@ -663,30 +527,21 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
                   <h3 className="font-bold text-lg">¿Qué sigue ahora?</h3>
                 </div>
                 <div className="space-y-4">
-                  <div className="flex gap-3">
-                    <div className="w-7 h-7 bg-amber-500 text-white rounded-full flex items-center justify-center flex-shrink-0 font-bold text-sm">1</div>
-                    <div>
-                      <p className="font-semibold text-gray-700 text-left">Contacto en 24 horas:</p>
-                      <p className="text-sm text-gray-700 text-left">Nuestro equipo se comunicará contigo por WhatsApp para confirmar todos los detalles de tu canción.</p>
+                  {[
+                    { n: 1, title: "Contacto en 24 horas:", desc: "Nuestro equipo se comunicará contigo por WhatsApp para confirmar todos los detalles de tu canción." },
+                    { n: 2, title: "Creación prioritaria:", desc: "Tu pago nos permite iniciar inmediatamente con la creación de tu canción personalizada." },
+                    { n: 3, title: "Entrega rápida:", desc: "Recibirás tu canción lista en aproximadamente 24 horas." },
+                  ].map(s => (
+                    <div key={s.n} className="flex gap-3">
+                      <div className="w-7 h-7 bg-amber-500 text-white rounded-full flex items-center justify-center flex-shrink-0 font-bold text-sm">{s.n}</div>
+                      <div>
+                        <p className="font-semibold text-gray-700 text-left">{s.title}</p>
+                        <p className="text-sm text-gray-700 text-left">{s.desc}</p>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex gap-3">
-                    <div className="w-7 h-7 bg-amber-500 text-white rounded-full flex items-center justify-center flex-shrink-0 font-bold text-sm">2</div>
-                    <div>
-                      <p className="font-semibold text-gray-700 text-left">Creación prioritaria:</p>
-                      <p className="text-sm text-gray-700 text-left">Tu pago nos permite iniciar inmediatamente con la creación de tu canción personalizada.</p>
-                    </div>
-                  </div>
-                  <div className="flex gap-3">
-                    <div className="w-7 h-7 bg-amber-500 text-white rounded-full flex items-center justify-center flex-shrink-0 font-bold text-sm">3</div>
-                    <div>
-                      <p className="font-semibold text-gray-700 text-left">Entrega rápida:</p>
-                      <p className="text-sm text-gray-700 text-left">Recibirás tu canción lista en aproximadamente 24 horas.</p>
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </div>
-
               <div className="bg-gradient-to-br from-teal-50 to-emerald-50 border-2 border-teal-200 rounded-2xl p-5 text-center mb-6">
                 <div className="flex items-center justify-center gap-2 mb-2">
                   <svg className="w-5 h-5 text-teal-600" fill="currentColor" viewBox="0 0 24 24">
@@ -694,48 +549,36 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
                   </svg>
                   <p className="font-semibold text-teal-900">¿Necesitas ayuda?</p>
                 </div>
-                <p className="text-sm text-teal-800">
-                  Contáctanos por WhatsApp: <span className="font-bold">+57 324 379 83 34</span>
-                </p>
+                <p className="text-sm text-teal-800">Contáctanos por WhatsApp: <span className="font-bold">+57 324 379 83 34</span></p>
               </div>
-
               <button className="w-full px-6 py-3 rounded-xl bg-gradient-to-r from-teal-600 to-teal-700 text-white font-bold hover:shadow-xl transition-all flex items-center justify-center gap-2" onClick={closePaymentSuccess}>
                 ¡Entendido!
               </button>
-
-              <p style={{ textAlign: 'center', marginTop: '16px', fontSize: '14px', color: '#6b7280' }}>
-                ¡Gracias por confiar en Letra Viva! 💚🎶
-              </p>
+              <p style={{ textAlign: 'center', marginTop: '16px', fontSize: '14px', color: '#6b7280' }}>¡Gracias por confiar en Letra Viva! 💚🎶</p>
             </div>
           </div>
         </div>
       )}
+
       {/* Modal de Bienvenida */}
       {showWelcome && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-3xl w-full max-w-lg max-h-[90vh] overflow-y-auto relative shadow-2xl">
-            <button
-              onClick={() => setShowWelcome(false)}
-              className="absolute top-4 right-4 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg hover:bg-gray-100 transition-all hover:rotate-90 z-10"
-            >
+            <button onClick={() => setShowWelcome(false)} className="absolute top-4 right-4 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg hover:bg-gray-100 transition-all hover:rotate-90 z-10">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
-
             <div className="p-8 text-center">
               <div className="w-24 h-24 bg-gradient-to-br from-teal-500 to-teal-600 rounded-3xl mx-auto mb-6 flex items-center justify-center shadow-xl">
                 <svg className="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" />
                 </svg>
               </div>
-
               <h1 className="text-4xl font-bold text-gray-900 mb-2">Letra Viva</h1>
               <p className="text-gray-600 mb-8">Donde tus emociones se convierten en música</p>
-
               <div className="bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl p-6 mb-8 border-2 border-teal-200">
                 <h3 className="text-teal-800 font-bold text-lg mb-4">• ¿CÓMO FUNCIONA? •</h3>
-
                 <div className="space-y-4">
                   {[
                     { num: 1, text: "Cuéntanos tu historia especial" },
@@ -744,22 +587,13 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
                     { num: 4, text: "Selecciona tu paquete y método de pago" }
                   ].map(step => (
                     <div key={step.num} className="flex items-center gap-3 text-left">
-                      <div className="w-10 h-10 bg-gradient-to-r from-[#f89a3f] via-[#ff6b35] to-[#f89a3f] hover:from-[#ff6b35] hover:via-[#f89a3f] hover:to-[#ff6b35] rounded-xl flex items-center justify-center text-white font-bold flex-shrink-0 shadow-md">
-                        {step.num}
-                      </div>
+                      <div className="w-10 h-10 bg-gradient-to-r from-[#f89a3f] via-[#ff6b35] to-[#f89a3f] rounded-xl flex items-center justify-center text-white font-bold flex-shrink-0 shadow-md">{step.num}</div>
                       <p className="text-teal-800 font-medium">{step.text}</p>
                     </div>
                   ))}
                 </div>
               </div>
-
-              <button
-                onClick={() => {
-                  setShowWelcome(false);
-                  setShowForm(true);
-                }}
-                className="w-full bg-gradient-to-r from-teal-600 to-teal-700 text-white py-4 rounded-2xl font-bold text-lg hover:shadow-xl transition-all hover:scale-105 flex items-center justify-center gap-2"
-              >
+              <button onClick={() => { setShowWelcome(false); setShowForm(true); }} className="w-full bg-gradient-to-r from-teal-600 to-teal-700 text-white py-4 rounded-2xl font-bold text-lg hover:shadow-xl transition-all hover:scale-105 flex items-center justify-center gap-2">
                 Comenzar Ahora
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
@@ -783,19 +617,12 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
             {/* Progress Bar */}
             <div className="bg-gradient-to-br from-teal-50 to-white p-6 border-b-2 border-teal-100">
               <div className="flex items-center gap-4 mb-4">
-                <div className="text-xs font-bold text-teal-700 bg-teal-100 px-3 py-1 rounded-full">
-                  PASO {currentStep + 1} DE {steps.length}
-                </div>
+                <div className="text-xs font-bold text-teal-700 bg-teal-100 px-3 py-1 rounded-full">PASO {currentStep + 1} DE {steps.length}</div>
                 <div className="text-xs text-gray-500">{Math.round(progressWidth)}% completado</div>
               </div>
-
               <div className="h-2 bg-teal-100 rounded-full overflow-hidden mb-4">
-                <div
-                  className="h-full bg-gradient-to-r from-teal-500 to-teal-600 transition-all duration-500 rounded-full"
-                  style={{ width: `${progressWidth}%` }}
-                />
+                <div className="h-full bg-gradient-to-r from-teal-500 to-teal-600 transition-all duration-500 rounded-full" style={{ width: `${progressWidth}%` }} />
               </div>
-
               <div className="flex items-center gap-4">
                 <div className="w-14 h-14 bg-gradient-to-br from-teal-500 to-teal-600 rounded-2xl flex items-center justify-center text-white flex-shrink-0 shadow-lg">
                   {currentStep === 0 && <span className="text-2xl">✨</span>}
@@ -806,7 +633,7 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
                   {currentStep === 5 && <span className="text-2xl">✅</span>}
                 </div>
                 <div className="flex-1 min-w-0 text-left">
-                  <h2 className="text-2xl font-bold text-gray-900 truncate ">{steps[currentStep].title}</h2>
+                  <h2 className="text-2xl font-bold text-gray-900 truncate">{steps[currentStep].title}</h2>
                   <p className="text-sm text-gray-600">{steps[currentStep].subtitle}</p>
                 </div>
               </div>
@@ -814,6 +641,7 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
 
             {/* Contenido del paso actual */}
             <div className="flex-1 overflow-y-auto p-6 h-96 md:h-auto">
+
               {/* Paso 0: Información Básica */}
               {currentStep === 0 && (
                 <div className="space-y-6">
@@ -826,11 +654,9 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
                       value={formData.nombre}
                       onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
                       placeholder="Escribe tu nombre"
-                      className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-4 focus:ring-teal-100 transition-all ${errors.nombre ? 'border-red-400' : 'border-gray-200 focus:border-teal-500'
-                        }`}
+                      className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-4 focus:ring-teal-100 transition-all ${errors.nombre ? 'border-red-400' : 'border-gray-200 focus:border-teal-500'}`}
                     />
                   </div>
-
                   <div className='flex flex-col md:flex-row gap-4'>
                     <div className='flex-1'>
                       <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
@@ -841,12 +667,10 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
                         value={formData.personaSorprender}
                         onChange={(e) => setFormData({ ...formData, personaSorprender: e.target.value })}
                         placeholder="Persona a sorprender"
-                        className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-4 focus:ring-teal-100 transition-all ${errors.personaSorprender ? 'border-red-400' : 'border-gray-200 focus:border-teal-500'
-                          }`}
+                        className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-4 focus:ring-teal-100 transition-all ${errors.personaSorprender ? 'border-red-400' : 'border-gray-200 focus:border-teal-500'}`}
                       />
                     </div>
-                    <div className=''>
-
+                    <div>
                       <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
                         <span className="text-teal-600">🔔</span> Se menciona en la canción
                       </label>
@@ -855,79 +679,43 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
                         value={formData.menciona}
                         onChange={(e) => setFormData({ ...formData, menciona: e.target.value })}
                         placeholder="Si/No"
-                        className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-4 focus:ring-teal-100 transition-all ${errors.menciona ? 'border-red-400' : 'border-gray-200 focus:border-teal-500'
-                          }`}
+                        className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-4 focus:ring-teal-100 transition-all ${errors.menciona ? 'border-red-400' : 'border-gray-200 focus:border-teal-500'}`}
                       />
-
-
                     </div>
                   </div>
-
                   <div>
                     <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-3">
                       <span className="text-teal-600">💝</span> Tono emocional
                     </label>
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1">
                       {tonosEmocionales.map((tono) => (
-                        <button
-                          key={tono.id}
-                          onClick={() => setFormData({ ...formData, tonoEmocional: tono.id })}
-                          className={`p-2 rounded-xl border-2 transition-all flex items-center gap-3 cursor-pointer ${formData.tonoEmocional === tono.id
-                            ? 'border-teal-500 bg-teal-50 shadow-md scale-105'
-                            : 'border-gray-200 hover:border-teal-300 hover:shadow-sm'
-                            }`}
-                        >
-                          <div className={` h-10  flex items-center justify-center text-white `}>
-                            {tono.emoji}
-                          </div>
-                          <div className="absolute top-2 right-2 w-5 h-5 bg-teal-600 rounded-full flex items-center justify-center">
-                            <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd">
-                              </path>
-                            </svg>
-                          </div>
+                        <button key={tono.id} onClick={() => setFormData({ ...formData, tonoEmocional: tono.id })} className={`p-2 rounded-xl border-2 transition-all flex items-center gap-3 cursor-pointer ${formData.tonoEmocional === tono.id ? 'border-teal-500 bg-teal-50 shadow-md scale-105' : 'border-gray-200 hover:border-teal-300 hover:shadow-sm'}`}>
+                          <div className="h-10 flex items-center justify-center text-white">{tono.emoji}</div>
                           <span className="font-semibold text-gray-800">{tono.label}</span>
                         </button>
                       ))}
                     </div>
                   </div>
-
                   <div>
                     <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-3">
                       <span className="text-teal-600">🎁</span> ¿Para quién es?
                     </label>
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                       {paraQuienOptions.map((option) => (
-                        <button
-                          key={option.id}
-                          onClick={() => setFormData({ ...formData, paraQuien: option.id })}
-                          className={`p-1 rounded-xl border-2 transition-all text-center cursor-pointer ${formData.paraQuien === option.id
-                            ? 'border-teal-500 bg-teal-50 shadow-md scale-105'
-                            : 'border-gray-200 hover:border-teal-300 hover:shadow-sm'
-                            }`}
-                        >
+                        <button key={option.id} onClick={() => setFormData({ ...formData, paraQuien: option.id })} className={`p-1 rounded-xl border-2 transition-all text-center cursor-pointer ${formData.paraQuien === option.id ? 'border-teal-500 bg-teal-50 shadow-md scale-105' : 'border-gray-200 hover:border-teal-300 hover:shadow-sm'}`}>
                           <div className="text-3xl mb-1">{option.emoji}</div>
-
                           <div className="text-xs font-semibold text-gray-800">{option.label}</div>
                         </button>
                       ))}
                     </div>
                   </div>
-
                   <div>
                     <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-3">
                       <span className="text-teal-600">📅</span> ¿Cuál es la ocasión?
                     </label>
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                       {ocasiones.map((ocasion) => (
-                        <button
-                          key={ocasion.id}
-                          onClick={() => setFormData({ ...formData, ocasion: ocasion.id })}
-                          className={`p-1 rounded-xl border-2 transition-all text-center cursor-pointer ${formData.ocasion === ocasion.id
-                            ? 'border-teal-500 bg-teal-50 shadow-md scale-105'
-                            : 'border-gray-200 hover:border-teal-300 hover:shadow-sm'
-                            }`}
-                        >
+                        <button key={ocasion.id} onClick={() => setFormData({ ...formData, ocasion: ocasion.id })} className={`p-1 rounded-xl border-2 transition-all text-center cursor-pointer ${formData.ocasion === ocasion.id ? 'border-teal-500 bg-teal-50 shadow-md scale-105' : 'border-gray-200 hover:border-teal-300 hover:shadow-sm'}`}>
                           <div className="text-3xl mb-1">{ocasion.emoji}</div>
                           <div className="text-xs font-semibold text-gray-800">{ocasion.label}</div>
                         </button>
@@ -950,30 +738,28 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
                       </p>
                     </div>
                   </div>
-
                   <textarea
                     value={formData.historia}
                     onChange={(e) => setFormData({ ...formData, historia: e.target.value })}
                     placeholder="Escribe tu historia aquí..."
                     rows={10}
-                    className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-4 focus:ring-teal-100 transition-all resize-none ${errors.historia ? 'border-red-400' : 'border-gray-200 focus:border-teal-500'
-                      }`}
+                    className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-4 focus:ring-teal-100 transition-all resize-none ${errors.historia ? 'border-red-400' : 'border-gray-200 focus:border-teal-500'}`}
                   />
-                  <div className="flex flex-col items-center justify-between  mt-2 text-sm">
+                  <div className="flex flex-col items-center justify-between mt-2 text-sm">
                     <span className={formData.historia.length >= 20 ? 'text-teal-600 font-semibold flex items-center gap-1' : 'text-gray-500'}>
                       {formData.historia.length >= 20 && <span>✓</span>}
                       Mínimo 20 caracteres · {formData.historia.length} escritos
                     </span>
-                    {formData.historia.length >= 20 && (
-                      <span className="text-teal-600 font-semibold">¡Perfecto!</span>
-                    )}
+                    {formData.historia.length >= 20 && <span className="text-teal-600 font-semibold">¡Perfecto!</span>}
                   </div>
                 </div>
               )}
 
-              {/* Paso 2: Información de Contacto */}
+              {/* ─── Paso 2: Información de Contacto ──────────────────────────────────── */}
               {currentStep === 2 && (
-                <div className="space-y-2">
+                <div className="space-y-4">
+
+                  {/* WhatsApp con selector de país */}
                   <div>
                     <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
                       <svg className="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 24 24">
@@ -981,17 +767,83 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
                       </svg>
                       WhatsApp
                     </label>
-                    <input
-                      type="tel"
-                      value={formData.whatsapp}
-                      onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
-                      placeholder="+57 300 123 4567"
-                      className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-4 focus:ring-teal-100 transition-all ${errors.whatsapp ? 'border-red-400' : 'border-gray-200 focus:border-teal-500'
-                        }`}
-                    />
-                    <p className="text-xs text-gray-500 mt-1 text-left">• Te contactaremos para coordinar la entrega</p>
+
+                    {/* Phone input row */}
+                    <div className={`flex items-stretch border-2 rounded-xl overflow-visible transition-all focus-within:ring-4 focus-within:ring-teal-100 ${errors.whatsapp ? 'border-red-400' : 'border-gray-200 focus-within:border-teal-500'}`}>
+
+                      {/* ── Country selector ── */}
+                      <div className="relative flex-shrink-0" ref={dropdownRef}>
+                        <button
+                          type="button"
+                          onClick={() => setCountryDropdownOpen(prev => !prev)}
+                          className="flex items-center gap-1.5 px-3 py-3 bg-gray-50 hover:bg-gray-100 transition-colors h-full border-r border-gray-200 rounded-l-xl"
+                          style={{ minWidth: '90px' }}
+                        >
+                          <img src={selectedCountry.flag} alt={selectedCountry.name} className="w-5 h-auto rounded-sm" />
+                          <span className="text-sm font-semibold text-gray-700">{selectedCountry.code}</span>
+                          <svg
+                            className={`w-3.5 h-3.5 text-gray-500 transition-transform duration-200 ${countryDropdownOpen ? 'rotate-180' : ''}`}
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </button>
+
+                        {/* Dropdown list */}
+                        {countryDropdownOpen && (
+                          <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-xl overflow-hidden"
+                            style={{ minWidth: '160px', zIndex: 9999 }}>
+                            <div className="max-h-64 overflow-y-auto">
+                              {COUNTRIES.map((country) => (
+                                <button
+                                  key={country.iso}
+                                  type="button"
+                                  onClick={() => {
+                                    setSelectedCountry(country);
+                                    setCountryDropdownOpen(false);
+                                  }}
+                                  className={`w-full flex items-center gap-2.5 px-3 py-2 text-left hover:bg-teal-50 transition-colors ${selectedCountry.iso === country.iso ? 'bg-teal-50' : ''}`}
+                                >
+                                  <img src={country.flag} alt={country.name} className="w-5 h-4 rounded-sm" />
+                                  <span className="text-sm font-semibold text-gray-700 font-mono">{country.code}</span>
+                                  {selectedCountry.iso === country.iso && (
+                                    <svg className="w-3.5 h-3.5 text-teal-600 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                  )}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* ── Phone number input ── */}
+                      <input
+                        type="tel"
+                        value={formData.whatsapp}
+                        onChange={(e) => {
+                          // Only allow digits, spaces, dashes, parentheses
+                          const val = e.target.value.replace(/[^\d\s\-()]/g, '');
+                          setFormData({ ...formData, whatsapp: val });
+                          if (errors.whatsapp) setErrors({ ...errors, whatsapp: false });
+                        }}
+                        placeholder="300 123 4567"
+                        className="flex-1 px-4 py-3 bg-white focus:outline-none rounded-r-xl text-gray-800 placeholder-gray-400"
+                      />
+                    </div>
+
+                    {/* Preview of full number */}
+                    {formData.whatsapp.trim().length > 0 && (
+                      <p className="text-xs text-teal-600 mt-1.5 font-medium flex items-center gap-1">
+                        <span>📲</span>
+                        Número completo: <span className="font-bold">{selectedCountry.code} {formData.whatsapp}</span>
+                      </p>
+                    )}
+                
                   </div>
 
+                  {/* Email */}
                   <div>
                     <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
                       <svg className="w-5 h-5 text-blue-500" fill="currentColor" viewBox="0 0 24 24">
@@ -1015,49 +867,26 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
               {currentStep === 3 && (
                 <div>
                   <div className="max-h-96 pr-2">
-
                     <div className='mb-3'>
                       <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
                         <span className="text-teal-600">🔊</span> Tipo de voz para la canción
                       </label>
-
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        {voz.map((voz) => (
-                          <button
-                            key={voz.id}
-                            onClick={() => setFormData({ ...formData, voz: voz.id })}
-                            className={`p-1 rounded-xl border-2 transition-all text-center cursor-pointer ${formData.voz === voz.id
-                              ? 'border-teal-500 bg-teal-50 shadow-md scale-105'
-                              : errors.voz ? 'border-red-400' : 'border-gray-200 focus:border-teal-500'
-                              }`}
-                          >
-                            <div className="text-3xl mb-1">{voz.emoji}</div>
-                            <div className="text-xs font-semibold text-gray-800">{voz.label}</div>
+                        {voz.map((v) => (
+                          <button key={v.id} onClick={() => setFormData({ ...formData, voz: v.id })} className={`p-1 rounded-xl border-2 transition-all text-center cursor-pointer ${formData.voz === v.id ? 'border-teal-500 bg-teal-50 shadow-md scale-105' : errors.voz ? 'border-red-400' : 'border-gray-200 focus:border-teal-500'}`}>
+                            <div className="text-3xl mb-1">{v.emoji}</div>
+                            <div className="text-xs font-semibold text-gray-800">{v.label}</div>
                           </button>
                         ))}
                       </div>
                     </div>
-
-
-
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                       {generos.map((genero) => (
-                        <button
-                          key={genero.id}
-                          onClick={() => setFormData({ ...formData, genero: genero.id })}
-                          className={`relative p-2 mx-1 rounded-xl border-2 transition-all text-center overflow-hidden cursor-pointer ${formData.genero === genero.id
-                            ? 'border-teal-500 shadow-lg scale-105'
-                            : 'border-gray-200 hover:border-teal-300 hover:shadow-sm'
-                            }`}
-                        >
+                        <button key={genero.id} onClick={() => setFormData({ ...formData, genero: genero.id })} className={`relative p-2 mx-1 rounded-xl border-2 transition-all text-center overflow-hidden cursor-pointer ${formData.genero === genero.id ? 'border-teal-500 shadow-lg scale-105' : 'border-gray-200 hover:border-teal-300 hover:shadow-sm'}`}>
                           <div className={`absolute inset-0 ${genero.color} opacity-${formData.genero === genero.id ? '21' : '10'} transition-opacity`}></div>
                           <div className="relative z-10">
-                            <div className={`text-2xl mb-2 ${formData.genero === genero.id ? 'text-white' : 'text-gray-800'}`}>
-                              {genero.icon}
-                            </div>
-                            <div className={`text-sm font-bold ${formData.genero === genero.id ? 'text-white' : 'text-gray-800'}`}>
-                              {genero.label}
-                            </div>
+                            <div className={`text-2xl mb-2 ${formData.genero === genero.id ? 'text-white' : 'text-gray-800'}`}>{genero.icon}</div>
+                            <div className={`text-sm font-bold ${formData.genero === genero.id ? 'text-white' : 'text-gray-800'}`}>{genero.label}</div>
                           </div>
                           {formData.genero === genero.id && (
                             <div className="absolute top-2 right-2 w-6 h-6 bg-white rounded-full flex items-center justify-center">
@@ -1069,7 +898,6 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
                         </button>
                       ))}
                     </div>
-
                     {formData.genero === "otro" && (
                       <div className='my-3'>
                         <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
@@ -1084,34 +912,19 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
                           className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-4 focus:ring-teal-100 transition-all ${errors.otroGenero ? 'border-red-400' : 'border-gray-200 focus:border-teal-500'}`}
                         />
                       </div>
-                    )
-                    }
+                    )}
                   </div>
                 </div>
               )}
 
-
               {/* Paso 4: Selecciona Tu Paquete */}
               {currentStep === 4 && (
                 <div className="space-y-4">
-
                   {paquetes.sort((a, b) => a.position - b.position).map((paquete) => (
-                    <button
-                      key={paquete.id}
-                      onClick={() => setFormData({ ...formData, paquete: paquete.id })}
-                      className={`relative w-full p-5 rounded-2xl border-2 transition-all text-left cursor-pointer ${formData.paquete === paquete.id
-                        ? 'border-teal-500 bg-gradient-to-br from-teal-50 to-teal-100 shadow-xl scale-105'
-                        : paquete.highlighted
-                          ? 'border-yellow-400 bg-gradient-to-br from-yellow-50 to-orange-50'
-                          : 'border-gray-200 bg-white hover:border-teal-300 hover:shadow-md'
-                        }`}
-                    >
+                    <button key={paquete.id} onClick={() => setFormData({ ...formData, paquete: paquete.id })} className={`relative w-full p-5 rounded-2xl border-2 transition-all text-left cursor-pointer ${formData.paquete === paquete.id ? 'border-teal-500 bg-gradient-to-br from-teal-50 to-teal-100 shadow-xl scale-105' : paquete.highlighted ? 'border-yellow-400 bg-gradient-to-br from-yellow-50 to-orange-50' : 'border-gray-200 bg-white hover:border-teal-300 hover:shadow-md'}`}>
                       {paquete.highlighted && formData.paquete !== paquete.id && (
-                        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-yellow-400 to-orange-400 text-white text-xs font-bold px-4 py-1 rounded-full shadow-md">
-                          ⭐ POPULAR
-                        </div>
+                        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-yellow-400 to-orange-400 text-white text-xs font-bold px-4 py-1 rounded-full shadow-md">⭐ POPULAR</div>
                       )}
-
                       {formData.paquete === paquete.id && (
                         <div className="absolute top-4 right-4 w-8 h-8 bg-teal-600 rounded-full flex items-center justify-center shadow-lg">
                           <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -1119,23 +932,19 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
                           </svg>
                         </div>
                       )}
-
                       <div className="flex items-start justify-between gap-4 mb-3">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1">
                             <span className="text-2xl">{paquete.icon}</span>
                             <h3 className="text-lg font-bold text-gray-900">{paquete.nombre}</h3>
                           </div>
-                          {paquete.subtitle && (
-                            <p className="text-sm font-semibold text-teal-700">{paquete.subtitle}</p>
-                          )}
+                          {paquete.subtitle && <p className="text-sm font-semibold text-teal-700">{paquete.subtitle}</p>}
                         </div>
                         <div className="text-right flex-shrink-0">
                           <div className="text-2xl font-black text-teal-600">{paquete.precio}</div>
                           <div className="text-xs text-gray-500 font-semibold">COP</div>
                         </div>
                       </div>
-
                       <div className="space-y-2">
                         {paquete.duracion && (
                           <div className="flex items-center gap-2 text-sm text-gray-700">
@@ -1159,9 +968,7 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
               {currentStep === 5 && (
                 <div className="space-y-6">
                   <div className="bg-gradient-to-br from-teal-50 to-cyan-50 rounded-2xl p-6 border-2 border-teal-200">
-                    <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                      DETALLES
-                    </h3>
+                    <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">DETALLES</h3>
                     <div className="space-y-3">
                       {[
                         { icon: "👤", label: "Nombre", value: formData.nombre },
@@ -1170,7 +977,7 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
                         { icon: "💝", label: "Tono", value: tonosEmocionales.find(t => t.id === formData.tonoEmocional)?.label },
                         { icon: "📅", label: "Ocasión", value: ocasiones.find(o => o.id === formData.ocasion)?.label },
                         { icon: "🎵", label: "Género", value: generos.find(g => g.id === formData.genero)?.label === "Otro" ? formData.otroGenero : generos.find(g => g.id === formData.genero)?.label },
-                        { icon: "📱", label: "WhatsApp", value: formData.whatsapp },
+                        { icon: "📱", label: "WhatsApp", value: getFullWhatsapp() },
                         { icon: "📧", label: "Email", value: formData.email }
                       ].map((item, idx) => (
                         <div key={idx} className="flex items-center justify-between py-2 border-b border-teal-200 last:border-0">
@@ -1197,7 +1004,6 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
                             <p className="text-sm text-gray-600 mb-2">{paq.subtitle}</p>
                             <div className="space-y-1">
                               <div className="text-sm text-gray-700">⏱ {paq.duracion}</div>
-
                               {paq.features.map((f, i) => (
                                 <div key={i} className="text-sm text-gray-700">✓ {f.text}</div>
                               ))}
@@ -1209,49 +1015,45 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
                           </div>
                         </div>
                       </div>
-                    ) : null
+                    ) : null;
                   })()}
 
                   <div>
                     <div className="flex items-start gap-3 p-4 bg-teal-50 rounded-lg border border-teal-200">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-message-circle h-5 w-5 text-amber-600 shrink-0 mt-0.5">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-amber-600 shrink-0 mt-0.5">
                         <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path>
                       </svg>
-                      <p className="text-sm text-gray-700">
-                        <span className="font-semibold ">Más de 10.000 clientes felices</span> ya han confiado en Letra Viva
-                      </p>
+                      <p className="text-sm text-gray-700"><span className="font-semibold">Más de 10.000 clientes felices</span> ya han confiado en Letra Viva</p>
                     </div>
-
                     <div className="p-4 bg-blue-50 rounded-lg border border-blue-200 mt-3 md:flex md:items-start md:justify-start">
                       <div className="flex items-start gap-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-lock h-5 w-5 text-green-600 shrink-0 mt-0.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-green-600 shrink-0 mt-0.5">
                           <rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect>
                           <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                         </svg>
                         <p className="text-sm font-semibold text-gray-700">Paga seguro con</p>
                       </div>
                       <div className="flex flex-wrap items-center gap-1 md:gap-3 ml-8 mt-2 md:mt-0">
-                        <img src="https://cdn.shopify.com/shopifycloud/admin-ui-foundations/payment-icons/1626b.svg" alt="Nequi" className="payment-icon border-base size-base"></img>
-                        <img src="https://cdn.shopify.com/shopifycloud/admin-ui-foundations/payment-icons/15a9f.svg" alt="DaviPlata" className="payment-icon border-base size-base"></img>
-                        <img src="https://cdn.shopify.com/shopifycloud/admin-ui-foundations/payment-icons/0c7fe.svg" alt="Bancolombia" className="payment-icon border-base size-base"></img>
-                        <img src="https://cdn.shopify.com/shopifycloud/admin-ui-foundations/payment-icons/d3e3d.svg" alt="Pagos Electrónicos Seguros (PSE)" className="payment-icon border-base size-base"></img>
+                        <img src="https://cdn.shopify.com/shopifycloud/admin-ui-foundations/payment-icons/1626b.svg" alt="Nequi" className="payment-icon border-base size-base" />
+                        <img src="https://cdn.shopify.com/shopifycloud/admin-ui-foundations/payment-icons/15a9f.svg" alt="DaviPlata" className="payment-icon border-base size-base" />
+                        <img src="https://cdn.shopify.com/shopifycloud/admin-ui-foundations/payment-icons/0c7fe.svg" alt="Bancolombia" className="payment-icon border-base size-base" />
+                        <img src="https://cdn.shopify.com/shopifycloud/admin-ui-foundations/payment-icons/d3e3d.svg" alt="PSE" className="payment-icon border-base size-base" />
+                        <img src="https://cdn.shopify.com/shopifycloud/admin-ui-foundations/payment-icons/c8dd7.svg" alt="Mercado Pago" className="payment-icon border-base size-base" />
+                        <img src="https://cdn.shopify.com/shopifycloud/admin-ui-foundations/payment-icons/4e117.svg" alt="PayPal" className="payment-icon border-base size-base" />
+
                         <span className="text-xs text-gray-500 font-medium">+ Más</span>
                       </div>
                     </div>
-
                     <div className="flex items-start gap-3 p-4 bg-amber-50 rounded-lg border border-amber-200 mt-3">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-handshake h-5 w-5 text-amber-600 shrink-0 mt-0.5">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-amber-600 shrink-0 mt-0.5">
                         <path d="m11 17 2 2a1 1 0 1 0 3-3"></path>
                         <path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4"></path>
                         <path d="m21 3 1 11h-2"></path>
                         <path d="M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3"></path>
                         <path d="M3 4h8"></path>
                       </svg>
-                      <p className="text-sm text-gray-700">
-                        <span className="font-semibold text-amber-600">Recuerda</span> que puedes hacer hasta <span className="font-semibold">3 modificaciones a la canción</span> si algo no te gusta👌🏼
-                      </p>
+                      <p className="text-sm text-gray-700"><span className="font-semibold text-amber-600">Recuerda</span> que puedes hacer hasta <span className="font-semibold">3 modificaciones a la canción</span> si algo no te gusta👌🏼</p>
                     </div>
-
                   </div>
 
                   <div className="bg-gradient-to-br from-yellow-50 to-amber-50 rounded-2xl p-5 border-2 border-yellow-300">
@@ -1262,73 +1064,39 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
                       <h3 className="text-base font-bold text-amber-900">Selecciona el Método de Pago</h3>
                     </div>
                     <div className="space-y-3">
-                      <button
-                        onClick={() => setFormData({ ...formData, metodoPago: 'online' })}
-                        className={`w-full p-4 rounded-xl border-2 transition-all flex items-center gap-3 cursor-pointer ${formData.metodoPago === 'online'
-                          ? 'border-teal-500 bg-teal-50 shadow-md'
-                          : 'border-gray-200 bg-white hover:border-teal-300'
-                          }`}
-                      >
+                      <button onClick={() => setFormData({ ...formData, metodoPago: 'online' })} className={`w-full p-4 rounded-xl border-2 transition-all flex items-center gap-3 cursor-pointer ${formData.metodoPago === 'online' ? 'border-teal-500 bg-teal-50 shadow-md' : 'border-gray-200 bg-white hover:border-teal-300'}`}>
                         <div className="text-2xl">💳</div>
                         <div className="flex-1 text-left">
                           <div className="font-bold text-gray-900 text-sm">Pago en Línea</div>
                           <div className="text-xs text-gray-600">Salta la fila y recibe tu canción en solo 24 Horas</div>
                         </div>
                       </button>
-                      {/*    <button
-                        onClick={() => setFormData({ ...formData, metodoPago: 'contraentrega' })}
-                        className={`w-full p-4 rounded-xl border-2 transition-all flex items-center gap-3 ${formData.metodoPago === 'contraentrega'
-                          ? 'border-teal-500 bg-teal-50 shadow-md'
-                          : 'border-gray-200 bg-white hover:border-teal-300'
-                          }`}
-                      >
-                        <div className="text-2xl">💵</div>
-                        <div className="flex-1 text-left">
-                          <div className="font-bold text-gray-900 text-sm">Desbloqueo al final</div>
-                          <div className="text-xs text-gray-600">Escucha primero, paga después</div>
-                        </div>
-                      </button> */}
                     </div>
-                    {errors.metodoPago && (
-                      <p className="text-red-500 text-sm mt-2">Selecciona un método de pago</p>
-                    )}
+                    {errors.metodoPago && <p className="text-red-500 text-sm mt-2">Selecciona un método de pago</p>}
                   </div>
-
                 </div>
-
               )}
             </div>
 
             {/* Botones de navegación */}
             <div className="border-t-2 border-gray-100 p-6 bg-white flex items-center gap-4">
               {currentStep > 0 && (
-                <button
-                  onClick={prevStep}
-                  className="px-6 py-3 rounded-xl bg-gray-100 text-gray-700 font-semibold hover:bg-gray-200 transition-all flex items-center gap-2 cursor-pointer"
-                >
+                <button onClick={prevStep} className="px-6 py-3 rounded-xl bg-gray-100 text-gray-700 font-semibold hover:bg-gray-200 transition-all flex items-center gap-2 cursor-pointer">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
                   </svg>
                   Atrás
                 </button>
               )}
-
               {currentStep < steps.length - 1 ? (
-                <button
-                  onClick={nextStep}
-                  className="flex-1 px-6 py-3 rounded-xl bg-gradient-to-r from-teal-600 to-teal-700 text-white font-bold hover:shadow-xl transition-all flex items-center justify-center gap-2 cursor-pointer"
-                >
+                <button onClick={nextStep} className="flex-1 px-6 py-3 rounded-xl bg-gradient-to-r from-teal-600 to-teal-700 text-white font-bold hover:shadow-xl transition-all flex items-center justify-center gap-2 cursor-pointer">
                   Siguiente
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
                   </svg>
                 </button>
               ) : (
-                <button
-                  onClick={handleSubmit}
-                  disabled={isSubmitting}
-                  className="flex-1 px-6 py-3 rounded-xl bg-gradient-to-r from-green-600 to-green-700 text-white font-bold hover:shadow-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
-                >
+                <button onClick={handleSubmit} disabled={isSubmitting} className="flex-1 px-6 py-3 rounded-xl bg-gradient-to-r from-green-600 to-green-700 text-white font-bold hover:shadow-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer">
                   {isSubmitting ? 'Procesando...' : 'Confirmar '}
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
@@ -1349,161 +1117,97 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
-
             <div className="welcome-content">
-              {/* Icono de éxito animado */}
               <div className="flex justify-center">
                 <div className="w-20 h-20 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full flex items-center justify-center shadow-xl animate-bounce-in">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-check w-10 h-10 text-white stroke-[3]">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-10 h-10 text-white stroke-[3]">
                     <path d="M20 6 9 17l-5-5"></path>
                   </svg>
                 </div>
               </div>
-
               <h2 className="success-title">¡Pedido Creado!</h2>
               <p className="success-subtitle">Tu canción personalizada está en camino</p>
-
               <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-200 rounded-2xl p-6 space-y-4">
                 <div className="text-center pb-3 border-b border-blue-200">
                   <p className="text-sm text-gray-600 mb-1">Número de Pedido</p>
                   <p className="text-3xl font-bold text-blue-600">{orderSuccess.orderNumber}</p>
                 </div>
                 <div className="space-y-3">
-                  <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-user w-5 h-5 text-purple-600">
-                        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="12" cy="7" r="4"></circle>
-                      </svg>
+                  {[
+                    { icon: "👤", label: "Cliente", value: orderSuccess.nombre },
+                    { icon: "🎵", label: "Paquete Seleccionado", value: orderSuccess.paquete },
+                    { icon: "🔥", label: "Total a Pagar", value: orderSuccess.precio },
+                    { icon: "📱", label: "WhatsApp", value: orderSuccess.whatsapp },
+                  ].map((item, i) => (
+                    <div key={i} className="flex items-start gap-3">
+                      <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm">
+                        <span className="text-xl">{item.icon}</span>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-600 text-left">{item.label}</p>
+                        <p className="font-semibold text-gray-900 text-left">{item.value}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-sm text-gray-600 text-left">Cliente</p>
-                      <p className="font-semibold text-gray-900 text-left">{orderSuccess.nombre}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-music w-5 h-5 text-purple-600">
-                        <path d="M9 18V5l12-2v13"></path>
-                        <circle cx="6" cy="18" r="3"></circle>
-                        <circle cx="18" cy="16" r="3"></circle>
-                      </svg>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-600 text-left">Paquete Seleccionado</p>
-                      <p className="font-semibold text-gray-900 text-left">{orderSuccess.paquete}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-flame w-5 h-5 text-orange-500">
-                        <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path>
-                      </svg>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-600 text-left">Total a Pagar</p>
-                      <p className="font-semibold text-gray-900 text-left">{orderSuccess.precio}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-phone w-5 h-5 text-purple-600">
-                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
-                        </path>
-                      </svg>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-600 text-left">WhatsApp</p>
-                      <p className="font-semibold text-gray-900 text-left">{orderSuccess.whatsapp}</p>
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </div>
-
-              {/* Próximos pasos */}
               <div className="bg-gradient-to-br from-amber-50 to-yellow-50 border-2 border-amber-200 rounded-2xl p-6 space-y-4 mt-2">
                 <div className="flex items-center gap-2 text-amber-800">
                   <div className="w-8 h-8 bg-amber-200 rounded-full flex items-center justify-center">
                     <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path>
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd"></path>
                     </svg>
                   </div>
                   <h3 className="font-bold text-lg">¿Qué sigue ahora?</h3>
                 </div>
                 <div className="space-y-4">
-                  <div className="flex gap-3">
-                    <div className="w-7 h-7 bg-amber-500 text-white rounded-full flex items-center justify-center flex-shrink-0 font-bold text-sm">1</div>
-                    <div>
-                      <p className="font-semibold text-gray-700 text-left">Contacto en 24 horas:</p>
-                      <p className="text-sm text-gray-700 text-left">Nuestro equipo se comunicará contigo por WhatsApp para confirmar todos los detalles de tu canción.</p>
+                  {[
+                    { n: 1, title: "Contacto en 24 horas:", desc: "Nuestro equipo se comunicará contigo por WhatsApp para confirmar todos los detalles de tu canción." },
+                    { n: 2, title: "Creación:", desc: "Comenzaremos a trabajar en tu canción personalizada con todo el amor y dedicación que mereces." },
+                    { n: 3, title: "Entrega:", desc: "Te enviaremos un adelanto para que escuches tu canción antes de pagar." },
+                  ].map(s => (
+                    <div key={s.n} className="flex gap-3">
+                      <div className="w-7 h-7 bg-amber-500 text-white rounded-full flex items-center justify-center flex-shrink-0 font-bold text-sm">{s.n}</div>
+                      <div>
+                        <p className="font-semibold text-gray-700 text-left">{s.title}</p>
+                        <p className="text-sm text-gray-700 text-left">{s.desc}</p>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex gap-3">
-                    <div className="w-7 h-7 bg-amber-500 text-white rounded-full flex items-center justify-center flex-shrink-0 font-bold text-sm">2</div>
-                    <div>
-                      <p className="font-semibold text-gray-700 text-left">Creación:</p>
-                      <p className="text-sm text-gray-700 text-left">Comenzaremos a trabajar en tu canción personalizada con todo el amor y dedicación que mereces.</p>
-                    </div>
-                  </div>
-                  <div className="flex gap-3">
-                    <div className="w-7 h-7 bg-amber-500 text-white rounded-full flex items-center justify-center flex-shrink-0 font-bold text-sm">3</div>
-                    <div>
-                      <p className="font-semibold text-gray-700 text-left">Entrega:</p>
-                      <p className="text-sm text-gray-700 text-left">Te enviaremos un adelanto para que escuches tu canción antes de pagar.</p>
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </div>
-
-              {/* Recordatorio de pago */}
               <div className="bg-gradient-to-br from-teal-50 to-emerald-50 border-2 border-teal-200 rounded-2xl p-5 text-center my-2">
                 <p className="text-teal-900 font-semibold flex items-center justify-center gap-2">
                   <span className="text-2xl">💵</span>
                   <span>Pagarás cuando recibas y escuches tu canción personalizada</span>
                 </p>
               </div>
-
-              {/* Botón de cierre */}
               <button className="w-full px-6 py-3 rounded-xl bg-gradient-to-r from-teal-600 to-teal-700 text-white font-bold hover:shadow-xl transition-all flex items-center justify-center gap-2" onClick={closeSuccess}>
                 ¡Perfecto! Entendido
               </button>
-
-              <p style={{ textAlign: 'center', marginTop: '16px', fontSize: '14px', color: '#6b7280' }}>
-                ¡Gracias por confiar en Letra Viva! 💚🎶
-              </p>
+              <p style={{ textAlign: 'center', marginTop: '16px', fontSize: '14px', color: '#6b7280' }}>¡Gracias por confiar en Letra Viva! 💚🎶</p>
             </div>
           </div>
         </div>
       )}
 
-      {/* Modal de Error (¡Ups! Algo salió mal) */}
+      {/* Modal de Error */}
       {showErrorModal && (
         <div className="modal-overlay">
-          {/* 💡 CAMBIOS AQUÍ: max-w-md, max-h-[90vh], overflow-y-auto */}
           <div className="modal-content modal-form-content">
-            {/* Icono de Cerrar Rojo */}
-            <button
-              onClick={closeErrorModal}
-              className="absolute top-4 right-4 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg hover:bg-gray-100 transition-all hover:rotate-90 z-10"
-            >
+            <button onClick={closeErrorModal} className="absolute top-4 right-4 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg hover:bg-gray-100 transition-all hover:rotate-90 z-10">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
-
-            {/* Contenido del Modal (Scroll interno gracias a las clases de arriba) */}
             <div className="p-8 text-center">
-              {/* Círculo de Error Grande */}
               <div className="w-24 h-24 bg-red-500 rounded-full mx-auto mb-6 flex items-center justify-center shadow-xl">
                 <svg className="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </div>
-
               <h1 className="text-4xl font-extrabold text-gray-900 mb-2">¡Ups! Algo salió mal</h1>
               <p className="text-gray-600 mb-8">No pudimos procesar tu pedido en este momento</p>
-
-              {/* Sección: ¿Qué pasó? */}
               <div className="bg-red-50 rounded-2xl p-4 mb-8 border-l-4 border-red-400 text-left">
                 <div className="flex items-center gap-3 mb-2">
                   <div className="w-6 h-6 bg-red-400 rounded-full flex items-center justify-center flex-shrink-0 text-white font-bold text-xs">
@@ -1513,12 +1217,8 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
                   </div>
                   <h3 className="text-lg font-bold text-red-800">¿Qué pasó?</h3>
                 </div>
-                <p className="text-red-700 text-sm pl-9">
-                  Hubo un problema al procesar tu pedido. Esto puede deberse a un error temporal en nuestro sistema o a un problema de conexión.
-                </p>
+                <p className="text-red-700 text-sm pl-9">Hubo un problema al procesar tu pedido. Esto puede deberse a un error temporal en nuestro sistema o a un problema de conexión.</p>
               </div>
-
-              {/* Sección: ¿Qué puedes hacer? */}
               <div className="bg-blue-50 rounded-2xl p-6 mb-8 border-l-4 border-blue-400 text-left space-y-4">
                 <div className="flex items-center gap-3 mb-2">
                   <div className="w-6 h-6 bg-blue-400 rounded-full flex items-center justify-center flex-shrink-0 text-white font-bold text-xs">
@@ -1528,42 +1228,20 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
                   </div>
                   <h3 className="text-lg font-bold text-blue-800">¿Qué puedes hacer?</h3>
                 </div>
-
-                {/* Opción 1 */}
-                <div className="flex items-start gap-3">
-                  <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0 text-sm mt-0.5">
-                    1
+                {[
+                  { n: 1, title: "Intenta nuevamente:", desc: "En la mayoría de los casos, intentarlo de nuevo soluciona el problema." },
+                  { n: 2, title: "Verifica tu conexión:", desc: "Asegúrate de tener una conexión estable a internet y vuelve a intentar." },
+                  { n: 3, title: "Contáctanos directamente:", desc: "Si el problema persiste, escríbenos por WhatsApp o correo electrónico." },
+                ].map(s => (
+                  <div key={s.n} className="flex items-start gap-3">
+                    <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0 text-sm mt-0.5">{s.n}</div>
+                    <div>
+                      <p className="font-semibold text-gray-800 mb-1">{s.title}</p>
+                      <p className="text-sm text-gray-700">{s.desc}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="font-semibold text-gray-800 mb-1">Intenta nuevamente:</p>
-                    <p className="text-sm text-gray-700">En la mayoría de los casos, intentarlo de nuevo soluciona el problema.</p>
-                  </div>
-                </div>
-
-                {/* Opción 2 */}
-                <div className="flex items-start gap-3">
-                  <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0 text-sm mt-0.5">
-                    2
-                  </div>
-                  <div>
-                    <p className="font-semibold text-gray-800 mb-1">Verifica tu conexión:</p>
-                    <p className="text-sm text-gray-700">Asegúrate de tener una conexión estable a internet y vuelve a intentar.</p>
-                  </div>
-                </div>
-
-                {/* Opción 3 */}
-                <div className="flex items-start gap-3">
-                  <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0 text-sm mt-0.5">
-                    3
-                  </div>
-                  <div>
-                    <p className="font-semibold text-gray-800 mb-1">Contáctanos directamente:</p>
-                    <p className="text-sm text-gray-700">Si el problema persiste, escríbenos por WhatsApp o correo electrónico.</p>
-                  </div>
-                </div>
+                ))}
               </div>
-
-              {/* Sección de Contacto Directo */}
               <div className="bg-yellow-50 rounded-2xl p-4 mb-6 border-l-4 border-yellow-400 text-left">
                 <h3 className="font-bold text-yellow-800 mb-3 flex items-center gap-2">
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -1571,141 +1249,58 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
                   </svg>
                   Contáctanos directamente
                 </h3>
-                <p className="text-sm text-gray-700 font-semibold flex items-center gap-2 mb-1">
-                  📞 WhatsApp: <span className="text-blue-600">+57 324 379 83 34</span>
-                </p>
-                <p className="text-sm text-gray-700 font-semibold flex items-center gap-2">
-                  📧 Email: <span className="text-blue-600">contactoletraviva@gmail.com</span>
-                </p>
+                <p className="text-sm text-gray-700 font-semibold flex items-center gap-2 mb-1">📞 WhatsApp: <span className="text-blue-600">+57 324 379 83 34</span></p>
+                <p className="text-sm text-gray-700 font-semibold flex items-center gap-2">📧 Email: <span className="text-blue-600">contactoletraviva@gmail.com</span></p>
               </div>
-
-              {/* Botón de Reintentar */}
               <div className="flex justify-end">
-                <button
-                  onClick={closeErrorModal}
-                  className="bg-gray-200 text-gray-600 py-3 px-4 rounded-2xl font-bold text-md hover:shadow-xl transition-all hover:bg-gray-300 flex items-center justify-center gap-2"
-                >
-                  Cerrar
-                </button>
-                <button
-                  onClick={handleRetry}
-                  className="ml-2 w-full bg-teal-600 text-white py-3 rounded-2xl font-bold text-lg hover:shadow-xl transition-all hover:bg-teal-700 flex items-center justify-center gap-2"
-                >
-                  Intenta Nuevamente
-                </button>
+                <button onClick={closeErrorModal} className="bg-gray-200 text-gray-600 py-3 px-4 rounded-2xl font-bold text-md hover:shadow-xl transition-all hover:bg-gray-300 flex items-center justify-center gap-2">Cerrar</button>
+                <button onClick={handleRetry} className="ml-2 w-full bg-teal-600 text-white py-3 rounded-2xl font-bold text-lg hover:shadow-xl transition-all hover:bg-teal-700 flex items-center justify-center gap-2">Intenta Nuevamente</button>
               </div>
             </div>
           </div>
         </div>
       )}
 
-      <style>{`       
-
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-
+      <style>{`
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideUp {
-          from {
-            transform: translateY(50px);
-            opacity: 0;
-          }
-          to {
-            transform: translateY(0);
-            opacity: 1;
-          }
+          from { transform: translateY(50px); opacity: 0; }
+          to { transform: translateY(0); opacity: 1; }
         }
-
         @keyframes checkmark {
-          0% {
-            transform: scale(0);
-            opacity: 0;
-          }
-          50% {
-            transform: scale(1.2);
-          }
-          100% {
-            transform: scale(1);
-            opacity: 1;
-          }
+          0% { transform: scale(0); opacity: 0; }
+          50% { transform: scale(1.2); }
+          100% { transform: scale(1); opacity: 1; }
         }
-
         @keyframes bounce {
-          0%, 100% {
-            transform: translateY(0);
-          }
-          50% {
-            transform: translateY(-10px);
-          }
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-10px); }
         }
-
         .modal-overlay {
-          position: fixed;
-          inset: 0;
-          background: rgba(0, 0, 0, 0.6);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          z-index: 10;
-          padding: 20px;
-          animation: fadeIn 0.3s ease;
+          position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+          display: flex; align-items: center; justify-content: center;
+          z-index: 10; padding: 20px; animation: fadeIn 0.3s ease;
         }
-
         .modal-content {
-          background: white;
-          border-radius: 24px;
-          width: 100%;
-          max-width: 600px;
-          max-height: 90vh;
-          overflow-y: auto;
-          position: relative;
-          animation: slideUp 0.4s ease;
+          background: white; border-radius: 24px; width: 100%;
+          max-width: 600px; max-height: 90vh; overflow-y: auto;
+          position: relative; animation: slideUp 0.4s ease;
         }
-
-        .modal-form-content {
-          max-width: 700px;
-        }
-
+        .modal-form-content { max-width: 700px; }
         .close-btn {
-          position: absolute;
-          top: 16px;
-          right: 16px;
-          background: rgba(255, 255, 255, 0.9);
-          border: none;
-          width: 40px;
-          height: 40px;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          transition: all 0.3s;
-          z-index: 10;
+          position: absolute; top: 16px; right: 16px;
+          background: rgba(255,255,255,0.9); border: none;
+          width: 40px; height: 40px; border-radius: 50%;
+          display: flex; align-items: center; justify-content: center;
+          cursor: pointer; transition: all 0.3s; z-index: 10;
         }
-
-        .close-btn:hover {
-          background: white;
-          transform: rotate(90deg);
-        }
-
+        .close-btn:hover { background: white; transform: rotate(90deg); }
         @media (max-width: 768px) {
-          .modal-content {
-            max-width: 100%;
-            max-height: 100vh;
-          }
-
-          .welcome-content {
-            padding: 60px 24px 24px;
-          }
-
+          .modal-content { max-width: 100%; max-height: 100vh; }
+          .welcome-content { padding: 60px 24px 24px; }
         }
-
-      }
-
       `}</style>
     </div>
-
   );
 };
 

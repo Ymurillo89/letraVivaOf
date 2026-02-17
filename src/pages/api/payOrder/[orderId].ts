@@ -2,7 +2,7 @@ import type { APIRoute } from 'astro';
 
 const SHOP_API_VERSION = '2025-01';
 const SHOP_DOMAIN = 'vjvdwh-gf.myshopify.com'; 
-const FALLBACK_EMAIL = 'pagos@letravivaoficial.com';
+const FALLBACK_EMAIL = ' ';
 
 export const POST: APIRoute = async ({ params, request }) => {
   const { orderId } = params;
