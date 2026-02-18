@@ -187,24 +187,12 @@ function getFeatures(title: string) {
                                         {/* Price */}
                                         <div class="pt-6 border-t-2 border-gray-200">
                                             <div class="flex items-baseline justify-center gap-1">
-                                                <span class="text-lg font-semibold text-gray-500">
-                                                    $
-                                                </span>
-                                                <span class="text-4xl font-black text-gray-900">
-                                                    {formatPrice(variant.price)}
-                                                </span>
+                                                <span class="text-lg font-semibold text-gray-500">$</span>
+                                                <span class="text-4xl font-black text-gray-900">{formatPrice(variant.price)}</span>
                                             </div>
-                                            <p class="text-sm text-gray-500 font-medium mt-1">
-                                                COP
-                                            </p>
-
+                                            <p class="text-sm text-gray-500 font-medium mt-1">USD</p>
                                             {variant.compare_at_price && (
-                                                <p class="text-sm text-gray-400 line-through mt-2">
-                                                    $
-                                                    {formatPrice(
-                                                        variant.compare_at_price,
-                                                    )}
-                                                </p>
+                                                <p class="text-sm text-gray-400 line-through mt-2">${formatPrice(variant.compare_at_price)}</p>
                                             )}
                                         </div>
 
