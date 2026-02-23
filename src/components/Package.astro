@@ -94,8 +94,10 @@ function getFeatures(title: string) {
                         const isStandard = variant.position === 1;
 
                         const icons = { 1: "🎤", 2: "🎵", 3: "👑" };
+                        const order ={1: "1", 2: "2", 3: "3"};
                         const icon =
                             icons[variant.position as keyof typeof icons];
+                        const idOrder = order[variant.position as keyof typeof order];
 
                         return (
                             <div
@@ -171,7 +173,7 @@ function getFeatures(title: string) {
                                         )}
 
                                         {/* Features */}
-                                        <div class="space-y-3 mb-8 min-h-[160px]">
+                                        <div class="space-y-3  min-h-[160px]">
                                             {features.map((feature) => (
                                                 <div class="flex items-start gap-3 text-left">
                                                     <span class="text-xl flex-shrink-0 mt-0.5">
@@ -184,15 +186,33 @@ function getFeatures(title: string) {
                                             ))}
                                         </div>
 
+                                        <p class="text-sm text-gray-500 font-medium my-2">
+                                            Los precios están en USD, tu banco o
+                                            pasarela de pago convierte el valor
+                                            automáticamente a tu moneda, sin que
+                                            tengas que hacer nada.
+                                        </p>
+
                                         {/* Price */}
                                         <div class="pt-6 border-t-2 border-gray-200">
                                             <div class="flex items-baseline justify-center gap-1">
-                                                <span class="text-lg font-semibold text-gray-500">$</span>
-                                                <span class="text-4xl font-black text-gray-900">{formatPrice(variant.price)}</span>
+                                                <span class="text-lg font-semibold text-gray-500">
+                                                    $
+                                                </span>
+                                                <span class="text-4xl font-black text-gray-900">
+                                                    {formatPrice(variant.price)}
+                                                </span>
                                             </div>
-                                            <p class="text-sm text-gray-500 font-medium mt-1">USD</p>
+                                            <p class="text-sm text-gray-500 font-medium mt-1">
+                                                USD
+                                            </p>
                                             {variant.compare_at_price && (
-                                                <p class="text-sm text-gray-400 line-through mt-2">${formatPrice(variant.compare_at_price)}</p>
+                                                <p class="text-sm text-gray-400 line-through mt-2">
+                                                    $
+                                                    {formatPrice(
+                                                        variant.compare_at_price,
+                                                    )}
+                                                </p>
                                             )}
                                         </div>
 
@@ -204,6 +224,8 @@ function getFeatures(title: string) {
                                         </div>
                                     </div>
                                 </button>
+
+                            
                             </div>
                         );
                     })

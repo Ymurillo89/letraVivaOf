@@ -840,7 +840,7 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
                         Número completo: <span className="font-bold">{selectedCountry.code} {formData.whatsapp}</span>
                       </p>
                     )}
-                
+
                   </div>
 
                   {/* Email */}
@@ -1034,12 +1034,12 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
                         <p className="text-sm font-semibold text-gray-700">Paga seguro con</p>
                       </div>
                       <div className="flex flex-wrap items-center gap-1 md:gap-3 ml-8 mt-2 md:mt-0">
+                        <img src="https://cdn.shopify.com/shopifycloud/admin-ui-foundations/payment-icons/c8dd7.svg" alt="Mercado Pago" className="payment-icon border-base size-base" />
+                        <img src="https://cdn.shopify.com/shopifycloud/admin-ui-foundations/payment-icons/4e117.svg" alt="PayPal" className="payment-icon border-base size-base" />
                         <img src="https://cdn.shopify.com/shopifycloud/admin-ui-foundations/payment-icons/1626b.svg" alt="Nequi" className="payment-icon border-base size-base" />
                         <img src="https://cdn.shopify.com/shopifycloud/admin-ui-foundations/payment-icons/15a9f.svg" alt="DaviPlata" className="payment-icon border-base size-base" />
                         <img src="https://cdn.shopify.com/shopifycloud/admin-ui-foundations/payment-icons/0c7fe.svg" alt="Bancolombia" className="payment-icon border-base size-base" />
                         <img src="https://cdn.shopify.com/shopifycloud/admin-ui-foundations/payment-icons/d3e3d.svg" alt="PSE" className="payment-icon border-base size-base" />
-                        <img src="https://cdn.shopify.com/shopifycloud/admin-ui-foundations/payment-icons/c8dd7.svg" alt="Mercado Pago" className="payment-icon border-base size-base" />
-                        <img src="https://cdn.shopify.com/shopifycloud/admin-ui-foundations/payment-icons/4e117.svg" alt="PayPal" className="payment-icon border-base size-base" />
 
                         <span className="text-xs text-gray-500 font-medium">+ Más</span>
                       </div>
@@ -1054,6 +1054,14 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
                       </svg>
                       <p className="text-sm text-gray-700"><span className="font-semibold text-amber-600">Recuerda</span> que puedes hacer hasta <span className="font-semibold">3 modificaciones a la canción</span> si algo no te gusta👌🏼</p>
                     </div>
+                  <div className="flex items-start gap-3 p-4 bg-teal-50 rounded-lg border border-teal-200 mt-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-teal-600 shrink-0 mt-0.5">
+                      <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A5 5 0 0 0 8 8c0 1.3.5 2.6 1.5 3.5.8.8 1.3 1.5 1.5 2.5"></path>
+                      <path d="M9 18h6"></path>
+                      <path d="M10 22h4"></path>
+                    </svg>
+                    <p className="text-sm text-gray-700">Los precios están en USD Tu banco o pasarela de pago convierte el valor automáticamente a tu moneda, sin que tengas que hacer nada.</p>
+                  </div>
                   </div>
 
                   <div className="bg-gradient-to-br from-yellow-50 to-amber-50 rounded-2xl p-5 border-2 border-yellow-300">
