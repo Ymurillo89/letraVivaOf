@@ -39,11 +39,10 @@ function getFeatures(title: string) {
     return features;
 }
 
-// URLs de ejemplo por posición (1=Mini, 2=Estándar, 3=Premium según tu orden)
 const exampleUrls: Record<number, string> = {
-    1: "https://www.letravivaoficial.com/card/6721211138197", // Mini
-    2: "https://www.letravivaoficial.com/card/6721174798485", // Estándar
-    3: "https://www.letravivaoficial.com/card/6721246658709", // Premium
+    1: "https://www.letravivaoficial.com/card/6721211138197",
+    2: "https://www.letravivaoficial.com/card/6721174798485",
+    3: "https://www.letravivaoficial.com/card/6721246658709",
 };
 ---
 
@@ -78,24 +77,24 @@ const exampleUrls: Record<number, string> = {
                         const exampleUrl = exampleUrls[variant.position];
 
                         return (
-                            <div class={`relative ${isStandard ? "md:scale-105" : ""}`}>
+                            <div class={`relative flex flex-col ${isStandard ? "md:scale-105" : ""}`}>
                                 {/* Popular Badge */}
                                 {isStandard && (
-                                    <div class="absolute -top-4 left-1/2 -translate-x-1/2 z-5">
+                                    <div class="absolute -top-4 left-1/2 -translate-x-1/2 z-10">
                                         <span class="bg-gradient-to-r from-[#f89a3f] via-[#ff6b35] to-[#f89a3f] text-white px-5 py-2 rounded-full text-sm font-bold shadow-xl whitespace-nowrap">
                                             ⭐ MÁS POPULAR
                                         </span>
                                     </div>
                                 )}
 
-                                {/* Card */}
-                                <button
+                                {/* ✅ Card como DIV — contiene todo incluyendo el botón ejemplo */}
+                                <div
                                     data-variant-id={variant.id}
                                     data-variant-price={variant.price}
-                                    class="package-btn w-full h-full p-8 cursor-pointer rounded-2xl bg-gradient-to-br from-white to-gray-50/80 border-2 border-gray-200 hover:border-[#11676a] transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 group relative overflow-hidden"
+                                    class="package-btn flex flex-col flex-1 p-8 cursor-pointer rounded-2xl bg-gradient-to-br from-white to-gray-50/80 border-2 border-gray-200 hover:border-[#11676a] transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 group relative overflow-hidden"
                                 >
                                     {/* Background Pattern */}
-                                    <div class="absolute inset-0 opacity-5">
+                                    <div class="absolute inset-0 opacity-5 pointer-events-none">
                                         <div
                                             class="absolute inset-0"
                                             style="background-image: radial-gradient(circle, currentColor 1px, transparent 1px); background-size: 20px 20px;"
@@ -103,17 +102,17 @@ const exampleUrls: Record<number, string> = {
                                     </div>
 
                                     {/* Content */}
-                                    <div class="relative">
+                                    <div class="relative flex flex-col flex-1">
                                         {/* Icon */}
-                                        <div class="text-6xl mb-4 transform group-hover:scale-110 transition-transform duration-300">
+                                        <div class="text-6xl mb-4 transform group-hover:scale-110 transition-transform duration-300 text-center">
                                             {icon}
                                         </div>
 
                                         {/* Title */}
-                                        <h3 class="text-2xl font-bold text-gray-900 mb-2">
+                                        <h3 class="text-2xl font-bold text-gray-900 mb-2 text-center">
                                             {info.name.replace(/🎼|🎤|🎬|👑|🎵/g, "").trim()}
                                         </h3>
-                                        <p class="text-sm font-medium text-[#f89a3f] mb-6">
+                                        <p class="text-sm font-medium text-[#f89a3f] mb-6 text-center">
                                             {info.subtitle.replace(/⭐/g, "").trim()}
                                         </p>
 
@@ -138,12 +137,12 @@ const exampleUrls: Record<number, string> = {
                                             ))}
                                         </div>
 
-                                        <p class="text-sm text-gray-500 font-medium my-2">
+                                        <p class="text-sm text-gray-500 font-medium my-2 text-center">
                                             Los precios están en USD, tu banco o pasarela de pago convierte el valor automáticamente a tu moneda, sin que tengas que hacer nada.
                                         </p>
 
                                         {/* Price */}
-                                        <div class="pt-6 border-t-2 border-gray-200">
+                                        <div class="pt-6 border-t-2 border-gray-200 text-center">
                                             <div class="flex items-baseline justify-center gap-1">
                                                 <span class="text-lg font-semibold text-gray-500">$</span>
                                                 <span class="text-4xl font-black text-gray-900">{formatPrice(variant.price)}</span>
@@ -156,37 +155,36 @@ const exampleUrls: Record<number, string> = {
                                             )}
                                         </div>
 
-                                        {/* CTA Principal */}
+                                        {/* CTA Seleccionar */}
                                         <div class="mt-6">
-                                            <div class="bg-gradient-to-r from-[#11676a] to-[#2d8c89] text-white py-3 px-6 rounded-xl font-bold group-hover:shadow-lg transition-all duration-300">
+                                            <div class="bg-gradient-to-r from-[#11676a] to-[#2d8c89] text-white py-3 px-6 rounded-xl font-bold text-center group-hover:shadow-lg transition-all duration-300">
                                                 Seleccionar
                                             </div>
                                         </div>
-                                    </div>
-                                </button>
 
-                                {/* ✅ Botón Ver Ejemplo — fuera del button para no interferir con el click del paquete */}
-                                {exampleUrl && (
-                                    <a
-                                        href={exampleUrl}
-                                        rel="noopener noreferrer"
-                                        class="example-link mt-3 flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl border border-[#11676a]/30 bg-white text-[#11676a] text-sm font-semibold hover:bg-[#11676a]/5 hover:border-[#11676a] active:scale-[0.98] transition-all duration-200"
-                                    >
-                                        {/* Ícono play */}
-                                        <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[#11676a]/10">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                                                <polygon points="5 3 19 12 5 21 5 3" />
-                                            </svg>
-                                        </span>
-                                        Ver ejemplo de este paquete
-                                        {/* Flecha externa */}
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-50">
-                                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                                            <polyline points="15 3 21 3 21 9" />
-                                            <line x1="10" y1="14" x2="21" y2="3" />
-                                        </svg>
-                                    </a>
-                                )}
+                                        {/* ✅ Botón Ver Ejemplo — DENTRO del card, detiene propagación via JS */}
+                                        {exampleUrl && (
+                                            <a
+                                                href={exampleUrl}                                               
+                                                rel="noopener noreferrer"
+                                                class="example-link mt-3 flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl border border-[#11676a]/25 bg-[#11676a]/5 text-[#11676a] text-sm font-semibold hover:bg-[#11676a]/10 hover:border-[#11676a]/50 active:scale-[0.98] transition-all duration-200"
+                                                onclick="event.stopPropagation()"
+                                            >
+                                                <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-[#11676a]/15">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+                                                        <polygon points="5 3 19 12 5 21 5 3" />
+                                                    </svg>
+                                                </span>
+                                                Ver ejemplo de este paquete
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-40 ml-auto">
+                                                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                                                    <polyline points="15 3 21 3 21 9" />
+                                                    <line x1="10" y1="14" x2="21" y2="3" />
+                                                </svg>
+                                            </a>
+                                        )}
+                                    </div>
+                                </div>
                             </div>
                         );
                     })
@@ -205,7 +203,10 @@ const exampleUrls: Record<number, string> = {
     }
 
     document.querySelectorAll(".package-btn").forEach((btn) => {
-        btn.addEventListener("click", function () {
+        btn.addEventListener("click", function (e) {
+            // Si el click viene del enlace de ejemplo, no hacer nada
+            if ((e.target as HTMLElement).closest(".example-link")) return;
+
             const variantId = this.getAttribute("data-variant-id");
             document.querySelectorAll(".package-btn").forEach((b) => b.classList.remove("selected"));
             this.classList.add("selected");
@@ -280,6 +281,12 @@ const exampleUrls: Record<number, string> = {
         animation: checkmark 0.3s ease-out;
     }
 
+    .example-link {
+        min-height: 44px;
+        position: relative;
+        z-index: 2;
+    }
+
     @keyframes checkmark {
         0% { transform: scale(0) rotate(-180deg); }
         50% { transform: scale(1.2) rotate(10deg); }
@@ -289,10 +296,5 @@ const exampleUrls: Record<number, string> = {
     @keyframes pulse {
         0%, 100% { opacity: 0.15; }
         50% { opacity: 0.25; }
-    }
-
-    /* Asegura que el botón ejemplo sea fácil de tocar en móvil */
-    .example-link {
-        min-height: 44px;
     }
 </style>
