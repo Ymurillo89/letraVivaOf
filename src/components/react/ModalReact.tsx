@@ -12,6 +12,7 @@ interface ShopifyVariant {
 
 interface ModalCancionPersonalizadaProps {
   variants: ShopifyVariant[];
+  hideButton?: boolean;
 }
 
 // ─── Country code data ───────────────────────────────────────────────────────
@@ -28,7 +29,7 @@ const COUNTRIES = [
   { code: '+595', flag: 'https://flagcdn.com/w20/py.png', name: 'Paraguay', iso: 'PY' },
 ];
 
-const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ variants }) => {
+const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ variants, hideButton = false }) => {
   const [showWelcome, setShowWelcome] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -117,7 +118,12 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
   useEffect(() => {
     const handleOpenModal = () => { openWelcome(); };
     EventBus.on('openSongModal', handleOpenModal);
-    return () => { EventBus.remove('openSongModal', handleOpenModal); };
+    window.addEventListener("openSongModal", handleOpenModal);
+
+    return () => {
+      EventBus.remove('openSongModal', handleOpenModal);
+      window.removeEventListener("openSongModal", handleOpenModal);
+    };
   }, []);
 
   const steps = [
@@ -208,7 +214,8 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
   };
 
   const parseVariantInfo = (title: string) => {
-    const nameMatch = title.match(/^(.*?)\s*–/);
+    const fixed = fixEncoding(title);
+    const nameMatch = fixed.match(/^(.*?)\s*–/);
     const nombre = nameMatch ? nameMatch[1].trim() : title;
     const subtitleMatch = title.match(/–\s*(.*?)\s*\|/);
     const subtitle = subtitleMatch ? subtitleMatch[1].trim() : '';
@@ -216,6 +223,14 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
     const duracion = durationMatch ? durationMatch[1].trim() : '';
     return { nombre, subtitle, duracion };
   };
+
+  const fixEncoding = (str: string): string => {
+  try {
+    return decodeURIComponent(escape(str));
+  } catch {
+    return str;
+  }
+};
 
   const getFeatures = (title: string) => {
     const features = [];
@@ -359,7 +374,7 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
           event_source_url: window.location.href,
           event_id: crypto.randomUUID(),
           user_agent: navigator.userAgent,
-          custom_data: { currency: "COP", value, payment_method: "online", package_name: packageName },
+          custom_data: { currency: "USD", value, payment_method: "online", package_name: packageName },
         }),
       });
     } catch { }
@@ -468,11 +483,12 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
     <div className="w-full">
 
       {/* Botón Principal */}
-      <button
-        onClick={openWelcome}
-        className="group cursor-pointer relative inline-flex items-center justify-center gap-3 bg-gradient-to-r from-[#f89a3f] via-[#ff6b35] to-[#f89a3f] hover:from-[#ff6b35] hover:via-[#f89a3f] hover:to-[#ff6b35] text-white px-6 py-4 rounded-full text-lg font-bold transition-all duration-500 hover:scale-[1.02] w-full max-w-lg mx-auto md:w-auto md:max-w-none overflow-hidden border-2 border-[#ff6b35]/30 shadow-xl"
-      >
-        <span className="relative z-10 flex items-center gap-3">
+      {!hideButton && (
+        <button
+          onClick={openWelcome}
+          className="group cursor-pointer relative inline-flex items-center justify-center gap-3 bg-gradient-to-r from-[#f89a3f] via-[#ff6b35] to-[#f89a3f] hover:from-[#ff6b35] hover:via-[#f89a3f] hover:to-[#ff6b35] text-white px-6 py-4 rounded-full text-lg font-bold transition-all duration-500 hover:scale-[1.02] w-full max-w-lg mx-auto md:w-auto md:max-w-none overflow-hidden border-2 border-[#ff6b35]/30 shadow-xl"
+        >
+          <span className="relative z-10 flex items-center gap-3">
           <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
             <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"></path>
           </svg>
@@ -483,7 +499,7 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
         </span>
         <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12"></div>
       </button>
-
+      )}
       {/* Modal de Pago Exitoso */}
       {showPaymentSuccess && (
         <div className="modal-overlay" onClick={closePaymentSuccess}>
@@ -942,7 +958,7 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
                         </div>
                         <div className="text-right flex-shrink-0">
                           <div className="text-2xl font-black text-teal-600">{paquete.precio}</div>
-                          <div className="text-xs text-gray-500 font-semibold">COP</div>
+                          <div className="text-xs text-gray-500 font-semibold">USD</div>
                         </div>
                       </div>
                       <div className="space-y-2">
@@ -1011,7 +1027,7 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
                           </div>
                           <div className="text-right">
                             <div className="text-3xl font-black text-teal-600">{paq.precio}</div>
-                            <div className="text-xs text-gray-500 font-semibold">COP</div>
+                            <div className="text-xs text-gray-500 font-semibold">USD</div>
                           </div>
                         </div>
                       </div>
