@@ -7,6 +7,9 @@ import YourVideo from "./YourVideo";
 import DigitalCardSkeleton from "./DigitalCardSkeleton";
 import PaymentButton from "./PaymentButton ";
 import DigitalCardError from "./DigitalCardError";
+import ExamplePackagesNav from "./ExamplePackagesNav";
+
+
 
 export default function MainContent() {
   const [dataMetafieldsKeyValue, setDataMetafieldsKeyValue] = useState<{
@@ -168,6 +171,7 @@ export default function MainContent() {
         </span>
       </div>
 
+      
       <div className="text-card-foreground flex flex-col gap-6 rounded-xl py-6 max-w-4xl mx-auto overflow-hidden shadow-2xl border-0 bg-white backdrop-blur">
         <Header
           imagen_generica={dataMetafieldsKeyValue?.metafields.imagen_generica ?? ""}
@@ -213,11 +217,18 @@ export default function MainContent() {
             />
           )}
 
+        
           {/* Botón de Pago: Solo se muestra si está pendiente */}
           {dataMetafieldsKeyValue?.paid === "pending" && (
             <PaymentButton orderId={orderId || ""} />
           )}
         </div>
+
+        <div className="px-6 md:px-8">
+          <ExamplePackagesNav currentOrderId={orderId?.trim() ?? ""} />
+        </div>
+
+
       </div>
     </div>
   );

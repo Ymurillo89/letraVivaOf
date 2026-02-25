@@ -3,17 +3,13 @@ import { fetchProductVariants } from "../lib/shopify.server.ts";
 
 const variants = await fetchProductVariants("8847688794261");
 
-// Función mejorada para extraer info del título
 function parseVariantInfo(title: string) {
     const nameMatch = title.match(/^(.*?)\s*–/);
     const name = nameMatch ? nameMatch[1].trim() : title;
-
     const subtitleMatch = title.match(/–\s*(.*?)\s*\|/);
     const subtitle = subtitleMatch ? subtitleMatch[1].trim() : "";
-
     const durationMatch = title.match(/\(([^)]+min[^)]*)\)/i);
     const duration = durationMatch ? durationMatch[1].trim() : "";
-
     return { name, subtitle, duration };
 }
 
@@ -21,59 +17,43 @@ function formatPrice(price: string) {
     return new Intl.NumberFormat("es-CO").format(parseFloat(price));
 }
 
-// Obtener features mejorado
 function getFeatures(title: string) {
     const features = [];
     const afterDuration = title.split(/\)/)[1] || "";
-
     if (afterDuration.includes("MP3")) {
         const formatMatch = afterDuration.match(/MP3\s+([^+\-]+)/);
         const format = formatMatch ? formatMatch[1].trim() : "";
-        features.push({
-            text: format ? `MP3 ${format}` : "Canción en MP3",
-            icon: "🎵",
-        });
+        features.push({ text: format ? `MP3 ${format}` : "Canción en MP3", icon: "🎵" });
     }
-
     if (afterDuration.includes("Tarjeta Digital")) {
-        features.push({
-            text: "Tarjeta Digital Personalizada",
-            icon: "🎴",
-        });
+        features.push({ text: "Tarjeta Digital Personalizada", icon: "🎴" });
     }
-
     if (afterDuration.includes("Video")) {
-        features.push({
-            text: "Video Lyric Animado",
-            icon: "🎬",
-        });
+        features.push({ text: "Video Lyric Animado", icon: "🎬" });
     }
-
     if (afterDuration.match(/\d+\s*Foto/i)) {
         const photoMatch = afterDuration.match(/(\d+)\s*Foto/i);
         const photoCount = photoMatch ? photoMatch[1] : "1";
-        features.push({
-            text: `${photoCount} Foto Para La Portada`,
-            icon: "📸",
-        });
+        features.push({ text: `${photoCount} Foto Para La Portada`, icon: "📸" });
     }
-
     return features;
 }
+
+const exampleUrls: Record<number, string> = {
+    1: "https://www.letravivaoficial.com/card/6721211138197",
+    2: "https://www.letravivaoficial.com/card/6721174798485",
+    3: "https://www.letravivaoficial.com/card/6721246658709",
+};
 ---
 
 <div class="py-20 px-4" id="paquetes">
     <div class="max-w-7xl mx-auto">
         <!-- Header -->
         <div class="text-center mb-16">
-            <h2
-                class="text-5xl md:text-6xl font-extrabold text-gray-900 mb-4 tracking-tight"
-            >
+            <h2 class="text-5xl md:text-6xl font-extrabold text-gray-900 mb-4 tracking-tight">
                 Canciones Personalizadas
             </h2>
-            <div
-                class="inline-flex items-center gap-2 bg-gradient-to-r from-[#11676a] to-[#2d8c89] text-white px-6 py-2 rounded-full text-sm font-semibold mb-6 shadow-lg"
-            >
+            <div class="inline-flex items-center gap-2 bg-gradient-to-r from-[#11676a] to-[#2d8c89] text-white px-6 py-2 rounded-full text-sm font-semibold mb-6 shadow-lg">
                 <span>🎁</span>
                 <span>Elige Tu Paquete</span>
             </div>
@@ -92,34 +72,29 @@ function getFeatures(title: string) {
                         const info = parseVariantInfo(variant.title);
                         const features = getFeatures(variant.title);
                         const isStandard = variant.position === 1;
-
                         const icons = { 1: "🎤", 2: "🎵", 3: "👑" };
-                        const order ={1: "1", 2: "2", 3: "3"};
-                        const icon =
-                            icons[variant.position as keyof typeof icons];
-                        const idOrder = order[variant.position as keyof typeof order];
+                        const icon = icons[variant.position as keyof typeof icons];
+                        const exampleUrl = exampleUrls[variant.position];
 
                         return (
-                            <div
-                                class={`relative ${isStandard ? "md:scale-105" : ""}`}
-                            >
+                            <div class={`relative flex flex-col ${isStandard ? "md:scale-105" : ""}`}>
                                 {/* Popular Badge */}
                                 {isStandard && (
-                                    <div class="absolute -top-4 left-1/2 -translate-x-1/2 z-5">
+                                    <div class="absolute -top-4 left-1/2 -translate-x-1/2 z-10">
                                         <span class="bg-gradient-to-r from-[#f89a3f] via-[#ff6b35] to-[#f89a3f] text-white px-5 py-2 rounded-full text-sm font-bold shadow-xl whitespace-nowrap">
                                             ⭐ MÁS POPULAR
                                         </span>
                                     </div>
                                 )}
 
-                                {/* Card */}
-                                <button
+                                {/* ✅ Card como DIV — contiene todo incluyendo el botón ejemplo */}
+                                <div
                                     data-variant-id={variant.id}
                                     data-variant-price={variant.price}
-                                    class={`package-btn w-full h-full p-8 cursor-pointer rounded-2xl bg-gradient-to-br from-white to-gray-50/80 border-2 border-gray-200 hover:border-[#11676a] transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 group relative overflow-hidden`}
+                                    class="package-btn flex flex-col flex-1 p-8 cursor-pointer rounded-2xl bg-gradient-to-br from-white to-gray-50/80 border-2 border-gray-200 hover:border-[#11676a] transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 group relative overflow-hidden"
                                 >
                                     {/* Background Pattern */}
-                                    <div class="absolute inset-0 opacity-5">
+                                    <div class="absolute inset-0 opacity-5 pointer-events-none">
                                         <div
                                             class="absolute inset-0"
                                             style="background-image: radial-gradient(circle, currentColor 1px, transparent 1px); background-size: 20px 20px;"
@@ -127,105 +102,90 @@ function getFeatures(title: string) {
                                     </div>
 
                                     {/* Content */}
-                                    <div class="relative">
+                                    <div class="relative flex flex-col flex-1">
                                         {/* Icon */}
-                                        <div class="text-6xl mb-4 transform group-hover:scale-110 transition-transform duration-300">
+                                        <div class="text-6xl mb-4 transform group-hover:scale-110 transition-transform duration-300 text-center">
                                             {icon}
                                         </div>
 
                                         {/* Title */}
-                                        <h3 class="text-2xl font-bold text-gray-900 mb-2">
-                                            {info.name
-                                                .replace(/🎼|🎤|🎬|👑|🎵/g, "")
-                                                .trim()}
+                                        <h3 class="text-2xl font-bold text-gray-900 mb-2 text-center">
+                                            {info.name.replace(/🎼|🎤|🎬|👑|🎵/g, "").trim()}
                                         </h3>
-                                        <p class="text-sm font-medium text-[#f89a3f] mb-6">
-                                            {info.subtitle
-                                                .replace(/⭐/g, "")
-                                                .trim()}
+                                        <p class="text-sm font-medium text-[#f89a3f] mb-6 text-center">
+                                            {info.subtitle.replace(/⭐/g, "").trim()}
                                         </p>
 
                                         {/* Duration */}
                                         {info.duration && (
                                             <div class="flex items-center justify-center gap-2 mb-6 bg-white/60 backdrop-blur-sm rounded-lg py-2 px-4 border border-gray-200">
-                                                <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    width="20"
-                                                    height="20"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    stroke-width="2"
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                >
-                                                    <circle
-                                                        cx="12"
-                                                        cy="12"
-                                                        r="10"
-                                                    />
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <circle cx="12" cy="12" r="10" />
                                                     <polyline points="12 6 12 12 16 14" />
                                                 </svg>
-                                                <span class="text-sm font-semibold text-gray-700">
-                                                    {info.duration}
-                                                </span>
+                                                <span class="text-sm font-semibold text-gray-700">{info.duration}</span>
                                             </div>
                                         )}
 
                                         {/* Features */}
-                                        <div class="space-y-3  min-h-[160px]">
+                                        <div class="space-y-3 min-h-[160px]">
                                             {features.map((feature) => (
                                                 <div class="flex items-start gap-3 text-left">
-                                                    <span class="text-xl flex-shrink-0 mt-0.5">
-                                                        {feature.icon}
-                                                    </span>
-                                                    <span class="text-sm text-gray-700 font-medium leading-relaxed">
-                                                        {feature.text}
-                                                    </span>
+                                                    <span class="text-xl flex-shrink-0 mt-0.5">{feature.icon}</span>
+                                                    <span class="text-sm text-gray-700 font-medium leading-relaxed">{feature.text}</span>
                                                 </div>
                                             ))}
                                         </div>
 
-                                        <p class="text-sm text-gray-500 font-medium my-2">
-                                            Los precios están en USD, tu banco o
-                                            pasarela de pago convierte el valor
-                                            automáticamente a tu moneda, sin que
-                                            tengas que hacer nada.
+                                        <p class="text-sm text-gray-500 font-medium my-2 text-center">
+                                            Los precios están en USD, tu banco o pasarela de pago convierte el valor automáticamente a tu moneda, sin que tengas que hacer nada.
                                         </p>
 
                                         {/* Price */}
-                                        <div class="pt-6 border-t-2 border-gray-200">
+                                        <div class="pt-6 border-t-2 border-gray-200 text-center">
                                             <div class="flex items-baseline justify-center gap-1">
-                                                <span class="text-lg font-semibold text-gray-500">
-                                                    $
-                                                </span>
-                                                <span class="text-4xl font-black text-gray-900">
-                                                    {formatPrice(variant.price)}
-                                                </span>
+                                                <span class="text-lg font-semibold text-gray-500">$</span>
+                                                <span class="text-4xl font-black text-gray-900">{formatPrice(variant.price)}</span>
                                             </div>
-                                            <p class="text-sm text-gray-500 font-medium mt-1">
-                                                USD
-                                            </p>
+                                            <p class="text-sm text-gray-500 font-medium mt-1">USD</p>
                                             {variant.compare_at_price && (
                                                 <p class="text-sm text-gray-400 line-through mt-2">
-                                                    $
-                                                    {formatPrice(
-                                                        variant.compare_at_price,
-                                                    )}
+                                                    ${formatPrice(variant.compare_at_price)}
                                                 </p>
                                             )}
                                         </div>
 
-                                        {/* CTA */}
+                                        {/* CTA Seleccionar */}
                                         <div class="mt-6">
-                                            <div class="bg-gradient-to-r from-[#11676a] to-[#2d8c89] text-white py-3 px-6 rounded-xl font-bold group-hover:shadow-lg transition-all duration-300">
+                                            <div class="bg-gradient-to-r from-[#11676a] to-[#2d8c89] text-white py-3 px-6 rounded-xl font-bold text-center group-hover:shadow-lg transition-all duration-300">
                                                 Seleccionar
                                             </div>
                                         </div>
-                                    </div>
-                                </button>
 
-                            
+                                        {/* ✅ Botón Ver Ejemplo — DENTRO del card, detiene propagación via JS */}
+                                        {exampleUrl && (
+                                            <a
+                                                href={exampleUrl}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                class="example-link mt-3 flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl border border-[#11676a]/25 bg-[#11676a]/5 text-[#11676a] text-sm font-semibold hover:bg-[#11676a]/10 hover:border-[#11676a]/50 active:scale-[0.98] transition-all duration-200"
+                                                onclick="event.stopPropagation()"
+                                            >
+                                                <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-[#11676a]/15">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+                                                        <polygon points="5 3 19 12 5 21 5 3" />
+                                                    </svg>
+                                                </span>
+                                                Ver ejemplo de este paquete
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="opacity-40 ml-auto">
+                                                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                                                    <polyline points="15 3 21 3 21 9" />
+                                                    <line x1="10" y1="14" x2="21" y2="3" />
+                                                </svg>
+                                            </a>
+                                        )}
+                                    </div>
+                                </div>
                             </div>
                         );
                     })
@@ -239,21 +199,17 @@ function getFeatures(title: string) {
     const selectedVariantId = urlParams.get("variant");
 
     if (selectedVariantId) {
-        const selectedBtn = document.querySelector(
-            `[data-variant-id="${selectedVariantId}"]`,
-        );
-        if (selectedBtn) {
-            selectedBtn.classList.add("selected");
-        }
+        const selectedBtn = document.querySelector(`[data-variant-id="${selectedVariantId}"]`);
+        if (selectedBtn) selectedBtn.classList.add("selected");
     }
 
     document.querySelectorAll(".package-btn").forEach((btn) => {
-        btn.addEventListener("click", function () {
-            const variantId = this.getAttribute("data-variant-id");
+        btn.addEventListener("click", function (e) {
+            // Si el click viene del enlace de ejemplo, no hacer nada
+            if ((e.target as HTMLElement).closest(".example-link")) return;
 
-            document
-                .querySelectorAll(".package-btn")
-                .forEach((b) => b.classList.remove("selected"));
+            const variantId = this.getAttribute("data-variant-id");
+            document.querySelectorAll(".package-btn").forEach((b) => b.classList.remove("selected"));
             this.classList.add("selected");
 
             const url = new URL(window.location.href);
@@ -261,7 +217,6 @@ function getFeatures(title: string) {
             window.history.pushState({}, "", url);
 
             const eventId = crypto.randomUUID();
-
             fetch("/api/meta-conversion", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -327,25 +282,20 @@ function getFeatures(title: string) {
         animation: checkmark 0.3s ease-out;
     }
 
+    .example-link {
+        min-height: 44px;
+        position: relative;
+        z-index: 2;
+    }
+
     @keyframes checkmark {
-        0% {
-            transform: scale(0) rotate(-180deg);
-        }
-        50% {
-            transform: scale(1.2) rotate(10deg);
-        }
-        100% {
-            transform: scale(1) rotate(0deg);
-        }
+        0% { transform: scale(0) rotate(-180deg); }
+        50% { transform: scale(1.2) rotate(10deg); }
+        100% { transform: scale(1) rotate(0deg); }
     }
 
     @keyframes pulse {
-        0%,
-        100% {
-            opacity: 0.15;
-        }
-        50% {
-            opacity: 0.25;
-        }
+        0%, 100% { opacity: 0.15; }
+        50% { opacity: 0.25; }
     }
 </style>
