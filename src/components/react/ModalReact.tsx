@@ -73,7 +73,7 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
     email: "",
     genero: "",
     paquete: "",
-    metodoPago: "",
+  /*   metodoPago: "", */
     otroGenero: "",
     voz: ""
   });
@@ -90,7 +90,7 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
     email: false,
     genero: false,
     paquete: false,
-    metodoPago: false,
+/*     metodoPago: false, */
     otroGenero: false,
     voz: false
   });
@@ -330,9 +330,9 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
         newErrors.paquete = !formData.paquete;
         isValid = !newErrors.paquete;
         break;
-      case 5:
+  /*     case 5:
         newErrors.metodoPago = !formData.metodoPago;
-        isValid = !newErrors.metodoPago;
+        isValid = !newErrors.metodoPago; */
         break;
     }
     setErrors(newErrors);
@@ -422,14 +422,18 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
           { name: "Otro Genero", value: formData.otroGenero },
           { name: "Voz", value: formData.voz },
           { name: "Prefijo", value: selectedCountry.code },
-          { name: "Metodo de Pago", value: formData.metodoPago === "online" ? "Pago en Linea" : "Contra Entrega" }
+          /* { name: "Metodo de Pago", value: formData.metodoPago === "online" ? "Pago en Linea" : "Contra Entrega" } */
+          { name: "Metodo de Pago", value:  "Pago en Linea" }
         ],
         note: `Historia: ${formData.historia}\n\nPara: ${formData.paraQuien}\nOcasion: ${formData.ocasion}\nTono: ${formData.tonoEmocional}\nGenero: ${selectedGenero?.label || ""}`
       };
 
-      const endpoint = formData.metodoPago === "online"
+      /* const endpoint = formData.metodoPago === "online"
         ? '/api/shopify/create-checkout'
-        : '/api/shopify/create-order';
+        : '/api/shopify/create-order'; */
+
+      const endpoint = '/api/shopify/create-checkout'
+     
 
       const response = await fetch(endpoint, {
         method: 'POST',
@@ -447,13 +451,13 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
 
       closeForm();
 
-      if (formData.metodoPago === "online") {
+     // if (formData.metodoPago === "online") {
         await sendMetaInitiateCheckout({
           value: Number(selectedPaquete?.precio || 0),
           packageName: selectedPaquete?.nombre || "",
         });
         window.location.href = data.checkoutUrl;
-      } else {
+  /*     } else {
         setOrderSuccess({
           orderNumber: data.orderNumber,
           nombre: formData.nombre,
@@ -468,7 +472,7 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
           email: "", genero: "", paquete: "", metodoPago: "", otroGenero: "", voz: ""
         });
         setCurrentStep(0);
-      }
+      } */
     } catch (error) {
       console.error('Error al crear pedido:', error);
       openErrorModal();
@@ -1081,14 +1085,21 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
                   </div>
 
                   <div className="bg-gradient-to-br from-yellow-50 to-amber-50 rounded-2xl p-5 border-2 border-yellow-300">
-                    <div className="flex items-center gap-2 mb-4">
+                    {/* <div className="flex items-center gap-2 mb-4">
                       <svg className="w-6 h-6 text-yellow-600" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" />
                       </svg>
                       <h3 className="text-base font-bold text-amber-900">Selecciona el Método de Pago</h3>
-                    </div>
+                    </div> */}
                     <div className="space-y-3">
-                      <button onClick={() => setFormData({ ...formData, metodoPago: 'online' })} className={`w-full p-4 rounded-xl border-2 transition-all flex items-center gap-3 cursor-pointer ${formData.metodoPago === 'online' ? 'border-teal-500 bg-teal-50 shadow-md' : 'border-gray-200 bg-white hover:border-teal-300'}`}>
+                      {/* <button onClick={() => setFormData({ ...formData, metodoPago: 'online' })} className={`w-full p-4 rounded-xl border-2 transition-all flex items-center gap-3 cursor-pointer ${formData.metodoPago === 'online' ? 'border-teal-500 bg-teal-50 shadow-md' : 'border-gray-200 bg-white hover:border-teal-300'}`}>
+                        <div className="text-2xl">💳</div>
+                        <div className="flex-1 text-left">
+                          <div className="font-bold text-gray-900 text-sm">Pago en Línea</div>
+                          <div className="text-xs text-gray-600">Salta la fila y recibe tu canción en solo 24 Horas</div>
+                        </div>
+                      </button> */}
+                      <button className={`w-full p-4 rounded-xl border-2 transition-all flex items-center gap-3 cursor-pointer border-gray-200 bg-white hover:border-teal-300 `}>
                         <div className="text-2xl">💳</div>
                         <div className="flex-1 text-left">
                           <div className="font-bold text-gray-900 text-sm">Pago en Línea</div>
@@ -1096,7 +1107,7 @@ const ModalCancionPersonalizada: React.FC<ModalCancionPersonalizadaProps> = ({ v
                         </div>
                       </button>
                     </div>
-                    {errors.metodoPago && <p className="text-red-500 text-sm mt-2">Selecciona un método de pago</p>}
+                    {/* {errors.metodoPago && <p className="text-red-500 text-sm mt-2">Selecciona un método de pago</p>} */}
                   </div>
                 </div>
               )}
