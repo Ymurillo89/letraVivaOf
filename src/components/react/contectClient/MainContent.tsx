@@ -202,13 +202,6 @@ export default function MainContent() {
             packageName={dataMetafieldsKeyValue?.packageName ?? ""}
           />
 
-          {(dataMetafieldsKeyValue?.packageName === "premium" || dataMetafieldsKeyValue?.packageName === "standard") && (
-            <LyricsSong
-              paid={dataMetafieldsKeyValue?.paid ?? ""}
-              letra_cancion={dataMetafieldsKeyValue?.metafields.letra_cancion ?? ""}
-            />
-          )}
-
           {dataMetafieldsKeyValue?.packageName === "premium" && (
             <YourVideo
               title={dataMetafieldsKeyValue?.metafields.titulo_cancion ?? ""}
@@ -217,7 +210,13 @@ export default function MainContent() {
             />
           )}
 
-        
+          {(dataMetafieldsKeyValue?.packageName === "premium" || dataMetafieldsKeyValue?.packageName === "standard") && (
+            <LyricsSong
+              paid={dataMetafieldsKeyValue?.paid ?? ""}
+              letra_cancion={dataMetafieldsKeyValue?.metafields.letra_cancion ?? ""}
+            />
+          )}
+                  
           {/* Botón de Pago: Solo se muestra si está pendiente */}
           {dataMetafieldsKeyValue?.paid === "pending" && (
             <PaymentButton orderId={orderId || ""} />
