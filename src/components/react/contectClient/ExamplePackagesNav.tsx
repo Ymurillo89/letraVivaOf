@@ -11,19 +11,19 @@ const EXAMPLE_ORDERS = {
 const EXAMPLE_LINKS = {
     premium: {
         label: "Premium",
-        url: "https://www.letravivaoficial.com/card/6721246658709",
+        url: "https://card.letravivaoficial.com/card/6721246658709",
         icon: "⭐",
         description: "Video + Letra + Dedicatoria",
     },
     standard: {
         label: "Estándar",
-        url: "https://www.letravivaoficial.com/card/6721174798485",
+        url: "https://card.letravivaoficial.com/card/6721174798485",
         icon: "🎵",
         description: "Letra + Dedicatoria",
     },
     mini: {
         label: "Mini",
-        url: "https://www.letravivaoficial.com/card/6721211138197",
+        url: "https://card.letravivaoficial.com/card/6721211138197",
         icon: "🎶",
         description: "Canción personalizada",
     },
