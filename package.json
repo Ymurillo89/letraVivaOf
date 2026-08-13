@@ -8,6 +8,9 @@
     "preview": "astro preview",
     "astro": "astro"
   },
+  "engines": {
+    "node": "^22"
+  },
   "dependencies": {
     "@astrojs/react": "^4.4.2",
     "@astrojs/solid-js": "^5.1.1",
