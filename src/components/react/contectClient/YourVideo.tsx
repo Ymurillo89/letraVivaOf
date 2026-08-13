@@ -141,34 +141,19 @@ export default function YourVideo({ paid,title, video_url }: Props) {
         try {
             setIsDownloading(true);
 
-            // Agregamos un timestamp para evitar problemas de caché del CDN
-            const urlWithCacheBust = `${video_url}${video_url.includes('?') ? '&' : '?'}t=${Date.now()}`;
-
-            const response = await fetch(urlWithCacheBust, {
-                method: 'GET',
-                mode: 'cors',
-            });
-
-            if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
-
-            const blob = await response.blob();
-            const blobUrl = window.URL.createObjectURL(blob);
+            const downloadUrl = `/api/download?url=${encodeURIComponent(video_url)}&filename=${encodeURIComponent(`${title}-LetraViva.mp4`)}`;
 
             const link = document.createElement('a');
-            link.href = blobUrl;
-            link.download = `${title}-LetraViva.mp4`;
+            link.href = downloadUrl;
             document.body.appendChild(link);
             link.click();
-
-            // Limpieza de memoria
             document.body.removeChild(link);
-            window.URL.revokeObjectURL(blobUrl);
 
             setIsDownloading(false);
 
         } catch (error) {
             console.error('Error al descargar el video:', error);
-            alert('Hubo un error al descargar el video. Asegúrate de que el CDN haya sido purgado en DigitalOcean.');
+            alert('Hubo un error al descargar el video. Por favor intenta de nuevo.');
             setIsDownloading(false);
         }
     };

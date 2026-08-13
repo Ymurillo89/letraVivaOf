@@ -71,42 +71,17 @@ export default function YourSong({ short_song_url, long_song_url, paid, title, d
         setIsDownloading(true);
 
         try {
-            // Descargar canción
-            const response1 = await fetch(long_song_url, {
-                method: 'GET',
-                mode: 'cors', // Esto es vital
-                headers: {
-                    'Origin': window.location.origin
-                }
-            });
-            const blob1 = await response1.blob();
-            const url1 = URL.createObjectURL(blob1);
             const nameSong = title
                 .replace(/\u00A0/g, ' ')
                 .trim();
 
+            const downloadUrl = `/api/download?url=${encodeURIComponent(long_song_url)}&filename=${encodeURIComponent(`${nameSong}-LetraViva.mp3`)}`;
+
             const a1 = document.createElement('a');
-            a1.href = url1;
-            a1.download = `${nameSong}-LetraViva.mp3`;
+            a1.href = downloadUrl;
             document.body.appendChild(a1);
             a1.click();
             document.body.removeChild(a1);
-            URL.revokeObjectURL(url1);
-
-            // Esperar y descargar carátula
-            /* await new Promise(resolve => setTimeout(resolve, 1000));
-
-            const response2 = await fetch(digital_card_url, { mode: 'cors' });
-            const blob2 = await response2.blob();
-            const url2 = URL.createObjectURL(blob2);
-
-            const a2 = document.createElement('a');
-            a2.href = url2;
-            a2.download = 'caratula.jpg';
-            document.body.appendChild(a2);
-            a2.click();
-            document.body.removeChild(a2);
-            URL.revokeObjectURL(url2); */
 
             setIsDownloading(false);
         } catch (error) {
